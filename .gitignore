@@ -1,0 +1,9 @@
+example/data
+example/git
+example/blobs
+example/tada
+example/git2
+
+# We want to ignore the toobig executable, but not directories.
+toobig
+!toobig/
