@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/nthnca/toobig/internal/base"
-	"github.com/nthnca/toobig/internal/config"
+	"github.com/shortmoose/toobig/internal/base"
+	"github.com/shortmoose/toobig/internal/config"
 )
 
 // Do TODO

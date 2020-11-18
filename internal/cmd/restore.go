@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/nthnca/toobig/internal/base"
-	"github.com/nthnca/toobig/internal/config"
+	"github.com/shortmoose/toobig/internal/base"
+	"github.com/shortmoose/toobig/internal/config"
 )
 
 // Restore the data from the combination of a ref and checksum repository.

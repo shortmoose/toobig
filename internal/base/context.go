@@ -1,6 +1,6 @@
 package base
 
-import "github.com/nthnca/toobig/internal/config"
+import "github.com/shortmoose/toobig/internal/config"
 
 // Context is the basic structure that toobig uses to keep state.
 // Many methods will take this structure as their first argument.

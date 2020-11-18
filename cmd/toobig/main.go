@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/nthnca/toobig/internal/base"
-	"github.com/nthnca/toobig/internal/cmd"
+	"github.com/shortmoose/toobig/internal/base"
+	"github.com/shortmoose/toobig/internal/cmd"
 	"github.com/urfave/cli/v2"
 )
 
