@@ -1,0 +1,15 @@
+#!/bin/bash
+
+for x in e2e-tests/*; do
+    echo $x
+
+    # Run test
+    $x
+
+    if [ "$?" -ne 0 ]; then
+        echo
+        echo "Failed $x"
+        return 1
+    fi
+
+done
