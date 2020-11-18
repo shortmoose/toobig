@@ -20,5 +20,3 @@ rm -f data/foo.jpg
 ../toobig -v --dry-run update validate.cfg
 
 diff -r git git2
-
-tree

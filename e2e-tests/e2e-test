@@ -18,5 +18,3 @@ echo abc 124 > data/foo.jpg
 ../toobig -v --dry-run fsck restore.cfg
 
 diff -r data tada
-
-tree

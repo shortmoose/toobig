@@ -9,7 +9,7 @@ for x in e2e-tests/*; do
     if [ "$?" -ne 0 ]; then
         echo
         echo "Failed $x"
-        return 1
+        exit 1
     fi
 
 done
