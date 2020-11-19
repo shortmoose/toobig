@@ -1,8 +1,4 @@
-example/data
-example/git
-example/blobs
-example/tada
-example/git2
+e2etmp
 
 # We want to ignore the toobig executable, but not directories.
 toobig
