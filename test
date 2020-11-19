@@ -1,7 +1,7 @@
 #!/bin/bash
 
 for x in e2e-tests/*; do
-    echo $x
+    echo "##################### $x"
 
     # Run test
     $x
@@ -13,3 +13,5 @@ for x in e2e-tests/*; do
     fi
 
 done
+
+rm -fr e2etmp

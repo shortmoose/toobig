@@ -60,6 +60,9 @@ func Update(ctx *base.Context) error {
 	}
 
 	err = os.Chdir(ctx.GitRepoPath)
+	if err != nil {
+		return err
+	}
 
 	fmt.Printf("Reading git directory...\n")
 	// Walk all files in the data directory.
