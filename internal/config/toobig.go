@@ -11,9 +11,10 @@ import (
 
 // TooBig represents a TooBig repository configuration.
 type TooBig struct {
-	HashRepoPath string `yaml:"blob_path"`
-	DataRepoPath string `yaml:"data_path"`
-	GitRepoPath  string `yaml:"git_path"`
+	HashPath    string `yaml:"blob_path"`
+	DataPath    string `yaml:"data_path"`
+	GitRepoPath string `yaml:"git_path"`
+	DupPath     string `yaml:"dup_path"`
 }
 
 // ReadConfig reads and deserializes TooBig from a file.
@@ -36,8 +37,8 @@ func ReadConfig(path string) (TooBig, error) {
 		return cfg, err
 	}
 
-	if len(cfg.DataRepoPath) == 0 ||
-		len(cfg.HashRepoPath) == 0 ||
+	if len(cfg.DataPath) == 0 ||
+		len(cfg.HashPath) == 0 ||
 		len(cfg.GitRepoPath) == 0 {
 		return cfg, fmt.Errorf("Must set data_path, hash_path, and git_path to valid directories")
 	}
@@ -47,13 +48,22 @@ func ReadConfig(path string) (TooBig, error) {
 		return cfg, err
 	}
 
-	cfg.GitRepoPath = filepath.Join(p, cfg.GitRepoPath)
-	cfg.DataRepoPath = filepath.Join(p, cfg.DataRepoPath)
-	cfg.HashRepoPath = filepath.Join(p, cfg.HashRepoPath)
+	join := func(root, add string) string {
+		if filepath.IsAbs(add) {
+			return add
+		}
+		return filepath.Join(root, add)
+	}
+
+	cfg.GitRepoPath = join(p, cfg.GitRepoPath)
+	cfg.DataPath = join(p, cfg.DataPath)
+	cfg.HashPath = join(p, cfg.HashPath)
+	cfg.DupPath = join(p, cfg.DupPath)
 
 	fmt.Printf("  git_path:  %s/\n", cfg.GitRepoPath)
-	fmt.Printf("  data_path: %s/\n", cfg.DataRepoPath)
-	fmt.Printf("  hash_path: %s/\n\n", cfg.HashRepoPath)
+	fmt.Printf("  data_path: %s/\n", cfg.DataPath)
+	fmt.Printf("  hash_path: %s/\n", cfg.HashPath)
+	fmt.Printf("  dup_path:  %s/\n\n", cfg.DupPath)
 
 	return cfg, nil
 }

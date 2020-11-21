@@ -37,7 +37,7 @@ func Restore(ctx *base.Context) error {
 			return er
 		}
 
-		hashFile := filepath.Join(ctx.HashRepoPath, sha.Sha256)
+		hashFile := filepath.Join(ctx.HashPath, sha.Sha256)
 
 		e, er := base.FileExists(hashFile)
 		if !e || er != nil {
@@ -45,7 +45,7 @@ func Restore(ctx *base.Context) error {
 			return nil
 		}
 
-		dataPath := filepath.Join(ctx.DataRepoPath, path)
+		dataPath := filepath.Join(ctx.DataPath, path)
 		d := filepath.Dir(dataPath)
 		er = os.MkdirAll(d, 0700)
 		if er != nil {

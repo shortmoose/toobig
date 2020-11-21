@@ -1,5 +1,7 @@
 #!/bin/bash
 
+GREP="$1"
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
@@ -14,7 +16,7 @@ test $? -eq 0 && echo shadows?... && shadow ./...
 # test $? -eq 0 && echo testing... && run_tests
 test $? -eq 0 && echo linting... && golint ./...
 
-test $? -eq 0 && echo e2e-test... && ./test
+test $? -eq 0 && echo e2e-test... && ./test "$GREP"
 
 test $? -ne 0 && COLOR="$RED"
 if [ "$COLOR" == "$GREEN" ]; then

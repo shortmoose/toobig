@@ -26,10 +26,10 @@ EOF
 echo abc 123 > e2etmp/data1/foo
 echo abc 124 > e2etmp/data1/foo.jpg
 
-$TB -v --dry-run update e2etmp/update.cfg
+$TB update e2etmp/update.cfg
 
 rm -f data/foo.jpg
 
-$TB -v --dry-run restore e2etmp/restore.cfg
+$TB restore e2etmp/restore.cfg
 
 diff -r e2etmp/data1 e2etmp/data2

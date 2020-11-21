@@ -9,17 +9,22 @@ set -ev
 rm -fr e2etmp
 
 mkdir e2etmp
-mkdir e2etmp/{data1,data2,blobs,git1}
+mkdir e2etmp/{data,blobs,git1,git2}
 
 cat << EOF > e2etmp/update.cfg
-data_path: data1
+data_path: data
 git_path: git1
 blob_path: blobs
 EOF
 
-echo abc 123 > e2etmp/data1/foo
-echo abc 124 > e2etmp/data1/foo.jpg
+mkdir e2etmp/data/a
+echo abc 123 > e2etmp/data/foo
 
 $TB update e2etmp/update.cfg
 
-$TB fsck e2etmp/update.cfg
+echo abc 123 >> e2etmp/data/foo
+
+# TODO: We should verify this exits for the correct reason.
+$TB update e2etmp/update.cfg || exit 0
+
+exit 1

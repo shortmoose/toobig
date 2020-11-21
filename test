@@ -1,7 +1,8 @@
 #!/bin/bash
 
-for x in e2e-tests/*; do
-    echo "##################### $x"
+for x in "e2e-tests/*$1*"; do
+    echo "#####################"
+    echo "$x"
 
     # Run test
     $x
