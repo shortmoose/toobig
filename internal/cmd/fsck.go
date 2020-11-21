@@ -21,14 +21,14 @@ func Fsck(ctx *base.Context) error {
 	}
 	ctx.TooBig = cfg
 
-	err = os.Chdir(ctx.DataRepoPath)
+	err = os.Chdir(ctx.DataPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Load and validate current set of hashes
 	fmt.Printf("Validating blobs:\n")
-	err = base.Walk(ctx.HashRepoPath, func(path string, info os.FileInfo) error {
+	err = base.Walk(ctx.HashPath, func(path string, info os.FileInfo) error {
 		expected := filepath.Base(path)
 		fmt.Printf("%s... validating... ", expected[:8])
 
@@ -59,7 +59,7 @@ func Fsck(ctx *base.Context) error {
 			return er
 		}
 
-		e, er := base.FileExists(filepath.Join(ctx.HashRepoPath, sha.Sha256))
+		e, er := base.FileExists(filepath.Join(ctx.HashPath, sha.Sha256))
 		if !e || er != nil {
 			fmt.Printf("BROKE: %v, %v\n", e, er)
 		}

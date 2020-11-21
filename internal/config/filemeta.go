@@ -8,9 +8,8 @@ import (
 
 // FileMeta is used to serialize metadata for a file.
 type FileMeta struct {
-	Filename string `json:"filename"`
 	Sha256   string `json:"sha256"`
-	Unixtime string `json:"unixtime"`
+	UnixNano int64  `json:"unixnano"`
 }
 
 // ReadFileMeta reads and deserializes FileMeta from a file.

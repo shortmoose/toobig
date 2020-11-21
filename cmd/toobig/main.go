@@ -40,17 +40,19 @@ func wrap(c *cli.Context, fn do) error {
 func main() {
 	app := &cli.App{
 		Flags: []cli.Flag{
-			&cli.BoolFlag{
-				Name:    "verbose",
-				Aliases: []string{"v"},
-				Value:   false,
-				Usage:   "Usage ...",
-			},
-			&cli.BoolFlag{
-				Name:  "dry-run",
-				Value: false,
-				Usage: "Usage ...",
-			},
+			/*
+				&cli.BoolFlag{
+					Name:    "verbose",
+					Aliases: []string{"v"},
+					Value:   false,
+					Usage:   "Usage ...",
+				},
+				&cli.BoolFlag{
+					Name:  "dry-run",
+					Value: false,
+					Usage: "Usage ...",
+				},
+			*/
 		},
 		Commands: []*cli.Command{
 			{
