@@ -219,10 +219,10 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 		if sha256 != currLinkedFile {
 			return fmt.Errorf("corrupted hash file: %s", currLinkedFile)
 		}
-		fmt.Printf("link exists... ")
-		return nil
+		return fmt.Errorf("but... we already checked??")
 	}
-	return nil
+
+	return createHardLink(ctx, filename, sha256)
 }
 
 func createHardLink(ctx *base.Context, filename, sha256 string) error {
