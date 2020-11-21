@@ -17,22 +17,22 @@ func Update(ctx *base.Context) error {
 
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading config %s: %w", ctx.ConfigPath, err)
 	}
 	ctx.TooBig = cfg
 
 	err = os.Chdir(ctx.DataPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading config %s: %w", ctx.ConfigPath, err)
 	}
 
-	fmt.Printf("Updating  data directory...\n")
+	fmt.Printf("Updating data directory...\n")
 	err = base.Walk(".", func(path string, info os.FileInfo) error {
 		fmt.Printf("Verifying %s... ", path)
 		valid, er2 := verifyMeta(ctx, path)
 		if er2 != nil {
 			fmt.Printf("\n")
-			return er2
+			return fmt.Errorf("verifying metadata: %w", er2)
 		}
 		if valid {
 			fmt.Printf("Valid\n")
@@ -43,19 +43,19 @@ func Update(ctx *base.Context) error {
 		er2 = updateMeta(ctx, path)
 		if er2 != nil {
 			fmt.Printf("\n")
-			return er2
+			return fmt.Errorf("updating metadata: %w", er2)
 		}
 
 		fmt.Printf("metadata updated.\n")
 		return nil
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("updating data directory: %w", err)
 	}
 
 	err = os.Chdir(ctx.GitRepoPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("changing directory %s: %w", ctx.GitRepoPath, err)
 	}
 
 	fmt.Printf("Removing uneeded files in git directory...\n")
@@ -63,23 +63,24 @@ func Update(ctx *base.Context) error {
 	err = base.Walk(".", func(path string, info os.FileInfo) error {
 		exists, er := base.FileExists(ctx.DataPath + "/" + path)
 		if er != nil {
-			return er
+			return fmt.Errorf("check file existence %s: %w", path, er)
 		}
 
 		if !exists {
 			fmt.Printf("Removing: %s\n", path)
-			e := os.Remove(path)
-			if e != nil {
-				return e
+			er = os.Remove(path)
+			if er != nil {
+				return fmt.Errorf("removing file %s: %w", path, er)
 			}
 		}
 		return nil
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("removing files: %w", err)
 	}
 
 	fmt.Printf("Update complete.\n")
+
 	// TODO: How many hashes are no longer needed? Space savings if we delete?
 	// TODO: Are there duplicate files?
 
@@ -96,13 +97,13 @@ func verifyMeta(ctx *base.Context, filename string) (bool, error) {
 			fmt.Printf("meta doesn't exist... ")
 			return false, nil
 		}
-		return false, err
+		return false, fmt.Errorf("reading file metadata: %w", err)
 	}
 
 	// Verify timestamps match.
 	info, err := os.Stat(filename)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("stating file: %w", err)
 	}
 
 	if meta.UnixNano != info.ModTime().UnixNano() {
@@ -113,7 +114,7 @@ func verifyMeta(ctx *base.Context, filename string) (bool, error) {
 	// Verify inodes match.
 	inode, err := base.GetInode(filename)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("getting inode: %w", err)
 	}
 
 	inode2, err := base.GetInode(filepath.Join(ctx.HashPath, meta.Sha256))
@@ -124,7 +125,7 @@ func verifyMeta(ctx *base.Context, filename string) (bool, error) {
 			fmt.Printf("link missing... ")
 			return false, nil
 		}
-		return false, err
+		return false, fmt.Errorf("getting inode of hash path: %w", err)
 	}
 
 	return inode == inode2, nil
@@ -137,17 +138,17 @@ func updateMeta(ctx *base.Context, filename string) error {
 	fmt.Printf("hashing... ")
 	hash, err := base.GetSha256(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("getting sha256: %w", err)
 	}
 
 	err = createHardLinkIfNeeded(ctx, filename, hash)
 	if err != nil {
-		return err
+		return fmt.Errorf("creating hard link: %w", err)
 	}
 
 	err = writeFileMeta(ctx, filename, hash)
 	if err != nil {
-		return err
+		return fmt.Errorf("writing file metadata: %w", err)
 	}
 
 	return nil
@@ -156,7 +157,7 @@ func updateMeta(ctx *base.Context, filename string) error {
 func writeFileMeta(ctx *base.Context, filename, sha256 string) error {
 	info, err := os.Stat(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("stating file: %w", err)
 	}
 
 	var fm config.FileMeta
@@ -166,12 +167,12 @@ func writeFileMeta(ctx *base.Context, filename, sha256 string) error {
 	d := filepath.Dir(filepath.Join(ctx.GitRepoPath, filename))
 	err = os.MkdirAll(d, 0700)
 	if err != nil {
-		return err
+		return fmt.Errorf("making directories: %w", err)
 	}
 
 	err = config.WriteFileMeta(ctx.GitRepoPath+"/"+filename, fm)
 	if err != nil {
-		return err
+		return fmt.Errorf("writing file metadata: %w", err)
 	}
 
 	return nil
@@ -183,7 +184,7 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 	// - If we aren't already linked, then make it so.
 	nlink, err := countHardLinks(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("counting hard links: %w", err)
 	}
 
 	if nlink == 1 {
@@ -192,12 +193,16 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 
 	inode, err := base.GetInode(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("get inode of data file: %w", err)
 	}
 
 	inode2, err := base.GetInode(ctx.HashPath + "/" + sha256)
 	if err != nil {
-		return err
+		// If the file doesn't exist that isn't really an error.
+		e, _ := err.(*os.PathError)
+		if e.Err != syscall.ENOENT {
+			return fmt.Errorf("get inode of hash path: %w", err)
+		}
 	}
 
 	if inode == inode2 {
@@ -207,7 +212,7 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 
 	currLinkedFile, err := findInodeHash(ctx, inode)
 	if err != nil {
-		return err
+		return fmt.Errorf("find inode in hashed files: %w", err)
 	}
 
 	if currLinkedFile != "" {
@@ -229,14 +234,20 @@ func createHardLink(ctx *base.Context, filename, sha256 string) error {
 
 	e, _ := err.(*os.LinkError)
 	if e.Err != syscall.EEXIST {
-		return err
+		return fmt.Errorf("link file to hash file: %w", err)
 	}
 	fmt.Print("dup found...")
 	fmt.Printf("%s\n", filepath.Join(ctx.DupPath, strings.Replace(filename, "/", "-", -1)))
 
-	os.Rename(filename, filepath.Join(ctx.DupPath, strings.Replace(filename, "/", "-", -1)))
+	err = os.Rename(filename, filepath.Join(ctx.DupPath, strings.Replace(filename, "/", "-", -1)))
+	if err != nil {
+		return fmt.Errorf("move file to dup directory: %w", err)
+	}
 
-	os.Link(ctx.HashPath+"/"+sha256, filename)
+	err = os.Link(ctx.HashPath+"/"+sha256, filename)
+	if err != nil {
+		return fmt.Errorf("link file to hash file: %w", err)
+	}
 
 	fmt.Printf("link created... ")
 	return nil
@@ -247,7 +258,7 @@ func findInodeHash(ctx *base.Context, inode uint64) (string, error) {
 	err := base.Walk(ctx.HashPath, func(path string, info os.FileInfo) error {
 		inode2, e := base.GetInode(path)
 		if e != nil {
-			return e
+			return fmt.Errorf("get inode %s: %w", path, e)
 		}
 
 		if inode == inode2 {
@@ -256,7 +267,7 @@ func findInodeHash(ctx *base.Context, inode uint64) (string, error) {
 		return nil
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("finding inode: %w", err)
 	}
 
 	return hash, nil
@@ -265,7 +276,7 @@ func findInodeHash(ctx *base.Context, inode uint64) (string, error) {
 func countHardLinks(filename string) (uint64, error) {
 	fi, err := os.Stat(filename)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("stat file: %w", err)
 	}
 	nlink := uint64(0)
 	if sys := fi.Sys(); sys != nil {
