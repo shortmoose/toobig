@@ -10,7 +10,7 @@ import (
 	"github.com/shortmoose/toobig/internal/config"
 )
 
-// Do TODO
+// Fsck TODO
 func Fsck(ctx *base.Context) error {
 	fmt.Printf("Performing fsck\n")
 

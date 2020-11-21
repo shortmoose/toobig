@@ -5,9 +5,10 @@ import (
 	"path/filepath"
 )
 
+// WalkFunc TODO
 type WalkFunc func(path string, info os.FileInfo) error
 
-// Walk TODO
+// Walk the given path, mostly a simple wrapper around filepath.Walk.
 func Walk(path string, walkFn WalkFunc) error {
 	return filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

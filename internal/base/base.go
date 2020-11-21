@@ -9,6 +9,7 @@ import (
 	"syscall"
 )
 
+// GetInode returns the inode of the given file.
 func GetInode(filename string) (uint64, error) {
 	fileinfo, err := os.Stat(filename)
 	if err != nil {
@@ -22,7 +23,7 @@ func GetInode(filename string) (uint64, error) {
 	return stat.Ino, nil
 }
 
-// GetSha256 TODO
+// GetSha256 computes and returns the SHA256 for the given file.
 func GetSha256(filename string) (string, error) {
 	f, err := os.Open(filename)
 	if err != nil {
@@ -38,6 +39,7 @@ func GetSha256(filename string) (string, error) {
 	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
 
+// FileExists determines if the given file exists (permissions allowing).
 func FileExists(path string) (bool, error) {
 	if _, err := os.Stat(path); err == nil {
 		return true, nil

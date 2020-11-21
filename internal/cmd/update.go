@@ -205,14 +205,14 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 		return nil
 	}
 
-	existing_hash, err := findInodeHash(ctx, inode)
+	currLinkedFile, err := findInodeHash(ctx, inode)
 	if err != nil {
 		return err
 	}
 
-	if existing_hash != "" {
-		if sha256 != existing_hash {
-			return fmt.Errorf("corrupted hash file: %s", existing_hash)
+	if currLinkedFile != "" {
+		if sha256 != currLinkedFile {
+			return fmt.Errorf("corrupted hash file: %s", currLinkedFile)
 		}
 		fmt.Printf("link exists... ")
 		return nil
