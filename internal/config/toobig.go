@@ -37,10 +37,11 @@ func ReadConfig(path string) (TooBig, error) {
 		return cfg, err
 	}
 
-	if len(cfg.DataPath) == 0 ||
-		len(cfg.HashPath) == 0 ||
-		len(cfg.GitRepoPath) == 0 {
-		return cfg, fmt.Errorf("Must set data_path, hash_path, and git_path to valid directories")
+	if cfg.DataPath == "" ||
+		cfg.HashPath == "" ||
+		cfg.GitRepoPath == "" ||
+		cfg.DupPath == "" {
+		return cfg, fmt.Errorf("Must set data_path, hash_path, git_path, and dup_path to valid directories")
 	}
 
 	p, err := filepath.Abs(filepath.Dir(path))
