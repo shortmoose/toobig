@@ -1,0 +1,17 @@
+#!/bin/bash
+
+TB=./toobig
+
+set -ev
+
+rm -fr e2etmp
+
+mkdir e2etmp
+mkdir e2etmp/{data,blobs,git,dup,data2,blobs2,git2}
+
+cat << EOF > e2etmp/update.cfg
+data_path: data
+git_path: git
+blob_path: blobs
+dup_path: dup
+EOF

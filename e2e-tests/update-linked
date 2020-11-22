@@ -1,0 +1,21 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo abc 123 > e2etmp/data/boo
+echo abc 123 > e2etmp/data/foo
+ln e2etmp/data/foo e2etmp/data/aoo
+
+$TB update e2etmp/update.cfg
+
+cat << EOF >e2etmp/tmp
+boo
+EOF
+
+/bin/ls e2etmp/dup | diff e2etmp/tmp -
+
+diff e2etmp/dup/boo - << EOF
+abc 123
+EOF
+
+. e2e-tests/help/validate
