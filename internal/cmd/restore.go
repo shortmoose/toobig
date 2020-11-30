@@ -26,7 +26,8 @@ func Restore(ctx *base.Context) error {
 		return err
 	}
 
-	// Walk gitrepo and validate that we have the necessary set of matching hashes.
+	// Walk gitrepo and validate that we have the necessary set of
+	// matching hashes.
 	fmt.Printf("Restoring files:\n")
 	err = base.Walk(".", func(path string, info os.FileInfo) error {
 		// Ignore the config file.
@@ -41,8 +42,7 @@ func Restore(ctx *base.Context) error {
 
 		e, er := base.FileExists(hashFile)
 		if !e || er != nil {
-			fmt.Printf("BROKE: %v, %v\n", e, er)
-			return nil
+			return fmt.Errorf("file not found %s: %w\n", hashFile, er)
 		}
 
 		dataPath := filepath.Join(ctx.DataPath, path)
