@@ -50,6 +50,7 @@ func Restore(ctx *base.Context) error {
 		d := filepath.Dir(dataPath)
 		er = os.MkdirAll(d, 0700)
 		if er != nil {
+			fmt.Printf("\n")
 			return nil
 		}
 
@@ -59,6 +60,7 @@ func Restore(ctx *base.Context) error {
 			if e.Err != syscall.EEXIST {
 				return fmt.Errorf("file not found %s:%w", hashFile, e)
 			}
+			fmt.Printf("\n")
 			return nil
 		}
 		fmt.Printf("LINKED\n")
