@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"syscall"
 
 	"github.com/shortmoose/toobig/internal/base"
 	"github.com/shortmoose/toobig/internal/config"
@@ -35,14 +36,14 @@ func Restore(ctx *base.Context) error {
 
 		sha, er := config.ReadFileMeta(path)
 		if er != nil {
-			return er
+			return fmt.Errorf("ReadFileMeta failed %s: %w", path, er)
 		}
 
 		hashFile := filepath.Join(ctx.HashPath, sha.Sha256)
 
 		e, er := base.FileExists(hashFile)
 		if !e || er != nil {
-			return fmt.Errorf("file not found %s: %w\n", hashFile, er)
+			return fmt.Errorf("file not found %s: %w", hashFile, er)
 		}
 
 		dataPath := filepath.Join(ctx.DataPath, path)
@@ -54,6 +55,10 @@ func Restore(ctx *base.Context) error {
 
 		er = os.Link(hashFile, dataPath)
 		if er != nil {
+			e, _ := er.(*os.LinkError)
+			if e.Err != syscall.EEXIST {
+				return fmt.Errorf("file not found %s:%w", hashFile, e)
+			}
 			return nil
 		}
 		fmt.Printf("LINKED\n")
@@ -61,6 +66,7 @@ func Restore(ctx *base.Context) error {
 		return nil
 	})
 	if err != nil {
+		fmt.Printf("\n")
 		return err
 	}
 
