@@ -20,7 +20,6 @@ func wrap(c *cli.Context, fn do) error {
 	}
 
 	for _, path := range args {
-
 		var ctx base.Context
 		ctx.Command = c.Command.Name
 		ctx.ConfigPath = path
@@ -74,6 +73,13 @@ func main() {
 				Usage: "verify data integrity",
 				Action: func(c *cli.Context) error {
 					return wrap(c, cmd.Fsck)
+				},
+			},
+			{
+				Name:  "status",
+				Usage: "info about current state",
+				Action: func(c *cli.Context) error {
+					return wrap(c, cmd.Status)
 				},
 			},
 			{
