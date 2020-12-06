@@ -10,3 +10,11 @@ echo abc 124 > e2etmp/data/foo.jpg
 $TB update e2etmp/update.cfg
 
 $TB fsck e2etmp/update.cfg
+
+echo abc >> e2etmp/blobs/c5*
+
+$TB fsck e2etmp/update.cfg && exit 1
+
+echo "fsck successfully failed"
+
+

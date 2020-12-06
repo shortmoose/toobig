@@ -21,6 +21,7 @@ func Fsck(ctx *base.Context) error {
 	}
 	ctx.TooBig = cfg
 
+	var errors []string
 	err = os.Chdir(ctx.DataPath)
 	if err != nil {
 		log.Fatal(err)
@@ -38,7 +39,9 @@ func Fsck(ctx *base.Context) error {
 		}
 
 		if expected != sha {
-			fmt.Printf("INVALID: %s\n", sha[:8])
+			st := fmt.Sprintf("INVALID: %s", sha[:8])
+			fmt.Println(st)
+			errors = append(errors, st)
 		}
 
 		fmt.Printf("correct\n")
@@ -61,7 +64,9 @@ func Fsck(ctx *base.Context) error {
 
 		e, er := base.FileExists(filepath.Join(ctx.HashPath, sha.Sha256))
 		if !e || er != nil {
-			fmt.Printf("BROKE: %v, %v\n", e, er)
+			st := fmt.Sprintf("BROKE: %v, %v", e, er)
+			fmt.Println(st)
+			errors = append(errors, st)
 		}
 
 		return nil
@@ -70,6 +75,10 @@ func Fsck(ctx *base.Context) error {
 		return err
 	}
 
+	if len(errors) != 0 {
+		fmt.Printf("Errors: %v\n", errors)
+		return fmt.Errorf("Bad stuff")
+	}
 	fmt.Printf("Fsck complete.\n")
 	return nil
 }
