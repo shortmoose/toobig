@@ -1,8 +1,13 @@
 #!/bin/bash
 
-TB=./toobig
+set -ex
 
-set -ev
+function warn() {
+    echo "$1"
+    exit 1
+}
+
+TB=./toobig
 
 rm -fr e2etmp
 
