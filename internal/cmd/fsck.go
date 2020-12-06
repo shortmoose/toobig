@@ -39,7 +39,7 @@ func Fsck(ctx *base.Context) error {
 		}
 
 		if expected != sha {
-			st := fmt.Sprintf("INVALID: %s", sha[:8])
+			st := fmt.Sprintf("Corrupted blob? %s", sha)
 			fmt.Println(st)
 			errors = append(errors, st)
 		}
@@ -64,7 +64,7 @@ func Fsck(ctx *base.Context) error {
 
 		e, er := base.FileExists(filepath.Join(ctx.HashPath, sha.Sha256))
 		if !e || er != nil {
-			st := fmt.Sprintf("BROKE: %v, %v", e, er)
+			st := fmt.Sprintf("No blob stored for %s: %v, %v", path, e, er)
 			fmt.Println(st)
 			errors = append(errors, st)
 		}
