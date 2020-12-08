@@ -42,5 +42,7 @@ func WriteFileMeta(path string, fm FileMeta) error {
 		return err
 	}
 
+	file = append(file, '\n')
+
 	return ioutil.WriteFile(path, file, 0644)
 }
