@@ -51,9 +51,9 @@ func ReadConfig(path string) (TooBig, error) {
 
 	join := func(root, add string) string {
 		if filepath.IsAbs(add) {
-			return add
+			return filepath.Clean(add)
 		}
-		return filepath.Join(root, add)
+		return filepath.Clean(filepath.Join(root, add))
 	}
 
 	cfg.GitRepoPath = join(p, cfg.GitRepoPath)
@@ -61,10 +61,10 @@ func ReadConfig(path string) (TooBig, error) {
 	cfg.HashPath = join(p, cfg.HashPath)
 	cfg.DupPath = join(p, cfg.DupPath)
 
-	fmt.Printf("  git_path:  %s/\n", cfg.GitRepoPath)
-	fmt.Printf("  data_path: %s/\n", cfg.DataPath)
-	fmt.Printf("  hash_path: %s/\n", cfg.HashPath)
-	fmt.Printf("  dup_path:  %s/\n\n", cfg.DupPath)
+	fmt.Printf("  git_path:  %s\n", cfg.GitRepoPath)
+	fmt.Printf("  data_path: %s\n", cfg.DataPath)
+	fmt.Printf("  hash_path: %s\n", cfg.HashPath)
+	fmt.Printf("  dup_path:  %s\n\n", cfg.DupPath)
 
 	return cfg, nil
 }
