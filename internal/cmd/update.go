@@ -27,31 +27,33 @@ func Update(ctx *base.Context) error {
 	}
 
 	fmt.Printf("Updating data directory...\n")
+	cnt := 0
+	updated := 0
 	err = base.Walk(".", func(path string, info os.FileInfo) error {
-		fmt.Printf("Verifying %s... ", path)
+		cnt += 1
 		valid, er2 := verifyMeta(ctx, path)
 		if er2 != nil {
-			fmt.Printf("\n")
 			return fmt.Errorf("verifying metadata: %w", er2)
 		}
 		if valid {
-			fmt.Printf("Valid\n")
 			return nil
 		}
 
-		fmt.Printf("stale... ")
+		fmt.Printf("Updating %s... ", path)
 		er2 = updateMeta(ctx, path)
 		if er2 != nil {
 			fmt.Printf("\n")
 			return fmt.Errorf("updating metadata: %w", er2)
 		}
 
+		updated += 0
 		fmt.Printf("metadata updated.\n")
 		return nil
 	})
 	if err != nil {
 		return fmt.Errorf("updating data directory: %w", err)
 	}
+	fmt.Printf("%d files checked, %d metadata files updated.\n\n", cnt, updated)
 
 	err = os.Chdir(ctx.GitRepoPath)
 	if err != nil {
@@ -59,14 +61,18 @@ func Update(ctx *base.Context) error {
 	}
 
 	fmt.Printf("Removing uneeded files in git directory...\n")
+	cnt = 0
+	updated = 0
 	// Walk all "meta" files in the git repo.
 	err = base.Walk(".", func(path string, info os.FileInfo) error {
+		cnt += 1
 		exists, er := base.FileExists(ctx.DataPath + "/" + path)
 		if er != nil {
 			return fmt.Errorf("check file existence %s: %w", path, er)
 		}
 
 		if !exists {
+			updated += 1
 			fmt.Printf("Removing: %s\n", path)
 			er = os.Remove(path)
 			if er != nil {
@@ -78,6 +84,7 @@ func Update(ctx *base.Context) error {
 	if err != nil {
 		return fmt.Errorf("removing files: %w", err)
 	}
+	fmt.Printf("%d files checked, %d metadata files removed.\n\n", cnt, updated)
 
 	fmt.Printf("Update complete.\n")
 

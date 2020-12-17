@@ -86,7 +86,7 @@ func main() {
 				Name:  "version",
 				Usage: "print version",
 				Action: func(c *cli.Context) error {
-					fmt.Printf("Version %s\n", VERSION)
+					fmt.Printf("Version %s\n", version)
 					return nil
 				},
 			},

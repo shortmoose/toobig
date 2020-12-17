@@ -30,9 +30,11 @@ func Restore(ctx *base.Context) error {
 	// Walk gitrepo and validate that we have the necessary set of
 	// matching hashes.
 	fmt.Printf("Restoring files:\n")
+	cnt := 0
+	restored := 0
 	err = base.Walk(".", func(path string, info os.FileInfo) error {
 		// Ignore the config file.
-		fmt.Printf("%s... ", path)
+		cnt += 1
 
 		sha, er := config.ReadFileMeta(path)
 		if er != nil {
@@ -50,8 +52,7 @@ func Restore(ctx *base.Context) error {
 		d := filepath.Dir(dataPath)
 		er = os.MkdirAll(d, 0700)
 		if er != nil {
-			fmt.Printf("\n")
-			return nil
+			return fmt.Errorf("unable to create directory: %s", dataPath)
 		}
 
 		er = os.Link(hashFile, dataPath)
@@ -60,17 +61,17 @@ func Restore(ctx *base.Context) error {
 			if e.Err != syscall.EEXIST {
 				return fmt.Errorf("file not found %s:%w", hashFile, e)
 			}
-			fmt.Printf("\n")
 			return nil
 		}
-		fmt.Printf("LINKED\n")
+		restored += 1
+		fmt.Printf("%s... LINKED\n", path)
 
 		return nil
 	})
 	if err != nil {
-		fmt.Printf("\n")
 		return err
 	}
+	fmt.Printf("%d files checked, %d restored.\n\n", cnt, restored)
 
 	return nil
 }
