@@ -12,7 +12,7 @@ This can be used for creating backups with which it is easy to verify file integ
 
 ## Install
 
-go install github.com/shortmoose/toobig[@version]
+go get github.com/shortmoose/toobig[@version]
 
 
 ## Docs
