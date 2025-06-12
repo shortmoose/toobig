@@ -38,6 +38,7 @@ func wrap(c *cli.Context, fn do) error {
 
 func main() {
 	app := &cli.App{
+		Usage: "manage large binary files (photos, videos, etc)",
 		Flags: []cli.Flag{
 			/*
 				&cli.BoolFlag{
@@ -56,14 +57,14 @@ func main() {
 		Commands: []*cli.Command{
 			{
 				Name:  "update",
-				Usage: "update repos to match blobs",
+				Usage: "update blobs and metadata files to match files",
 				Action: func(c *cli.Context) error {
 					return wrap(c, cmd.Update)
 				},
 			},
 			{
 				Name:  "restore",
-				Usage: "restore blobs to match repos",
+				Usage: "restore files to match blobs and metadata files",
 				Action: func(c *cli.Context) error {
 					return wrap(c, cmd.Restore)
 				},
