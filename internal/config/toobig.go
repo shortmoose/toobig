@@ -25,7 +25,7 @@ func ReadConfig(path string) (TooBig, error) {
 	if err != nil {
 		return cfg, err
 	}
-	defer jsonFile.Close()
+	defer func() { _ = jsonFile.Close() }() // Explicitly ignore the error
 
 	byteValue, err := ioutil.ReadAll(jsonFile)
 	if err != nil {

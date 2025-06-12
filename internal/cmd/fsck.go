@@ -77,7 +77,7 @@ func Fsck(ctx *base.Context) error {
 
 	if len(errors) != 0 {
 		fmt.Printf("Errors: %v\n", errors)
-		return fmt.Errorf("Bad stuff")
+		return fmt.Errorf("bad stuff")
 	}
 	fmt.Printf("Fsck complete.\n")
 	return nil

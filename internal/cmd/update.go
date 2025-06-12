@@ -244,9 +244,9 @@ func createHardLink(ctx *base.Context, filename, sha256 string) error {
 		return fmt.Errorf("link file to hash file: %w", err)
 	}
 	fmt.Print("dup found...")
-	fmt.Printf("%s\n", filepath.Join(ctx.DupPath, strings.Replace(filename, "/", "-", -1)))
+	fmt.Printf("%s\n", filepath.Join(ctx.DupPath, strings.ReplaceAll(filename, "/", "-", -1)))
 
-	err = os.Rename(filename, filepath.Join(ctx.DupPath, strings.Replace(filename, "/", "-", -1)))
+	err = os.Rename(filename, filepath.Join(ctx.DupPath, strings.ReplaceAll(filename, "/", "-", -1)))
 	if err != nil {
 		return fmt.Errorf("move file to dup directory: %w", err)
 	}

@@ -20,7 +20,7 @@ func ReadFileMeta(path string) (FileMeta, error) {
 	if err != nil {
 		return fm, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }() // Explicitly ignore the error
 
 	sha256, err := ioutil.ReadAll(f)
 	if err != nil {
