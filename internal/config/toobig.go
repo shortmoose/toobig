@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -25,9 +25,9 @@ func ReadConfig(path string) (TooBig, error) {
 	if err != nil {
 		return cfg, err
 	}
-	defer jsonFile.Close()
+	defer func() { _ = jsonFile.Close() }() // Explicitly ignore the error
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return cfg, err
 	}
@@ -41,7 +41,7 @@ func ReadConfig(path string) (TooBig, error) {
 		cfg.HashPath == "" ||
 		cfg.GitRepoPath == "" ||
 		cfg.DupPath == "" {
-		return cfg, fmt.Errorf("Must set data_path, hash_path, git_path, and dup_path to valid directories")
+		return cfg, fmt.Errorf("data_path, hash_path, git_path, and dup_path must be valid directories")
 	}
 
 	p, err := filepath.Abs(filepath.Dir(path))
