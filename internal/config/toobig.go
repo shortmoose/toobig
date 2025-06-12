@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -27,7 +27,7 @@ func ReadConfig(path string) (TooBig, error) {
 	}
 	defer func() { _ = jsonFile.Close() }() // Explicitly ignore the error
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return cfg, err
 	}

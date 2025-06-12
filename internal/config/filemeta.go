@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"os"
 )
 
@@ -22,7 +22,7 @@ func ReadFileMeta(path string) (FileMeta, error) {
 	}
 	defer func() { _ = f.Close() }() // Explicitly ignore the error
 
-	sha256, err := ioutil.ReadAll(f)
+	sha256, err := io.ReadAll(f)
 	if err != nil {
 		return fm, err
 	}
@@ -44,5 +44,5 @@ func WriteFileMeta(path string, fm FileMeta) error {
 
 	file = append(file, '\n')
 
-	return ioutil.WriteFile(path, file, 0644)
+	return os.WriteFile(path, file, 0644)
 }
