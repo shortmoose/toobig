@@ -13,17 +13,10 @@ import (
 
 // Restore the data from the combination of a ref and checksum repository.
 func Restore(ctx *base.Context) error {
-	fmt.Printf("Performing restore:\n")
-
-	// TODO: Validate the configuration.
-	cfg, err := config.ReadConfig(ctx.ConfigPath)
-	if err != nil {
-		return err
-	}
-	ctx.TooBig = cfg
+	fmt.Println("Performing restore")
 
 	// Set our current working directory to the git path.
-	err = os.Chdir(ctx.RefPath)
+	err := os.Chdir(ctx.RefPath)
 	if err != nil {
 		return fmt.Errorf("cd %s: %w", ctx.RefPath, err)
 	}
