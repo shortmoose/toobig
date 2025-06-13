@@ -32,7 +32,9 @@ func Fsck(ctx *base.Context) error {
 	fmt.Printf("Validating blobs:\n")
 	err = base.Walk(ctx.HashPath, func(path string, info fs.DirEntry) error {
 		expected := filepath.Base(path)
-		fmt.Printf("%s... validating... ", expected[:min(len(expected), 8)])
+		if ctx.Verbose {
+			fmt.Printf("%s... validating... ", expected[:min(len(expected), 8)])
+		}
 
 		sha, er := base.GetSha256(path)
 		if er != nil {
@@ -46,7 +48,9 @@ func Fsck(ctx *base.Context) error {
 			return nil
 		}
 
-		fmt.Printf("correct\n")
+		if ctx.Verbose {
+			fmt.Printf("correct\n")
+		}
 		return nil
 	})
 	if err != nil {
@@ -57,7 +61,9 @@ func Fsck(ctx *base.Context) error {
 	// Walk gitrepo and validate that we have the necessary set of matching hashes.
 	err = base.Walk(ctx.GitRepoPath, func(path string, info fs.DirEntry) error {
 		expected := filepath.Base(path)
-		fmt.Printf("Checking: %s\n", expected)
+		if ctx.Verbose {
+			fmt.Printf("Checking: %s\n", expected)
+		}
 
 		sha, er := config.ReadFileMeta(path)
 		if er != nil {
