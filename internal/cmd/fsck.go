@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 
