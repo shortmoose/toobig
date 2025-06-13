@@ -31,7 +31,7 @@ func Fsck(ctx *base.Context) error {
 	fmt.Printf("Validating blobs:\n")
 	err = base.Walk(ctx.HashPath, func(path string, info os.FileInfo) error {
 		expected := filepath.Base(path)
-		fmt.Printf("%s... validating... ", expected[:8])
+		fmt.Printf("%s... validating... ", expected[:min(len(expected), 8)])
 
 		sha, er := base.GetSha256(path)
 		if er != nil {
@@ -42,6 +42,7 @@ func Fsck(ctx *base.Context) error {
 			st := fmt.Sprintf("Corrupted blob? %s", sha)
 			fmt.Println(st)
 			errors = append(errors, st)
+			return nil
 		}
 
 		fmt.Printf("correct\n")
