@@ -1,20 +1,23 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
-
-	"gopkg.in/yaml.v2"
 )
 
 // TooBig represents a TooBig repository configuration.
 type TooBig struct {
-	HashPath    string `yaml:"blob_path"`
-	DataPath    string `yaml:"data_path"`
-	GitRepoPath string `yaml:"git_path"`
-	DupPath     string `yaml:"dup_path"`
+	FilePath string `json:"file_path"`
+	BlobPath string `json:"blob_path"`
+	RefPath  string `json:"ref_path"`
+	DupPath  string `json:"dup_path"`
+
+	// Deprecated...
+	GitRepoPath string `json:"git_path,omitempty"`
+	DataPath    string `json:"data_path,omitempty"`
 }
 
 // ReadConfig reads and deserializes TooBig from a file.
@@ -25,23 +28,39 @@ func ReadConfig(path string) (TooBig, error) {
 	if err != nil {
 		return cfg, err
 	}
-	defer func() { _ = jsonFile.Close() }() // Explicitly ignore the error
+	defer func() { _ = jsonFile.Close() }() // Yes, we are ignoring any errors
 
 	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return cfg, err
 	}
 
-	err = yaml.Unmarshal(byteValue, &cfg)
+	err = json.Unmarshal(byteValue, &cfg)
 	if err != nil {
 		return cfg, err
 	}
 
-	if cfg.DataPath == "" ||
-		cfg.HashPath == "" ||
-		cfg.GitRepoPath == "" ||
+	if cfg.GitRepoPath != "" {
+		if cfg.RefPath == "" {
+			cfg.RefPath = cfg.GitRepoPath
+		} else {
+			return cfg, fmt.Errorf("can't use both git and ref_path, remove git_path and double check config")
+		}
+	}
+
+	if cfg.DataPath != "" {
+		if cfg.FilePath == "" {
+			cfg.FilePath = cfg.DataPath
+		} else {
+			return cfg, fmt.Errorf("can't use both data and file_path, remove data_path and double check config")
+		}
+	}
+
+	if cfg.FilePath == "" ||
+		cfg.BlobPath == "" ||
+		cfg.RefPath == "" ||
 		cfg.DupPath == "" {
-		return cfg, fmt.Errorf("data_path, hash_path, git_path, and dup_path must be valid directories")
+		return cfg, fmt.Errorf("data_path, blob_path, git_path, and dup_path must be valid directories")
 	}
 
 	p, err := filepath.Abs(filepath.Dir(path))
@@ -56,15 +75,25 @@ func ReadConfig(path string) (TooBig, error) {
 		return filepath.Clean(filepath.Join(root, add))
 	}
 
-	cfg.GitRepoPath = join(p, cfg.GitRepoPath)
-	cfg.DataPath = join(p, cfg.DataPath)
-	cfg.HashPath = join(p, cfg.HashPath)
+	cfg.RefPath = join(p, cfg.RefPath)
+	cfg.FilePath = join(p, cfg.FilePath)
+	cfg.BlobPath = join(p, cfg.BlobPath)
 	cfg.DupPath = join(p, cfg.DupPath)
 
-	fmt.Printf("  git_path:  %s\n", cfg.GitRepoPath)
-	fmt.Printf("  data_path: %s\n", cfg.DataPath)
-	fmt.Printf("  hash_path: %s\n", cfg.HashPath)
+	fmt.Printf("  data_path: %s\n", cfg.FilePath)
+	fmt.Printf("  ref_path:  %s\n", cfg.RefPath)
+	fmt.Printf("  blob_path: %s\n", cfg.BlobPath)
 	fmt.Printf("  dup_path:  %s\n\n", cfg.DupPath)
 
 	return cfg, nil
+}
+
+func WriteExampleConfig() {
+	var cfg TooBig
+
+	out, err := json.MarshalIndent(cfg, "", " ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(out))
 }

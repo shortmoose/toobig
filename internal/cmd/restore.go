@@ -23,7 +23,7 @@ func Restore(ctx *base.Context) error {
 	ctx.TooBig = cfg
 
 	// Set our current working directory to the git path.
-	err = os.Chdir(ctx.GitRepoPath)
+	err = os.Chdir(ctx.RefPath)
 	if err != nil {
 		return err
 	}
@@ -42,14 +42,14 @@ func Restore(ctx *base.Context) error {
 			return fmt.Errorf("ReadFileMeta failed %s: %w", path, er)
 		}
 
-		hashFile := filepath.Join(ctx.HashPath, sha.Sha256)
+		hashFile := filepath.Join(ctx.BlobPath, sha.Sha256)
 
 		e, er := base.FileExists(hashFile)
 		if !e || er != nil {
 			return fmt.Errorf("file not found %s: %w", hashFile, er)
 		}
 
-		dataPath := filepath.Join(ctx.DataPath, path)
+		dataPath := filepath.Join(ctx.FilePath, path)
 		d := filepath.Dir(dataPath)
 		er = os.MkdirAll(d, 0700)
 		if er != nil {

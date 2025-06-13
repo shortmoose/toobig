@@ -20,7 +20,7 @@ func Status(ctx *base.Context) error {
 	}
 	ctx.TooBig = cfg
 
-	err = os.Chdir(ctx.DataPath)
+	err = os.Chdir(ctx.FilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,18 +46,18 @@ func Status(ctx *base.Context) error {
 	}
 	fmt.Printf("%d files checked, %d new or orphaned data files.\n\n", cnt, orphaned)
 
-	err = os.Chdir(ctx.GitRepoPath)
+	err = os.Chdir(ctx.RefPath)
 	if err != nil {
-		return fmt.Errorf("reading data directory %s: %w", ctx.GitRepoPath, err)
+		return fmt.Errorf("reading ref directory %s: %w", ctx.RefPath, err)
 	}
 
-	fmt.Printf("Scanning git directory...\n")
+	fmt.Printf("Scanning ref directory...\n")
 	cnt = 0
 	orphaned = 0
 	// Walk all "meta" files in the git repo.
 	err = base.Walk(".", func(path string, info fs.DirEntry) error {
 		cnt += 1
-		exists, er := base.FileExists(ctx.DataPath + "/" + path)
+		exists, er := base.FileExists(ctx.FilePath + "/" + path)
 		if er != nil {
 			return fmt.Errorf("check file existence %s: %w", path, er)
 		}
