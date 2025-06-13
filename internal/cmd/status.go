@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 
 	"github.com/shortmoose/toobig/internal/base"
@@ -16,13 +15,13 @@ func Status(ctx *base.Context) error {
 	// TODO: Validate the configuration.
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	ctx.TooBig = cfg
 
 	err = os.Chdir(ctx.FilePath)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("cd %s: %w", ctx.FilePath, err)
 	}
 
 	fmt.Printf("Scanning data directory...\n")

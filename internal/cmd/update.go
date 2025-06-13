@@ -18,13 +18,13 @@ func Update(ctx *base.Context) error {
 
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
-		return fmt.Errorf("reading config %s: %w", ctx.ConfigPath, err)
+		return err
 	}
 	ctx.TooBig = cfg
 
 	err = os.Chdir(ctx.FilePath)
 	if err != nil {
-		return fmt.Errorf("reading config %s: %w", ctx.ConfigPath, err)
+		return fmt.Errorf("cd %s: %w", ctx.FilePath, err)
 	}
 
 	fmt.Printf("Updating data directory...\n")
