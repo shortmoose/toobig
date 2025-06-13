@@ -24,7 +24,7 @@ func Update(ctx *base.Context) error {
 
 	err = os.Chdir(ctx.FilePath)
 	if err != nil {
-		return fmt.Errorf("reading config %s: %w", ctx.ConfigPath, err)
+		return fmt.Errorf("cd %s: %w", ctx.FilePath, err)
 	}
 
 	fmt.Printf("Updating data directory...\n")

@@ -106,7 +106,7 @@ func main() {
 
 	err := app.Run(os.Args)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err)
+		fmt.Fprintf(os.Stderr, "Failed: %s\n", err)
 
 		os.Exit(1)
 	}

@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -24,11 +23,12 @@ func Fsck(ctx *base.Context) error {
 	}
 	ctx.TooBig = cfg
 
-	var errors []string
 	err = os.Chdir(ctx.FilePath)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("cd %s: %w", ctx.FilePath, err)
 	}
+
+	var errors []string
 
 	// Load and validate current set of hashes
 	fmt.Println("Validating blobs:")

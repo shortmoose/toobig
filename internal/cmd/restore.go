@@ -25,7 +25,7 @@ func Restore(ctx *base.Context) error {
 	// Set our current working directory to the git path.
 	err = os.Chdir(ctx.RefPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("cd %s: %w", ctx.RefPath, err)
 	}
 
 	// Walk gitrepo and validate that we have the necessary set of
