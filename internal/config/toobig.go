@@ -50,6 +50,7 @@ func readConfig(path string) (TooBig, error) {
 
 	if cfg.GitRepoPath != "" {
 		if cfg.RefPath == "" {
+			fmt.Fprintf(os.Stderr, "Config file: git_path has been *DEPRECATED* in favor of ref_path\n")
 			cfg.RefPath = cfg.GitRepoPath
 		} else {
 			return cfg, fmt.Errorf("can't use both git and ref_path, remove git_path and double check config")
@@ -58,6 +59,7 @@ func readConfig(path string) (TooBig, error) {
 
 	if cfg.DataPath != "" {
 		if cfg.FilePath == "" {
+			fmt.Fprintf(os.Stderr, "Config file: data_path has been *DEPRECATED* in favor of file_path\n")
 			cfg.FilePath = cfg.DataPath
 		} else {
 			return cfg, fmt.Errorf("can't use both data and file_path, remove data_path and double check config")
@@ -88,7 +90,7 @@ func readConfig(path string) (TooBig, error) {
 	cfg.BlobPath = join(p, cfg.BlobPath)
 	cfg.DupPath = join(p, cfg.DupPath)
 
-	fmt.Printf("  data_path: %s\n", cfg.FilePath)
+	fmt.Printf("  file_path: %s\n", cfg.FilePath)
 	fmt.Printf("  ref_path:  %s\n", cfg.RefPath)
 	fmt.Printf("  blob_path: %s\n", cfg.BlobPath)
 	fmt.Printf("  dup_path:  %s\n\n", cfg.DupPath)
