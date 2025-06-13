@@ -23,7 +23,8 @@ type TooBig struct {
 func ReadConfig(path string) (TooBig, error) {
 	cfg, err := readConfig(path)
 	if err != nil {
-		return cfg, fmt.Errorf("Failed while reading config file %s: %w", path, err)
+		// TODO: I really want to capitalize Failed here, since it is the start of an error message.
+		return cfg, fmt.Errorf("failed while reading config file %s: %w", path, err)
 	}
 	return cfg, err
 }
