@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -15,7 +14,7 @@ import (
 func createTempFile(t *testing.T, content string) string {
 	t.Helper()
 
-	tmpFile, err := ioutil.TempFile("", "config-*.json")
+	tmpFile, err := os.CreateTemp("", "config-*.json")
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
