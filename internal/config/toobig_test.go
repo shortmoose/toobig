@@ -40,7 +40,7 @@ func TestReadConfig_FileNotFound(t *testing.T) {
 
 func TestReadConfig_InvalidJSON(t *testing.T) {
 	tmpFile := createTempFile(t, `{"name": "test", "size": }`) // malformed JSON
-	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
+	defer func() { _ = os.Remove(tmpFile) }()                  // Yes, we are ignoring any errors
 
 	_, err := ReadConfig(tmpFile)
 	if err == nil {
