@@ -16,7 +16,7 @@ func Status(ctx *base.Context) error {
 	// TODO: Validate the configuration.
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	ctx.TooBig = cfg
 

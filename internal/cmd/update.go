@@ -18,7 +18,7 @@ func Update(ctx *base.Context) error {
 
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
-		return fmt.Errorf("reading config %s: %w", ctx.ConfigPath, err)
+		return err
 	}
 	ctx.TooBig = cfg
 

@@ -20,7 +20,7 @@ func Fsck(ctx *base.Context) error {
 	// TODO: Validate the configuration.
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
-		log.Fatalf("Error reading config: %s", err)
+		return err
 	}
 	ctx.TooBig = cfg
 

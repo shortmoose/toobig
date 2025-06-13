@@ -20,8 +20,16 @@ type TooBig struct {
 	DataPath    string `json:"data_path,omitempty"`
 }
 
-// ReadConfig reads and deserializes TooBig from a file.
 func ReadConfig(path string) (TooBig, error) {
+	cfg, err := readConfig(path)
+	if err != nil {
+		return cfg, fmt.Errorf("Failed while reading config file %s: %w", path, err)
+	}
+	return cfg, err
+}
+
+// ReadConfig reads and deserializes TooBig from a file.
+func readConfig(path string) (TooBig, error) {
 	var cfg TooBig
 
 	jsonFile, err := os.Open(path)
