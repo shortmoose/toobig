@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"io/fs"
-	"os"
 	"path/filepath"
 
 	"github.com/shortmoose/toobig/internal/base"
@@ -16,11 +15,6 @@ import (
 func Fsck(ctx *base.Context) error {
 	fmt.Println("Performing fsck")
 
-	err := os.Chdir(ctx.FilePath)
-	if err != nil {
-		return fmt.Errorf("cd %s: %w", ctx.FilePath, err)
-	}
-
 	var errors []string
 
 	// Load and validate current set of hashes
@@ -28,7 +22,7 @@ func Fsck(ctx *base.Context) error {
 	a := "s"
 	c := 0
 	e := 0
-	err = base.Walk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
+	err := base.ChdirWalk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
 		expected := filepath.Base(path)
 		if a != expected[:1] {
 			a = expected[:1]
@@ -67,7 +61,7 @@ func Fsck(ctx *base.Context) error {
 	e = 0
 	fmt.Printf("\nValidating refs:\n")
 	// Walk gitrepo and validate that we have the necessary set of matching hashes.
-	err = base.Walk(ctx.RefPath, func(path string, info fs.DirEntry) error {
+	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		expected := filepath.Base(path)
 		if ctx.Verbose {
 			fmt.Printf("Checking: %s\n", expected)
