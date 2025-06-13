@@ -39,19 +39,19 @@ func main() {
 	app := &cli.App{
 		Usage: "manage large binary files (photos, videos, etc)",
 		Flags: []cli.Flag{
-				&cli.BoolFlag{
-					Name:    "verbose",
-					Aliases: []string{"v"},
-					Value:   false,
-					Usage:   "Usage ...",
-				},
-				/*
+			&cli.BoolFlag{
+				Name:    "verbose",
+				Aliases: []string{"v"},
+				Value:   false,
+				Usage:   "Usage ...",
+			},
+			/*
 				&cli.BoolFlag{
 					Name:  "dry-run",
 					Value: false,
 					Usage: "Usage ...",
 				},
-				*/
+			*/
 		},
 		Commands: []*cli.Command{
 			{
