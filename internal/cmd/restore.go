@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -32,7 +33,7 @@ func Restore(ctx *base.Context) error {
 	fmt.Printf("Restoring files:\n")
 	cnt := 0
 	restored := 0
-	err = base.Walk(".", func(path string, info os.FileInfo) error {
+	err = base.Walk(".", func(path string, info fs.DirEntry) error {
 		// Ignore the config file.
 		cnt += 1
 

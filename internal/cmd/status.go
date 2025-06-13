@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 
@@ -28,7 +29,7 @@ func Status(ctx *base.Context) error {
 	fmt.Printf("Scanning data directory...\n")
 	cnt := 0
 	orphaned := 0
-	err = base.Walk(".", func(path string, info os.FileInfo) error {
+	err = base.Walk(".", func(path string, info fs.DirEntry) error {
 		cnt += 1
 		valid, er2 := verifyMeta(ctx, path)
 		if er2 != nil {
@@ -55,7 +56,7 @@ func Status(ctx *base.Context) error {
 	cnt = 0
 	orphaned = 0
 	// Walk all "meta" files in the git repo.
-	err = base.Walk(".", func(path string, info os.FileInfo) error {
+	err = base.Walk(".", func(path string, info fs.DirEntry) error {
 		cnt += 1
 		exists, er := base.FileExists(ctx.DataPath + "/" + path)
 		if er != nil {

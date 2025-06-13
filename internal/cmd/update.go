@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -29,7 +30,7 @@ func Update(ctx *base.Context) error {
 	fmt.Printf("Updating data directory...\n")
 	cnt := 0
 	updated := 0
-	err = base.Walk(".", func(path string, info os.FileInfo) error {
+	err = base.Walk(".", func(path string, info fs.DirEntry) error {
 		cnt += 1
 		valid, er2 := verifyMeta(ctx, path)
 		if er2 != nil {
@@ -64,7 +65,7 @@ func Update(ctx *base.Context) error {
 	cnt = 0
 	updated = 0
 	// Walk all "meta" files in the git repo.
-	err = base.Walk(".", func(path string, info os.FileInfo) error {
+	err = base.Walk(".", func(path string, info fs.DirEntry) error {
 		cnt += 1
 		exists, er := base.FileExists(ctx.DataPath + "/" + path)
 		if er != nil {
@@ -262,7 +263,7 @@ func createHardLink(ctx *base.Context, filename, sha256 string) error {
 
 func findInodeHash(ctx *base.Context, inode uint64) (string, error) {
 	var hash string
-	err := base.Walk(ctx.HashPath, func(path string, info os.FileInfo) error {
+	err := base.Walk(ctx.HashPath, func(path string, info fs.DirEntry) error {
 		inode2, e := base.GetInode(path)
 		if e != nil {
 			return fmt.Errorf("get inode %s: %w", path, e)
