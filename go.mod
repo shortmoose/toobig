@@ -1,6 +1,6 @@
 module github.com/shortmoose/toobig
 
-go 1.20
+go 1.21
 
 require (
 	github.com/urfave/cli/v2 v2.3.0
