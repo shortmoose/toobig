@@ -3,9 +3,9 @@ package config
 import (
 	"encoding/json"
 	"errors"
-	"os"
 	"io/fs"
 	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -69,7 +69,7 @@ func TestReadConfig_EmptyFile(t *testing.T) {
 
 func TestReadConfig_InvalidConfig(t *testing.T) {
 	tmpFile := createTempFile(t,
-	`{"file_path": "test",
+		`{"file_path": "test",
 	"ref_path": "y",
 	"dup_path": "z" }`)
 	defer os.Remove(tmpFile)
@@ -82,7 +82,7 @@ func TestReadConfig_InvalidConfig(t *testing.T) {
 
 func TestReadConfig_Success(t *testing.T) {
 	tmpFile := createTempFile(t,
-	`{"file_path": "test",
+		`{"file_path": "test",
 	"blob_path": "y",
 	"ref_path": "y",
 	"dup_path": "z" }`)
