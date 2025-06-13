@@ -22,7 +22,7 @@ func createTempFile(t *testing.T, content string) string {
 	if _, err := tmpFile.Write([]byte(content)); err != nil {
 		t.Fatalf("Failed to write to temp file: %v", err)
 	}
-	tmpFile.Close()
+	_ = tmpFile.Close()
 	return tmpFile.Name()
 }
 
@@ -40,7 +40,7 @@ func TestReadConfig_FileNotFound(t *testing.T) {
 
 func TestReadConfig_InvalidJSON(t *testing.T) {
 	tmpFile := createTempFile(t, `{"name": "test", "size": }`) // malformed JSON
-	defer os.Remove(tmpFile)
+	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
 	_, err := ReadConfig(tmpFile)
 	if err == nil {
@@ -54,7 +54,7 @@ func TestReadConfig_InvalidJSON(t *testing.T) {
 
 func TestReadConfig_EmptyFile(t *testing.T) {
 	tmpFile := createTempFile(t, ``)
-	defer os.Remove(tmpFile)
+	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
 	_, err := ReadConfig(tmpFile)
 	if err == nil {
@@ -71,7 +71,7 @@ func TestReadConfig_InvalidConfig(t *testing.T) {
 		`{"file_path": "test",
 	"ref_path": "y",
 	"dup_path": "z" }`)
-	defer os.Remove(tmpFile)
+	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
 	_, err := ReadConfig(tmpFile)
 	if err == nil {
