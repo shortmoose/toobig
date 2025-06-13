@@ -36,7 +36,7 @@ func readConfig(path string) (TooBig, error) {
 	if err != nil {
 		return cfg, err
 	}
-	defer func() { _ = jsonFile.Close() }() // Yes, we are ignoring any errors
+	defer func() { _ = jsonFile.Close() }() // Yes, we are ignoring errors
 
 	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
