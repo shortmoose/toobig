@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -29,7 +30,7 @@ func Fsck(ctx *base.Context) error {
 
 	// Load and validate current set of hashes
 	fmt.Printf("Validating blobs:\n")
-	err = base.Walk(ctx.HashPath, func(path string, info os.FileInfo) error {
+	err = base.Walk(ctx.HashPath, func(path string, info fs.DirEntry) error {
 		expected := filepath.Base(path)
 		fmt.Printf("%s... validating... ", expected[:min(len(expected), 8)])
 
@@ -54,7 +55,7 @@ func Fsck(ctx *base.Context) error {
 
 	fmt.Printf("\nValidating refs:\n")
 	// Walk gitrepo and validate that we have the necessary set of matching hashes.
-	err = base.Walk(ctx.GitRepoPath, func(path string, info os.FileInfo) error {
+	err = base.Walk(ctx.GitRepoPath, func(path string, info fs.DirEntry) error {
 		expected := filepath.Base(path)
 		fmt.Printf("Checking: %s\n", expected)
 

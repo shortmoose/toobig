@@ -13,7 +13,6 @@ import (
 type do func(ctx *base.Context) error
 
 func wrap(c *cli.Context, fn do) error {
-	// TODO: Do we want to allow multiple configs?
 	args := c.Args().Slice()
 	if len(args) != 1 {
 		cli.ShowCommandHelpAndExit(c, c.Command.Name, 1)

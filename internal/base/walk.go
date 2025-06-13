@@ -1,16 +1,16 @@
 package base
 
 import (
-	"os"
+	"io/fs"
 	"path/filepath"
 )
 
 // WalkFunc TODO
-type WalkFunc func(path string, info os.FileInfo) error
+type WalkFunc func(path string, info fs.DirEntry) error
 
 // Walk the given path, mostly a simple wrapper around filepath.Walk.
 func Walk(path string, walkFn WalkFunc) error {
-	return filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+	return filepath.WalkDir(path, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
