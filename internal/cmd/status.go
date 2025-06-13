@@ -10,7 +10,6 @@ import (
 	"github.com/shortmoose/toobig/internal/config"
 )
 
-// Status TODO
 func Status(ctx *base.Context) error {
 	fmt.Printf("Performing status\n")
 
