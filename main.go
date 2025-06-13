@@ -18,21 +18,26 @@ func wrap(c *cli.Context, fn do) error {
 		cli.ShowCommandHelpAndExit(c, c.Command.Name, 1)
 	}
 
-	for _, path := range args {
-		var ctx base.Context
-		ctx.Command = c.Command.Name
-		ctx.ConfigPath = path
+	var ctx base.Context
+	ctx.Command = c.Command.Name
+	ctx.ConfigPath = args[0]
 
-		ctx.DryRun = c.Bool("dry-run")
-		ctx.Verbose = c.Bool("verbose")
+	ctx.DryRun = c.Bool("dry-run")
+	ctx.Verbose = c.Bool("verbose")
 
-		e := fn(&ctx)
-		if e != nil {
-			return e
-		}
+	return fn(&ctx)
+}
+
+func wrap0(c *cli.Context, fn do) error {
+	args := c.Args().Slice()
+	if len(args) != 0 {
+		cli.ShowCommandHelpAndExit(c, c.Command.Name, 1)
 	}
 
-	return nil
+	var ctx base.Context
+	ctx.Command = c.Command.Name
+
+	return fn(&ctx)
 }
 
 func main() {
@@ -80,6 +85,13 @@ func main() {
 				Usage: "info about current state",
 				Action: func(c *cli.Context) error {
 					return wrap(c, cmd.Status)
+				},
+			},
+			{
+				Name:  "config",
+				Usage: "print an example config",
+				Action: func(c *cli.Context) error {
+					return wrap0(c, cmd.Config)
 				},
 			},
 			{

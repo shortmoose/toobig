@@ -20,12 +20,12 @@ func Fsck(ctx *base.Context) error {
 	// TODO: Validate the configuration.
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error reading config: %s", err)
 	}
 	ctx.TooBig = cfg
 
 	var errors []string
-	err = os.Chdir(ctx.DataPath)
+	err = os.Chdir(ctx.FilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +35,7 @@ func Fsck(ctx *base.Context) error {
 	a := "s"
 	c := 0
 	e := 0
-	err = base.Walk(ctx.HashPath, func(path string, info fs.DirEntry) error {
+	err = base.Walk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
 		expected := filepath.Base(path)
 		if a != expected[:1] {
 			a = expected[:1]
@@ -74,7 +74,7 @@ func Fsck(ctx *base.Context) error {
 	e = 0
 	fmt.Printf("\nValidating refs:\n")
 	// Walk gitrepo and validate that we have the necessary set of matching hashes.
-	err = base.Walk(ctx.GitRepoPath, func(path string, info fs.DirEntry) error {
+	err = base.Walk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		expected := filepath.Base(path)
 		if ctx.Verbose {
 			fmt.Printf("Checking: %s\n", expected)
@@ -85,7 +85,7 @@ func Fsck(ctx *base.Context) error {
 			return er
 		}
 
-		ex, er := base.FileExists(filepath.Join(ctx.HashPath, sha.Sha256))
+		ex, er := base.FileExists(filepath.Join(ctx.BlobPath, sha.Sha256))
 		if !ex || er != nil {
 			st := fmt.Sprintf("No blob stored for %s: %v, %v", path, ex, er)
 			fmt.Println(st)
