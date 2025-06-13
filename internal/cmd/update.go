@@ -16,15 +16,10 @@ import (
 func Update(ctx *base.Context) error {
 	fmt.Println("Performing update")
 
-	err := os.Chdir(ctx.FilePath)
-	if err != nil {
-		return fmt.Errorf("cd %s: %w", ctx.FilePath, err)
-	}
-
 	fmt.Printf("Updating data directory...\n")
 	cnt := 0
 	updated := 0
-	err = base.Walk(".", func(path string, info fs.DirEntry) error {
+	err := base.ChdirWalk(ctx.FilePath, func(path string, info fs.DirEntry) error {
 		cnt += 1
 		valid, er2 := verifyMeta(ctx, path)
 		if er2 != nil {
@@ -50,16 +45,11 @@ func Update(ctx *base.Context) error {
 	}
 	fmt.Printf("%d files checked, %d metadata files updated.\n\n", cnt, updated)
 
-	err = os.Chdir(ctx.RefPath)
-	if err != nil {
-		return fmt.Errorf("changing directory %s: %w", ctx.RefPath, err)
-	}
-
 	fmt.Printf("Removing uneeded files in git directory...\n")
 	cnt = 0
 	updated = 0
 	// Walk all "meta" files in the git repo.
-	err = base.Walk(".", func(path string, info fs.DirEntry) error {
+	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		cnt += 1
 		exists, er := base.FileExists(ctx.FilePath + "/" + path)
 		if er != nil {

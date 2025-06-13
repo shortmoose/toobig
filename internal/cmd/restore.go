@@ -15,18 +15,12 @@ import (
 func Restore(ctx *base.Context) error {
 	fmt.Println("Performing restore")
 
-	// Set our current working directory to the git path.
-	err := os.Chdir(ctx.RefPath)
-	if err != nil {
-		return fmt.Errorf("cd %s: %w", ctx.RefPath, err)
-	}
-
 	// Walk gitrepo and validate that we have the necessary set of
 	// matching hashes.
 	fmt.Printf("Restoring files:\n")
 	cnt := 0
 	restored := 0
-	err = base.Walk(".", func(path string, info fs.DirEntry) error {
+	err := base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		// Ignore the config file.
 		cnt += 1
 
