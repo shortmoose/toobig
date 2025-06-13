@@ -3,10 +3,12 @@
 mkdir e2etmp/data-validate
 
 cat << EOF > e2etmp/validate.cfg
-data_path: data-validate
-git_path: git
-blob_path: blobs
-dup_path: dup
+{
+"data_path": "data-validate",
+"git_path": "git",
+"blob_path": "blobs",
+"dup_path": "dup"
+}
 EOF
 
 $TB restore e2etmp/validate.cfg
