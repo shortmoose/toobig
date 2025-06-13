@@ -6,12 +6,13 @@ import (
 
 	"github.com/shortmoose/toobig/internal/base"
 	"github.com/shortmoose/toobig/internal/cmd"
+	"github.com/shortmoose/toobig/internal/config"
 	"github.com/urfave/cli/v2"
 )
 
 type do func(ctx *base.Context) error
 
-func wrap(c *cli.Context, fn do) error {
+func wrap_cfg(c *cli.Context, fn do) error {
 	args := c.Args().Slice()
 	if len(args) != 1 {
 		cli.ShowCommandHelpAndExit(c, c.Command.Name, 1)
@@ -23,6 +24,13 @@ func wrap(c *cli.Context, fn do) error {
 
 	ctx.DryRun = c.Bool("dry-run")
 	ctx.Verbose = c.Bool("verbose")
+
+	// TODO: Validate the configuration.
+	cfg, err := config.ReadConfig(ctx.ConfigPath)
+	if err != nil {
+		return err
+	}
+	ctx.TooBig = cfg
 
 	return fn(&ctx)
 }
@@ -62,28 +70,28 @@ func main() {
 				Name:  "update",
 				Usage: "update blobs and metadata files to match files",
 				Action: func(c *cli.Context) error {
-					return wrap(c, cmd.Update)
+					return wrap_cfg(c, cmd.Update)
 				},
 			},
 			{
 				Name:  "restore",
 				Usage: "restore files to match blobs and metadata files",
 				Action: func(c *cli.Context) error {
-					return wrap(c, cmd.Restore)
+					return wrap_cfg(c, cmd.Restore)
 				},
 			},
 			{
 				Name:  "fsck",
 				Usage: "verify data integrity",
 				Action: func(c *cli.Context) error {
-					return wrap(c, cmd.Fsck)
+					return wrap_cfg(c, cmd.Fsck)
 				},
 			},
 			{
 				Name:  "status",
 				Usage: "info about current state",
 				Action: func(c *cli.Context) error {
-					return wrap(c, cmd.Status)
+					return wrap_cfg(c, cmd.Status)
 				},
 			},
 			{

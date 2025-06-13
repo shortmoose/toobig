@@ -16,14 +16,7 @@ import (
 func Fsck(ctx *base.Context) error {
 	fmt.Println("Performing fsck")
 
-	// TODO: Validate the configuration.
-	cfg, err := config.ReadConfig(ctx.ConfigPath)
-	if err != nil {
-		return err
-	}
-	ctx.TooBig = cfg
-
-	err = os.Chdir(ctx.FilePath)
+	err := os.Chdir(ctx.FilePath)
 	if err != nil {
 		return fmt.Errorf("cd %s: %w", ctx.FilePath, err)
 	}

@@ -6,20 +6,12 @@ import (
 	"os"
 
 	"github.com/shortmoose/toobig/internal/base"
-	"github.com/shortmoose/toobig/internal/config"
 )
 
 func Status(ctx *base.Context) error {
-	fmt.Printf("Performing status\n")
+	fmt.Println("Performing status")
 
-	// TODO: Validate the configuration.
-	cfg, err := config.ReadConfig(ctx.ConfigPath)
-	if err != nil {
-		return err
-	}
-	ctx.TooBig = cfg
-
-	err = os.Chdir(ctx.FilePath)
+	err := os.Chdir(ctx.FilePath)
 	if err != nil {
 		return fmt.Errorf("cd %s: %w", ctx.FilePath, err)
 	}
