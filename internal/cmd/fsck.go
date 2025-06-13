@@ -11,9 +11,11 @@ import (
 	"github.com/shortmoose/toobig/internal/config"
 )
 
-// Fsck TODO
+// Basic details:
+// fsck, minimal output, display errors.
+// for each section it should output the total number of files it processed.
 func Fsck(ctx *base.Context) error {
-	fmt.Printf("Performing fsck\n")
+	fmt.Println("Performing fsck")
 
 	// TODO: Validate the configuration.
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
@@ -29,9 +31,17 @@ func Fsck(ctx *base.Context) error {
 	}
 
 	// Load and validate current set of hashes
-	fmt.Printf("Validating blobs:\n")
+	fmt.Println("Validating blobs:")
+	a := "s"
+	c := 0
+	e := 0
 	err = base.Walk(ctx.HashPath, func(path string, info fs.DirEntry) error {
 		expected := filepath.Base(path)
+		if a != expected[:1] {
+			a = expected[:1]
+			fmt.Printf("%s...", a)
+		}
+
 		if ctx.Verbose {
 			fmt.Printf("%s... validating... ", expected[:min(len(expected), 8)])
 		}
@@ -45,18 +55,23 @@ func Fsck(ctx *base.Context) error {
 			st := fmt.Sprintf("Corrupted blob? %s", sha)
 			fmt.Println(st)
 			errors = append(errors, st)
+			e += 1
 			return nil
 		}
 
 		if ctx.Verbose {
 			fmt.Printf("correct\n")
 		}
+		c += 1
 		return nil
 	})
 	if err != nil {
 		return err
 	}
+	fmt.Printf("\n%d blobs validated, %d errors.\n", c, e)
 
+	c = 0
+	e = 0
 	fmt.Printf("\nValidating refs:\n")
 	// Walk gitrepo and validate that we have the necessary set of matching hashes.
 	err = base.Walk(ctx.GitRepoPath, func(path string, info fs.DirEntry) error {
@@ -70,23 +85,27 @@ func Fsck(ctx *base.Context) error {
 			return er
 		}
 
-		e, er := base.FileExists(filepath.Join(ctx.HashPath, sha.Sha256))
-		if !e || er != nil {
-			st := fmt.Sprintf("No blob stored for %s: %v, %v", path, e, er)
+		ex, er := base.FileExists(filepath.Join(ctx.HashPath, sha.Sha256))
+		if !ex || er != nil {
+			st := fmt.Sprintf("No blob stored for %s: %v, %v", path, ex, er)
 			fmt.Println(st)
 			errors = append(errors, st)
+			e += 1
+			return nil
 		}
 
+		c += 1
 		return nil
 	})
 	if err != nil {
 		return err
 	}
+	fmt.Printf("%d refs validated, %d errors.\n", c, e)
 
 	if len(errors) != 0 {
 		fmt.Printf("Errors: %v\n", errors)
 		return fmt.Errorf("bad stuff")
 	}
-	fmt.Printf("Fsck complete.\n")
+	fmt.Println("\nFsck complete.")
 	return nil
 }
