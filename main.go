@@ -17,7 +17,7 @@ type do func(ctx *base.Context) error
 func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 	args := cd.Args().Slice()
 	if len(args) != 1 {
-		cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
+		_ = cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
 		os.Exit(1)
 	}
 
@@ -41,7 +41,7 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 func wrap0(ct context.Context, cd *cli.Command, fn do) error {
 	args := cd.Args().Slice()
 	if len(args) != 0 {
-		cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
+		_ = cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
 		os.Exit(1)
 	}
 
