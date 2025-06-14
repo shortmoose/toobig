@@ -30,19 +30,19 @@ func Fsck(ctx *base.Context) error {
 
 		sha, er := base.GetSha256(path)
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "Blob %s failed: %v\n", filename, er)
+			fmt.Fprintf(os.Stderr, "Blob '%s' failed: %v\n", filename, er)
 			cnt_e += 1
 			return nil
 		}
 
 		if filename != sha {
-			fmt.Fprintf(os.Stderr, "Blob %s appears corrupted: %s\n", filename, sha)
+			fmt.Fprintf(os.Stderr, "Blob '%s' appears corrupted: %s\n", filename, sha)
 			cnt_e += 1
 			return nil
 		}
 
 		if ctx.Verbose {
-			fmt.Printf("Blob %s... valid.\n", filename[:8])
+			fmt.Printf("Blob '%s...' valid.\n", filename[:8])
 		}
 
 		cnt += 1
@@ -68,20 +68,20 @@ func Fsck(ctx *base.Context) error {
 
 		sha, er := config.ReadFileMeta(path)
 		if er != nil {
-			fmt.Printf("Ref %s invalid: %v\n", path, er)
+			fmt.Printf("Ref '%s' invalid: %v\n", path, er)
 			cnt_e += 1
 			return nil
 		}
 
 		ex, er := base.FileExists(filepath.Join(ctx.BlobPath, sha.Sha256))
 		if !ex || er != nil {
-			fmt.Printf("Ref %s doesn't point to a blob: %v\n", path, er)
+			fmt.Printf("Ref '%s' doesn't point to a blob: %v\n", path, er)
 			cnt_e += 1
 			return nil
 		}
 
 		if ctx.Verbose {
-			fmt.Printf("Ref %s valid.\n", filename)
+			fmt.Printf("Ref '%s' valid.\n", filename)
 		}
 
 		cnt += 1
