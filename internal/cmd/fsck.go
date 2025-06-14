@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"io/fs"
+	"os"
 	"path/filepath"
 
 	"github.com/shortmoose/toobig/internal/base"
@@ -15,70 +16,75 @@ import (
 func Fsck(ctx *base.Context) error {
 	fmt.Println("Performing fsck")
 
-	var errors []string
-
-	// Load and validate current set of hashes
-	fmt.Println("Validating blobs:")
-	a := "s"
+	// ########
+	fmt.Println("\nValidating blobs:")
+	curr := ""
 	c := 0
-	e := 0
+	c_e := 0
 	err := base.ChdirWalk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
-		expected := filepath.Base(path)
-		if a != expected[:1] {
-			a = expected[:1]
-			fmt.Printf("%s...", a)
-		}
+		filename := filepath.Base(path)
 
-		if ctx.Verbose {
-			fmt.Printf("%s... validating... ", expected[:min(len(expected), 8)])
+		// Display a progress bar (sort of).
+		if !ctx.Verbose && curr != filename[:1] {
+			curr = filename[:1]
+			fmt.Printf("%s...", curr)
 		}
 
 		sha, er := base.GetSha256(path)
 		if er != nil {
-			return er
+			fmt.Fprintf(os.Stderr, "Blob %s failed: %v\n", filename, er)
+			c_e += 1
+			return nil
 		}
 
-		if expected != sha {
-			st := fmt.Sprintf("Corrupted blob? %s", sha)
-			fmt.Println(st)
-			errors = append(errors, st)
-			e += 1
+		if filename != sha {
+			fmt.Fprintf(os.Stderr, "Blob %s appears corrupted: %s\n", filename, sha)
+			c_e += 1
 			return nil
 		}
 
 		if ctx.Verbose {
-			fmt.Printf("correct\n")
+			fmt.Printf("Blob %s... valid.\n", filename[:8])
 		}
+
 		c += 1
 		return nil
 	})
 	if err != nil {
 		return err
 	}
-	fmt.Printf("\n%d blobs validated, %d errors.\n", c, e)
 
+	if !ctx.Verbose {
+		fmt.Println("")
+	}
+	if c_e != 0 {
+		return fmt.Errorf("%d blobs validated, %d errors.", c, c_e)
+	}
+	fmt.Printf("%d blobs validated, %d errors.\n", c, c_e)
+
+	// ########
+	fmt.Println("\nValidating refs:")
 	c = 0
-	e = 0
-	fmt.Printf("\nValidating refs:\n")
-	// Walk gitrepo and validate that we have the necessary set of matching hashes.
+	c_e = 0
 	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
-		expected := filepath.Base(path)
-		if ctx.Verbose {
-			fmt.Printf("Checking: %s\n", expected)
-		}
+		filename := filepath.Base(path)
 
 		sha, er := config.ReadFileMeta(path)
 		if er != nil {
-			return er
+			fmt.Printf("Ref %s invalid: %v\n", path, er)
+			c_e += 1
+			return nil
 		}
 
 		ex, er := base.FileExists(filepath.Join(ctx.BlobPath, sha.Sha256))
 		if !ex || er != nil {
-			st := fmt.Sprintf("No blob stored for %s: %v, %v", path, ex, er)
-			fmt.Println(st)
-			errors = append(errors, st)
-			e += 1
+			fmt.Printf("Ref %s doesn't point to a blob: %v\n", path, er)
+			c_e += 1
 			return nil
+		}
+
+		if ctx.Verbose {
+			fmt.Printf("Ref %s valid.\n", filename)
 		}
 
 		c += 1
@@ -87,12 +93,12 @@ func Fsck(ctx *base.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%d refs validated, %d errors.\n", c, e)
 
-	if len(errors) != 0 {
-		fmt.Printf("Errors: %v\n", errors)
-		return fmt.Errorf("bad stuff")
+	if c_e != 0 {
+		return fmt.Errorf("%d refs validated, %d errors.", c, c_e)
 	}
+	fmt.Printf("%d refs validated, %d errors.\n", c, c_e)
+
 	fmt.Println("\nFsck complete.")
 	return nil
 }

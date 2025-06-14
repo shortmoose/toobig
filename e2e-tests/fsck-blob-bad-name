@@ -5,15 +5,14 @@
 echo "abc 123" > e2etmp/data/foo
 echo "abc 124" > e2etmp/data/foo.jpg
 
-# update and then validate.
+# Set our baseline for the test.
 $TB update e2etmp/update.cfg
 $TB fsck e2etmp/update.cfg
 
 # Create a problem in the repo.
 echo "a" >> e2etmp/blobs/a
 
-# This case used to lead to a panic, it should just get a regular exit 1.
-# echo abc >> e2etmp/blobs/abc
+# Verify we are getting *exactly* exit 1, for example a panic is exit 2.
 exit_code=0
 $TB fsck e2etmp/update.cfg || exit_code=$?
 if [ $exit_code -ne 1 ]; then

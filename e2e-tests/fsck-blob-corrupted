@@ -1,0 +1,22 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo "abc 123" > e2etmp/data/foo
+echo "abc 124" > e2etmp/data/foo.jpg
+
+# Set our baseline for the test.
+$TB update e2etmp/update.cfg
+$TB fsck e2etmp/update.cfg
+
+# Create a blob that doesn't match it's name
+mv e2etmp/blobs/79cec447bf708b719ce9fe5a2eb9921393921542d65bbb81ff113d908b56419a \
+   e2etmp/blobs/79cec447bf708b719ce9fe5a2eb9921393921542d65bbb81ff113d908b56419b
+
+# Verify we are getting *exactly* exit 1, for example a panic is exit 2.
+exit_code=0
+$TB fsck e2etmp/update.cfg || exit_code=$?
+if [ $exit_code -ne 1 ]; then
+	echo "Test failed with error code: $exit_code"
+	exit 1
+fi
