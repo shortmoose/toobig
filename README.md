@@ -48,7 +48,7 @@ store only one blob to represent all of those original files.
 go install github.com/shortmoose/toobig[@version]
 
 
-## Docs
+## Usage
 
 ### toobig update <repo.cfg>
 
