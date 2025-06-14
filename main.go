@@ -1,9 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
-	"context"
 
 	"github.com/shortmoose/toobig/internal/base"
 	"github.com/shortmoose/toobig/internal/cmd"
@@ -54,8 +54,8 @@ func wrap0(ct context.Context, cd *cli.Command, fn do) error {
 func main() {
 	app := &cli.Command{
 		EnableShellCompletion: true,
-		Name: "toobig",
-		Usage: "manage large binary files (photos, videos, etc)",
+		Name:                  "toobig",
+		Usage:                 "manage large binary files (photos, videos, etc)",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "verbose",
