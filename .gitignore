@@ -1,4 +1,4 @@
-e2etmp
+x
 
 # We want to ignore the toobig executable, but not directories.
 toobig

@@ -2,17 +2,17 @@
 
 . e2e-tests/help/setup
 
-echo abc 123 > e2etmp/data/foo
+echo abc 123 >x/data/foo
 
-$TB update e2etmp/update.cfg
+$TB update x/update.cfg
 
 # TODO: This suggests just relying on time isn't sufficient
 # If we modify the file too quickly the timestamp hasn't changed.
 sleep 0.2
 
-echo abc 123 >> e2etmp/data/foo
+echo abc 123 >>x/data/foo
 
 # TODO: We should verify this exits for the correct reason.
-$TB update e2etmp/update.cfg || exit 0
+$TB update x/update.cfg || exit 0
 
 exit 1

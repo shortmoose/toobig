@@ -2,20 +2,20 @@
 
 . e2e-tests/help/setup
 
-echo abc 123 > e2etmp/data/foo
-echo abc 124 > e2etmp/data/foo.jpg
+echo abc 123 >x/data/foo
+echo abc 124 >x/data/foo.jpg
 
 # Set our baseline for the test.
-$TB update e2etmp/update.cfg
-$TB fsck e2etmp/update.cfg
+$TB update x/update.cfg
+$TB fsck x/update.cfg
 
 # This isn't a valid ref file.
-echo "abc 124" >> e2etmp/git/corrupt.jpg
+echo "abc 124" >>x/git/corrupt.jpg
 
 # Verify we are getting *exactly* exit 1, for example a panic is exit 2.
 exit_code=0
-$TB fsck e2etmp/update.cfg || exit_code=$?
+$TB fsck x/update.cfg || exit_code=$?
 if [ $exit_code -ne 1 ]; then
-	echo "Test failed with error code: $exit_code, Expected: 1."
-	exit 1
+    echo "Test failed with error code: $exit_code, Expected: 1."
+    exit 1
 fi

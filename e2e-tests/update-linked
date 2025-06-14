@@ -2,19 +2,19 @@
 
 . e2e-tests/help/setup
 
-echo abc 123 > e2etmp/data/boo
-echo abc 123 > e2etmp/data/foo
-ln e2etmp/data/foo e2etmp/data/aoo
+echo abc 123 >x/data/boo
+echo abc 123 >x/data/foo
+ln x/data/foo x/data/aoo
 
-$TB update e2etmp/update.cfg
+$TB update x/update.cfg
 
-cat << EOF >e2etmp/tmp
+cat <<EOF >x/tmp
 boo
 EOF
 
-/bin/ls e2etmp/dup | diff e2etmp/tmp -
+/bin/ls x/dup | diff x/tmp -
 
-diff e2etmp/dup/boo - << EOF
+diff x/dup/boo - <<EOF
 abc 123
 EOF
 

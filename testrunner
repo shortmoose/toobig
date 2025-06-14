@@ -8,26 +8,26 @@ NC='\033[0m' # No Color
 
 while true; do
 
-COLOR="$GREEN"
+    COLOR="$GREEN"
 
-test $? -eq 0 && echo building... && go build -o . ./...
-# test $? -eq 0 && echo shadows?... && shadow ./...
-test $? -eq 0 && echo unittesting... && go test ./...
-# test $? -eq 0 && echo testing... && run_tests
-# test $? -eq 0 && echo linting... && golint ./...
+    test $? -eq 0 && echo building... && go build -o . ./...
+    # test $? -eq 0 && echo shadows?... && shadow ./...
+    test $? -eq 0 && echo unittesting... && go test ./...
+    # test $? -eq 0 && echo testing... && run_tests
+    # test $? -eq 0 && echo linting... && golint ./...
 
-test $? -eq 0 && echo e2e-test... && ./test "$GREP"
+    test $? -eq 0 && echo e2e-test... && ./test "$GREP"
 
-test $? -ne 0 && COLOR="$RED"
-if [ "$COLOR" == "$GREEN" ]; then
-    MSG=SUCCESS
-else
-    MSG=FAILED
-fi
-echo -e "$COLOR###############  $MSG  ######################$NC"
-echo "WAITING..."
+    test $? -ne 0 && COLOR="$RED"
+    if [ "$COLOR" == "$GREEN" ]; then
+        MSG=SUCCESS
+    else
+        MSG=FAILED
+    fi
+    echo -e "$COLOR###############  $MSG  ######################$NC"
+    echo "WAITING..."
 
-inotifywait -q -r -e modify,create,delete,move .
-sleep 1  # Let filesystem settle down, don't want files in a partially saved state.
+    inotifywait -q -r -e modify,create,delete,move .
+    sleep 1 # Let filesystem settle down, don't want files in a partially saved state.
 
 done
