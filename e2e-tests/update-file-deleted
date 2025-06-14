@@ -4,8 +4,8 @@
 
 . e2e-tests/help/setup
 
-echo abc 123 > x/data/foo
-echo abc 124 > x/data/foo.jpg
+echo abc 123 >x/data/foo
+echo abc 124 >x/data/foo.jpg
 
 $TB update x/update.cfg
 

@@ -6,15 +6,15 @@
 . e2e-tests/help/setup
 
 mkdir x/data/a
-echo abc 123 > x/data/a/foo
+echo abc 123 >x/data/a/foo
 sleep 0.1
-echo abc 123 > x/data/a/foo.jpg
+echo abc 123 >x/data/a/foo.jpg
 
 $TB update x/update.cfg
 
 diff x/git/a/foo x/git/a/foo.jpg
 
-diff x/dup/a-foo.jpg - << EOF
+diff x/dup/a-foo.jpg - <<EOF
 abc 123
 EOF
 

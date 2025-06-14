@@ -2,20 +2,20 @@
 
 . e2e-tests/help/setup
 
-echo "abc 123" > x/data/foo
-echo "abc 124" > x/data/foo.jpg
+echo "abc 123" >x/data/foo
+echo "abc 124" >x/data/foo.jpg
 
 # Set our baseline for the test.
 $TB update x/update.cfg
 $TB fsck x/update.cfg
 
 # Modifying a file is a bad idea.
-echo "abc 124" >> x/data/foo.jpg
+echo "abc 124" >>x/data/foo.jpg
 
 # Verify we are getting *exactly* exit 1, for example a panic is exit 2.
 exit_code=0
 $TB fsck x/update.cfg || exit_code=$?
 if [ $exit_code -ne 1 ]; then
-	echo "Test failed with error code: $exit_code"
-	exit 1
+    echo "Test failed with error code: $exit_code"
+    exit 1
 fi

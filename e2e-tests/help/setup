@@ -14,7 +14,7 @@ rm -fr x
 mkdir x
 mkdir x/{data,blobs,git,dup,data2,blobs2,git2}
 
-cat << EOF > x/update.cfg
+cat <<EOF >x/update.cfg
 {
 "data_path": "data",
 "git_path": "git",

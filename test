@@ -16,7 +16,7 @@ for x in e2e-tests/*$1*; do
         echo "Failed $x"
         exit 1
     fi
-    
+
     echo "$x"
     echo "#####################"
 done
