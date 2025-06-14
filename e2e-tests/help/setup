@@ -2,9 +2,23 @@
 
 set -e -x
 
-function warn() {
+warn() {
     echo "$1"
     exit 1
+}
+
+# Normally we use this to verify we are getting an exit code of 1
+# This protects us from hiding problems like a panic (exit 2).
+run_and_verify() {
+    expected=$1
+    exit_code=0
+    shift
+    $TB "$@" || exit_code=$?
+
+    if [ $exit_code -ne $expected ]; then
+        echo "Test failed with error code: $exit_code, expected $expected."
+        exit 1
+    fi
 }
 
 TB=./toobig
@@ -12,12 +26,12 @@ TB=./toobig
 rm -fr x
 
 mkdir x
-mkdir x/{data,blobs,git,dup,data2,blobs2,git2}
+mkdir x/{data,data2,blobs,blobs2,refs,refs2,dup}
 
 cat <<EOF >x/update.cfg
 {
-"data_path": "data",
-"git_path": "git",
+"file_path": "data",
+"ref_path": "refs",
 "blob_path": "blobs",
 "dup_path": "dup"
 }

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo abc 123 >x/data/foo
+echo abc 124 >x/data/foo.jpg
+
+# Set our baseline for the test.
+$TB update x/update.cfg
+$TB fsck x/update.cfg
+
+# This isn't a valid ref file.
+echo "abc 124" >>x/refs/corrupt.jpg
+
+run_and_verify 1 fsck x/update.cfg

@@ -61,7 +61,6 @@ func main() {
 				Name:    "verbose",
 				Aliases: []string{"v"},
 				Value:   false,
-				Usage:   "Usage ...",
 			},
 			/*
 				&cli.BoolFlag{
@@ -87,17 +86,17 @@ func main() {
 				},
 			},
 			{
-				Name:  "fsck",
-				Usage: "verify data integrity",
+				Name:  "status",
+				Usage: "current state of repository - are there current file changes",
 				Action: func(ctx context.Context, c *cli.Command) error {
-					return wrap_cfg(ctx, c, cmd.Fsck)
+					return wrap_cfg(ctx, c, cmd.Status)
 				},
 			},
 			{
-				Name:  "status",
-				Usage: "info about current state",
+				Name:  "fsck",
+				Usage: "verify data integrity - are the refs and blobs valid",
 				Action: func(ctx context.Context, c *cli.Command) error {
-					return wrap_cfg(ctx, c, cmd.Status)
+					return wrap_cfg(ctx, c, cmd.Fsck)
 				},
 			},
 			{

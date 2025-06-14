@@ -1,7 +1,12 @@
 #!/bin/bash
 
-for x in e2e-tests/*$1*; do
-    if [ -d "$x" ]; then
+for x in e2e-tests/*/*; do
+    if [ ! -x "$x" ]; then
+        continue
+    fi
+
+    if [[ $x != *$1* ]]; then
+        echo "$x ...skipping"
         continue
     fi
 
@@ -21,4 +26,4 @@ for x in e2e-tests/*$1*; do
     echo "#####################"
 done
 
-rm -fr e2etmp
+rm -fr x/

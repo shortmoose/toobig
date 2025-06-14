@@ -4,8 +4,8 @@ mkdir x/data-validate
 
 cat <<EOF >x/validate.cfg
 {
-"data_path": "data-validate",
-"git_path": "git",
+"file_path": "data-validate",
+"ref_path": "refs",
 "blob_path": "blobs",
 "dup_path": "dup"
 }

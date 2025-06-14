@@ -12,10 +12,4 @@ $TB fsck x/update.cfg
 # Create a problem in the repo.
 echo "a" >>x/blobs/a
 
-# Verify we are getting *exactly* exit 1, for example a panic is exit 2.
-exit_code=0
-$TB fsck x/update.cfg || exit_code=$?
-if [ $exit_code -ne 1 ]; then
-    echo "Test failed with error code: $exit_code"
-    exit 1
-fi
+run_and_verify 1 fsck x/update.cfg

@@ -11,8 +11,8 @@ $TB fsck x/update.cfg
 
 # Extra "valid" blobs are okay
 echo "abc 125" >x/blobs/bb964bb682d701aad340ab78c677e597fa8fc33df131c8b48f5b951c43d73338
-$TB fsck x/update.cfg
+run_and_verify 0 fsck x/update.cfg
 
 # Duplicate files are okay.
-cp x/git/foo x/git/cp_of_foo
-$TB fsck x/update.cfg
+cp x/refs/foo x/refs/cp_of_foo
+run_and_verify 0 fsck x/update.cfg

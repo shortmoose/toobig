@@ -10,16 +10,11 @@ $TB update x/update.cfg
 $TB fsck x/update.cfg
 
 # The blob file referenced here doesn't exist.
-cat <<HERE >x/git/no-sha.jpg
+cat <<HERE >x/refs/no-sha.jpg
 {
  "sha256": "c5d982dc040081e09cad25209fed928b334a21fb2ff34db5202178a7b1a81988",
  "unixnano": 1749858394741289104
 }
 HERE
 
-exit_code=0
-$TB fsck x/update.cfg || exit_code=$?
-if [ $exit_code -ne 1 ]; then
-    echo "Test failed with error code: $exit_code, Expected: 1."
-    exit 1
-fi
+run_and_verify 1 fsck x/update.cfg
