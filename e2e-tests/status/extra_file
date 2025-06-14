@@ -1,0 +1,14 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo abc 123 >x/data/foo
+echo abc 124 >x/data/foo.jpg
+
+# Set our baseline for the test.
+$TB update x/update.cfg
+$TB fsck x/update.cfg
+
+# Duplicate ref
+echo abc 124 >x/data/extra
+run_and_verify 1 status x/update.cfg

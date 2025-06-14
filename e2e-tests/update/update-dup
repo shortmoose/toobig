@@ -12,7 +12,7 @@ echo abc 123 >x/data/a/foo.jpg
 
 $TB update x/update.cfg
 
-diff x/git/a/foo x/git/a/foo.jpg
+diff x/refs/a/foo x/refs/a/foo.jpg
 
 diff x/dup/a-foo.jpg - <<EOF
 abc 123

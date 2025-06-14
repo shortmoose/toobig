@@ -18,9 +18,7 @@ func Fsck(ctx *base.Context) error {
 
 	// ########
 	fmt.Println("\nValidating blobs:")
-	curr := ""
-	c := 0
-	c_e := 0
+	curr, cnt, cnt_e := "", 0, 0
 	err := base.ChdirWalk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
 		filename := filepath.Base(path)
 
@@ -33,13 +31,13 @@ func Fsck(ctx *base.Context) error {
 		sha, er := base.GetSha256(path)
 		if er != nil {
 			fmt.Fprintf(os.Stderr, "Blob %s failed: %v\n", filename, er)
-			c_e += 1
+			cnt_e += 1
 			return nil
 		}
 
 		if filename != sha {
 			fmt.Fprintf(os.Stderr, "Blob %s appears corrupted: %s\n", filename, sha)
-			c_e += 1
+			cnt_e += 1
 			return nil
 		}
 
@@ -47,7 +45,7 @@ func Fsck(ctx *base.Context) error {
 			fmt.Printf("Blob %s... valid.\n", filename[:8])
 		}
 
-		c += 1
+		cnt += 1
 		return nil
 	})
 	if err != nil {
@@ -57,29 +55,28 @@ func Fsck(ctx *base.Context) error {
 	if !ctx.Verbose {
 		fmt.Println("")
 	}
-	if c_e != 0 {
-		return fmt.Errorf("%d blobs validated, %d errors", c, c_e)
+	if cnt_e != 0 {
+		return fmt.Errorf("%d blobs validated, %d errors", cnt, cnt_e)
 	}
-	fmt.Printf("%d blobs validated, %d errors.\n", c, c_e)
+	fmt.Printf("%d blobs validated, %d errors.\n", cnt, cnt_e)
 
 	// ########
 	fmt.Println("\nValidating refs:")
-	c = 0
-	c_e = 0
+	cnt, cnt_e = 0, 0
 	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		filename := filepath.Base(path)
 
 		sha, er := config.ReadFileMeta(path)
 		if er != nil {
 			fmt.Printf("Ref %s invalid: %v\n", path, er)
-			c_e += 1
+			cnt_e += 1
 			return nil
 		}
 
 		ex, er := base.FileExists(filepath.Join(ctx.BlobPath, sha.Sha256))
 		if !ex || er != nil {
 			fmt.Printf("Ref %s doesn't point to a blob: %v\n", path, er)
-			c_e += 1
+			cnt_e += 1
 			return nil
 		}
 
@@ -87,17 +84,17 @@ func Fsck(ctx *base.Context) error {
 			fmt.Printf("Ref %s valid.\n", filename)
 		}
 
-		c += 1
+		cnt += 1
 		return nil
 	})
 	if err != nil {
 		return err
 	}
 
-	if c_e != 0 {
-		return fmt.Errorf("%d refs validated, %d errors", c, c_e)
+	if cnt_e != 0 {
+		return fmt.Errorf("%d refs validated, %d errors", cnt, cnt_e)
 	}
-	fmt.Printf("%d refs validated, %d errors.\n", c, c_e)
+	fmt.Printf("%d refs validated, %d errors.\n", cnt, cnt_e)
 
 	fmt.Println("\nFsck complete.")
 	return nil

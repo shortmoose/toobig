@@ -15,8 +15,6 @@ import (
 func Restore(ctx *base.Context) error {
 	fmt.Println("Performing restore")
 
-	// Walk gitrepo and validate that we have the necessary set of
-	// matching hashes.
 	fmt.Printf("Restoring files:\n")
 	cnt := 0
 	restored := 0

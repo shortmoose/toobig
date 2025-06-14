@@ -1,0 +1,19 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo abc 123 >x/data/foo
+echo abc 124 >x/data/foo.jpg
+
+# Set our baseline for the test.
+$TB update x/update.cfg
+$TB fsck x/update.cfg
+
+# Extra "valid" blobs are okay
+echo "abc 125" >x/blobs/bb964bb682d701aad340ab78c677e597fa8fc33df131c8b48f5b951c43d73338
+run_and_verify 0 status x/update.cfg
+
+# Duplicate files are okay.
+# cp x/git/foo x/git/cp_of_foo
+# run_and_verify 0 status x/update.cfg
+# exit 1
