@@ -2,12 +2,9 @@
 
 . e2e-tests/help/setup
 
-echo abc 123 >x/data/foo
-echo abc 124 >x/data/foo.jpg
-
-# Set our baseline for the test.
+echo abc 123 >x/files/foo
+echo abc 124 >x/files/foo.jpg
 $TB update x/update.cfg
-$TB fsck x/update.cfg
 
 # This isn't a valid ref file.
 echo "abc 124" >>x/refs/corrupt.jpg

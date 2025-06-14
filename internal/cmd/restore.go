@@ -11,7 +11,7 @@ import (
 	"github.com/shortmoose/toobig/internal/config"
 )
 
-// Restore the data from the combination of a ref and checksum repository.
+// Restore the files from the combination of a refs and blobs directory.
 func Restore(ctx *base.Context) error {
 	fmt.Println("Performing restore")
 

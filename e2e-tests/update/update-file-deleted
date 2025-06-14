@@ -1,15 +1,15 @@
 #!/bin/bash
-# Verify that if a data file gets deleted that the matching
+# Verify that if a files file gets deleted that the matching
 # git repo file is also deleted.
 
 . e2e-tests/help/setup
 
-echo abc 123 >x/data/foo
-echo abc 124 >x/data/foo.jpg
+echo abc 123 >x/files/foo
+echo abc 124 >x/files/foo.jpg
 
 $TB update x/update.cfg
 
-rm -f data/foo.jpg
+rm -f files/foo.jpg
 
 $TB update x/update.cfg
 

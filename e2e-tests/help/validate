@@ -1,10 +1,10 @@
 #!/bin/bash
 
-mkdir x/data-validate
+mkdir x/files-validate
 
 cat <<EOF >x/validate.cfg
 {
-"file_path": "data-validate",
+"file_path": "files-validate",
 "ref_path": "refs",
 "blob_path": "blobs",
 "dup_path": "dup"
@@ -13,4 +13,4 @@ EOF
 
 $TB restore x/validate.cfg
 
-diff -r x/data x/data-validate
+diff -r x/files x/files-validate

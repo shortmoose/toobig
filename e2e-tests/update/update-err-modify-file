@@ -2,7 +2,7 @@
 
 . e2e-tests/help/setup
 
-echo abc 123 >x/data/foo
+echo abc 123 >x/files/foo
 
 $TB update x/update.cfg
 
@@ -10,9 +10,6 @@ $TB update x/update.cfg
 # If we modify the file too quickly the timestamp hasn't changed.
 sleep 0.2
 
-echo abc 123 >>x/data/foo
+echo abc 123 >>x/files/foo
 
-# TODO: We should verify this exits for the correct reason.
-$TB update x/update.cfg || exit 0
-
-exit 1
+run_and_verify 1 update x/update.cfg
