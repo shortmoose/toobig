@@ -1,9 +1,13 @@
 # Exit Codes
 
 0 - Success
+
 1 - General Error
+
 2 - Panic, application crashed - golang defined exit code
+
 3 - Invalid arguments, invalid command, etc.
-100+ - We aren't using anything up here.
 
 10+ - These are what we will be using for specific exit codes.
+
+100+ - We aren't using anything up here.
