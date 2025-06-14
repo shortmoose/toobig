@@ -3,27 +3,30 @@ package main
 import (
 	"fmt"
 	"os"
+	"context"
 
 	"github.com/shortmoose/toobig/internal/base"
 	"github.com/shortmoose/toobig/internal/cmd"
 	"github.com/shortmoose/toobig/internal/config"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
+// This is ugly, not sure how to get the parent.
 type do func(ctx *base.Context) error
 
-func wrap_cfg(c *cli.Context, fn do) error {
-	args := c.Args().Slice()
+func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
+	args := cd.Args().Slice()
 	if len(args) != 1 {
-		cli.ShowCommandHelpAndExit(c, c.Command.Name, 1)
+		cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
+		os.Exit(1)
 	}
 
 	var ctx base.Context
-	ctx.Command = c.Command.Name
+	ctx.Command = cd.Name
 	ctx.ConfigPath = args[0]
 
-	ctx.DryRun = c.Bool("dry-run")
-	ctx.Verbose = c.Bool("verbose")
+	ctx.DryRun = cd.Bool("dry-run")
+	ctx.Verbose = cd.Bool("verbose")
 
 	// TODO: Validate the configuration.
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
@@ -35,20 +38,23 @@ func wrap_cfg(c *cli.Context, fn do) error {
 	return fn(&ctx)
 }
 
-func wrap0(c *cli.Context, fn do) error {
-	args := c.Args().Slice()
+func wrap0(ct context.Context, cd *cli.Command, fn do) error {
+	args := cd.Args().Slice()
 	if len(args) != 0 {
-		cli.ShowCommandHelpAndExit(c, c.Command.Name, 1)
+		cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
+		os.Exit(1)
 	}
 
 	var ctx base.Context
-	ctx.Command = c.Command.Name
+	ctx.Command = cd.Name
 
 	return fn(&ctx)
 }
 
 func main() {
-	app := &cli.App{
+	app := &cli.Command{
+		EnableShellCompletion: true,
+		Name: "toobig",
 		Usage: "manage large binary files (photos, videos, etc)",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
@@ -69,42 +75,42 @@ func main() {
 			{
 				Name:  "update",
 				Usage: "update blobs and metadata files to match files",
-				Action: func(c *cli.Context) error {
-					return wrap_cfg(c, cmd.Update)
+				Action: func(ctx context.Context, c *cli.Command) error {
+					return wrap_cfg(ctx, c, cmd.Update)
 				},
 			},
 			{
 				Name:  "restore",
 				Usage: "restore files to match blobs and metadata files",
-				Action: func(c *cli.Context) error {
-					return wrap_cfg(c, cmd.Restore)
+				Action: func(ctx context.Context, c *cli.Command) error {
+					return wrap_cfg(ctx, c, cmd.Restore)
 				},
 			},
 			{
 				Name:  "fsck",
 				Usage: "verify data integrity",
-				Action: func(c *cli.Context) error {
-					return wrap_cfg(c, cmd.Fsck)
+				Action: func(ctx context.Context, c *cli.Command) error {
+					return wrap_cfg(ctx, c, cmd.Fsck)
 				},
 			},
 			{
 				Name:  "status",
 				Usage: "info about current state",
-				Action: func(c *cli.Context) error {
-					return wrap_cfg(c, cmd.Status)
+				Action: func(ctx context.Context, c *cli.Command) error {
+					return wrap_cfg(ctx, c, cmd.Status)
 				},
 			},
 			{
 				Name:  "config",
 				Usage: "print an example config",
-				Action: func(c *cli.Context) error {
-					return wrap0(c, cmd.Config)
+				Action: func(ctx context.Context, c *cli.Command) error {
+					return wrap0(ctx, c, cmd.Config)
 				},
 			},
 			{
 				Name:  "version",
 				Usage: "print version",
-				Action: func(c *cli.Context) error {
+				Action: func(ctx context.Context, c *cli.Command) error {
 					fmt.Printf("Version %s\n", version)
 					return nil
 				},
@@ -112,7 +118,7 @@ func main() {
 		},
 	}
 
-	err := app.Run(os.Args)
+	err := app.Run(context.Background(), os.Args)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed: %s\n", err)
 
