@@ -45,7 +45,7 @@ func Update(ctx *base.Context) error {
 	}
 	fmt.Printf("%d files checked, %d metadata files updated.\n\n", cnt, updated)
 
-	fmt.Printf("Removing uneeded files in git directory...\n")
+	fmt.Printf("Removing unneeded files in git directory...\n")
 	cnt = 0
 	updated = 0
 	// Walk all "meta" files in the git repo.

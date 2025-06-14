@@ -1,22 +1,18 @@
 #!/bin/bash
-# Verify that if a data file gets deleted that the matching
-# git repo file is also deleted.
 
 . e2e-tests/help/setup
 
 echo abc 123 > e2etmp/data/foo
 echo abc 124 > e2etmp/data/foo.jpg
 
-# update and then validate.
+# Set our baseline for the test.
 $TB update e2etmp/update.cfg
 $TB fsck e2etmp/update.cfg
 
-# Create a problem in the repo.
-echo abc >> e2etmp/blobs/c5*
+# Extra "valid" blobs are okay
+echo "abc 125" > e2etmp/blobs/bb964bb682d701aad340ab78c677e597fa8fc33df131c8b48f5b951c43d73338
+$TB fsck e2etmp/update.cfg
 
-exit_code=0
-$TB fsck e2etmp/update.cfg || exit_code=$?
-if [ $exit_code -ne 1 ]; then
-	echo "Test failed"
-	exit 1
-fi
+# Duplicate files are okay.
+cp e2etmp/git/foo e2etmp/git/cp_of_foo
+$TB fsck e2etmp/update.cfg
