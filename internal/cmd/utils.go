@@ -13,33 +13,31 @@ import (
 )
 
 // Validate that all three files (orig, meta, and hash) fully match each other.
-func verifyMeta(ctx *base.Context, filename string) (bool, error) {
+func verifyMeta(ctx *base.Context, filename string) (error, error) {
 	// Verify we have file metadata.
 	meta, err := config.ReadFileMeta(filepath.Join(ctx.RefPath, filename))
 	if err != nil {
 		e, _ := err.(*os.PathError)
 		if e.Err == syscall.ENOENT {
-			fmt.Printf("meta doesn't exist... ")
-			return false, nil
+			return fmt.Errorf("meta doesn't exist"), nil
 		}
-		return false, fmt.Errorf("reading file metadata: %w", err)
+		return nil, fmt.Errorf("reading file metadata: %w", err)
 	}
 
 	// Verify timestamps match.
 	info, err := os.Stat(filename)
 	if err != nil {
-		return false, fmt.Errorf("stating file: %w", err)
+		return nil, fmt.Errorf("stating file: %w", err)
 	}
 
 	if meta.UnixNano != info.ModTime().UnixNano() {
-		fmt.Printf("file modified... ")
-		return false, nil
+		return fmt.Errorf("file modified"), nil
 	}
 
 	// Verify inodes match.
 	inode, err := base.GetInode(filename)
 	if err != nil {
-		return false, fmt.Errorf("getting inode: %w", err)
+		return nil, fmt.Errorf("getting inode: %w", err)
 	}
 
 	inode2, err := base.GetInode(filepath.Join(ctx.BlobPath, meta.Sha256))
@@ -47,13 +45,15 @@ func verifyMeta(ctx *base.Context, filename string) (bool, error) {
 		// If the file doesn't exist that isn't really an error.
 		e, _ := err.(*os.PathError)
 		if e.Err == syscall.ENOENT {
-			fmt.Printf("link missing... ")
-			return false, nil
+			return fmt.Errorf("blob missing"), nil
 		}
-		return false, fmt.Errorf("getting inode of hash path: %w", err)
+		return nil, fmt.Errorf("getting inode of hash path: %w", err)
 	}
 
-	return inode == inode2, nil
+	if inode != inode2 {
+		return fmt.Errorf("file updated"), nil
+	}
+	return nil, nil
 }
 
 // Assume "filename" is the source of truth.

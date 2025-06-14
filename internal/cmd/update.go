@@ -12,16 +12,15 @@ import (
 func Update(ctx *base.Context) error {
 	fmt.Println("Performing update")
 
-	fmt.Printf("Updating files directory...\n")
-	cnt := 0
-	updated := 0
+	fmt.Println("\nAdding/Updating files:")
+	cnt, updated := 0, 0
 	err := base.ChdirWalk(ctx.FilePath, func(path string, info fs.DirEntry) error {
 		cnt += 1
-		valid, er2 := verifyMeta(ctx, path)
+		ix, er2 := verifyMeta(ctx, path)
 		if er2 != nil {
 			return fmt.Errorf("verifying refs: %w", er2)
 		}
-		if valid {
+		if ix == nil {
 			return nil
 		}
 

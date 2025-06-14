@@ -15,21 +15,15 @@ func Status(ctx *base.Context) error {
 	fmt.Println("\nValidating files:")
 	cnt, cnt_e := 0, 0
 	err := base.ChdirWalk(ctx.FilePath, func(path string, info fs.DirEntry) error {
-		valid, er := verifyMeta(ctx, path)
+		ix, er := verifyMeta(ctx, path)
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "File '%s' ref status: %v\n", path, er)
-			cnt_e += 1
-			return nil
+			ix = er
 		}
 
-		if !valid {
-			fmt.Fprintf(os.Stderr, "File '%s' missing ref file\n", path)
+		if ix != nil {
+			fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, ix)
 			cnt_e += 1
 			return nil
-		}
-
-		if ctx.Verbose {
-			fmt.Printf("File '%s' has matching ref file.\n", path)
 		}
 
 		cnt += 1

@@ -8,4 +8,3 @@ $TB update x/update.cfg
 
 echo abc 125 >x/files/foo
 run_and_verify 1 status x/update.cfg
-# TODO: Output is currently confusing for this test.
