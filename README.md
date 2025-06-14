@@ -8,10 +8,10 @@
 TooBig was created from a need to manage largish files like photos, videos, and
 binaries. Over the last number of years I have found it has worked wonderfully
 for managing my decades of family photos, but also for managing photo and video
-assets for development projects, and a few other uses here and there.
+assets for development projects, and other uses here and there.
 
-The basics of what TooBig does is take a set of files and converts those files
-into two sets of files, which I call refs and blobs. A blob is the original
+The basics of what TooBig does is it converts a set of files
+into a set of refs and blobs. A blob is the original
 file, but the name has been changed to the 64 character SHA-256 checksum of the
 contents of the file. A ref is a small file that has the same name and directory
 structure of the original file, but the file itself is tiny, containing just the
@@ -36,6 +36,8 @@ SHA-256 checksum of the original file and a timestamp.
   allows you to track all the changes to your files without actually storing
   your actual data in `git`. (Git really doesn't do well with GBs of large
   files, that is what I used to do...)
+- Data deduplication. If you have the same file multiple times this will
+  store only one blob to represent all of those original files.
 
 
 ## Install
