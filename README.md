@@ -39,6 +39,22 @@ SHA-256 checksum of the original file and a timestamp.
 - Data deduplication. If you have the same file multiple times this will
   store only one blob to represent all of those original files.
 
+## Why Use TooBig?
+
+TooBig's architecture of separating file metadata (refs) from file content (blobs) provides several powerful advantages:
+
+### Efficient Syncing and Backups
+
+Have you ever reorganized a photo library and then had to wait for rsync to re-upload gigabytes of data, even though the files themselves didn't change? With TooBig, you only sync the tiny *ref* files. The large *blobs* (your actual data) wasn't renamed or moved, making synchronization and backups dramatically faster and more efficient.
+
+### Verifiable Data Integrity
+
+Because each blob's filename is its SHA-256 checksum, verifying your entire collection is trivial. `toobig fsck` can easily confirm that none of your files have suffered from bit rot or corruption during transfers between hard drives, cloud storage, or backup media over the years.
+
+### Version Control Your Files with Git
+
+Git is powerful, but struggles with large binary files. TooBig allows you to commit your directory structure—the lightweight *ref* files—to a Git repository. This lets you track every change, rename, and reorganization of your assets without bloating the repository. You get a complete version history for your massive files without the performance penalty of storing the actual files in Git.
+
 
 ## Install
 
