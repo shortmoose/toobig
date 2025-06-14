@@ -70,7 +70,7 @@ func readConfig(path string) (TooBig, error) {
 		cfg.BlobPath == "" ||
 		cfg.RefPath == "" ||
 		cfg.DupPath == "" {
-		return cfg, fmt.Errorf("data_path, blob_path, git_path, and dup_path must be valid directories")
+		return cfg, fmt.Errorf("file_path, blob_path, ref_path, and dup_path must be valid directories")
 	}
 
 	p, err := filepath.Abs(filepath.Dir(path))

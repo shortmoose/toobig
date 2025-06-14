@@ -2,10 +2,10 @@
 
 . e2e-tests/help/setup
 
-echo abc 123 >x/data/foo
+echo abc 123 >x/files/foo
 $TB update x/update.cfg
 
-echo abc 1234 >x/data/boo
+echo abc 1234 >x/files/boo
 $TB update x/update.cfg
 
 . e2e-tests/help/validate

@@ -16,7 +16,7 @@ while true; do
     # test $? -eq 0 && echo testing... && run_tests
     # test $? -eq 0 && echo linting... && golint ./...
 
-    test $? -eq 0 && echo e2e-test... && ./test "$GREP"
+    test $? -eq 0 && echo e2e-test... && time ./test "$GREP"
 
     test $? -ne 0 && COLOR="$RED"
     if [ "$COLOR" == "$GREEN" ]; then

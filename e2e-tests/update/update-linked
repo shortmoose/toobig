@@ -2,9 +2,9 @@
 
 . e2e-tests/help/setup
 
-echo abc 123 >x/data/boo
-echo abc 123 >x/data/foo
-ln x/data/foo x/data/aoo
+echo abc 123 >x/files/boo
+echo abc 123 >x/files/foo
+ln x/files/foo x/files/aoo
 
 $TB update x/update.cfg
 

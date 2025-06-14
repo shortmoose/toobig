@@ -26,11 +26,11 @@ TB=./toobig
 rm -fr x
 
 mkdir x
-mkdir x/{data,data2,blobs,blobs2,refs,refs2,dup}
+mkdir x/{files,files2,blobs,blobs2,refs,refs2,dup}
 
 cat <<EOF >x/update.cfg
 {
-"file_path": "data",
+"file_path": "files",
 "ref_path": "refs",
 "blob_path": "blobs",
 "dup_path": "dup"

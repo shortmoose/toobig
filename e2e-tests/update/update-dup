@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# If the same file is duplicated in data, make sure it is handled properly
+# If a file is duplicated, make sure it is handled properly
 # and that the dup ends up in the dup directory.
 
 . e2e-tests/help/setup
 
-mkdir x/data/a
-echo abc 123 >x/data/a/foo
+mkdir x/files/a
+echo abc 123 >x/files/a/foo
 sleep 0.1
-echo abc 123 >x/data/a/foo.jpg
+echo abc 123 >x/files/a/foo.jpg
 
 $TB update x/update.cfg
 
