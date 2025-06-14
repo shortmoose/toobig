@@ -38,7 +38,7 @@ Git is powerful, but struggles with large binary files. TooBig allows you to com
 
 ### Data Deduplication
 
-TODO: Need words here...
+*TODO:* Need words here...
 If you have the same file multiple times this will
 store only one blob to represent all of those original files.
 
@@ -50,16 +50,20 @@ go install github.com/shortmoose/toobig[@version]
 
 ## Docs
 
-### toobig update <repo.yaml>
+### toobig update <repo.cfg>
 
-Converts a set of files into a matching set of metadata files and a hardlink to its SHA256.
+Converts a set of files into a matching set of refs and blobs.
 
-### toobig restore <repo.yaml>
+### toobig restore <repo.cfg>
 
-Converts a set of metadata and SHA256 files into the original set of files.
+Converts a set of refs and blobs into a matching set of files.
 
-### toobig fsck <repo.yaml>
+### toobig status <repo.cfg>
 
-Verifies the data integrity of a set of files, metadata files, and SHA256s to verify everything is consistent.
+Which files need to be updated. (Basically a dry-run for `toobig update`.)
 
-The -d \<dir\> doesn't use a repo.yaml file but instead just treats the directory as a blob directory to be verified.
+### toobig fsck <repo.cfg>
+
+Verifies the integrity of the refs and blobs.
+
+*TODO:* The -d \<dir\> doesn't use a repo.cfg file but instead just treats the directory as a blob directory to be verified.
