@@ -4,7 +4,7 @@
 
 echo abc 123 >x/files/foo
 echo abc 124 >x/files/foo.jpg
-$TB update x/update.cfg
+$TB update $CFG
 
 echo abc 124 >x/files/extra
-run_and_verify 1 status x/update.cfg
+run_and_verify 1 status $CFG

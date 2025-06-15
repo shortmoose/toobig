@@ -9,7 +9,7 @@ mkdir x/files/a
 echo abc 123 >x/files/a/foo
 echo abc 123 >x/files/a/foo.jpg
 
-$TB update x/update.cfg
+$TB update $CFG
 
 diff x/refs/a/foo x/refs/a/foo.jpg
 

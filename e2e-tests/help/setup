@@ -28,7 +28,8 @@ rm -fr x
 mkdir x
 mkdir x/{files,files2,blobs,blobs2,refs,refs2,dup}
 
-cat <<EOF >x/update.cfg
+CFG="x/update.cfg"
+cat <<EOF >$CFG
 {
 "file_path": "files",
 "ref_path": "refs",

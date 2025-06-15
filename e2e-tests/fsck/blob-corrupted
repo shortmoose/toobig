@@ -4,10 +4,10 @@
 
 echo "abc 123" >x/files/foo
 echo "abc 124" >x/files/foo.jpg
-$TB update x/update.cfg
+$TB update $CFG
 
 # Create a blob that doesn't match it's name
 mv x/blobs/79cec447bf708b719ce9fe5a2eb9921393921542d65bbb81ff113d908b56419a \
     x/blobs/79cec447bf708b719ce9fe5a2eb9921393921542d65bbb81ff113d908b56419b
 
-run_and_verify 1 fsck x/update.cfg
+run_and_verify 10 fsck $CFG

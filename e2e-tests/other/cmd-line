@@ -1,0 +1,12 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+# Bad command gives an exit code of 3
+run_and_verify 3 updat $CFG
+
+# This is also a bad command. Although the output looks like help.
+run_and_verify 3 update
+
+# Output will be the same as above, but -h means it was expected.
+run_and_verify 0 update -h
