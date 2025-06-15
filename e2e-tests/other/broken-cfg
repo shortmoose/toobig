@@ -1,0 +1,19 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+# This config is very dangerous, make sure this doesn't work.
+cat <<EOF >$CFG
+{
+"file_path": "files",
+"ref_path": "files",
+"blob_path": "blobs",
+"dup_path": "dup"
+}
+EOF
+
+echo abc 123 >x/files/foo
+echo abc 124 >x/files/foo.jpg
+run_and_verify 2 update $CFG
+# TODO, this crashes which is certainly better than working, but it would
+# be good if it gave the user a better understanding of why it crashed.
