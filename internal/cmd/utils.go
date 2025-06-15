@@ -12,16 +12,16 @@ import (
 	"github.com/shortmoose/toobig/internal/config"
 )
 
-// Validate that all three files (orig, meta, and hash) fully match each other.
+// Validate that all three files (file, ref, and blob) fully match each other.
 func verifyMeta(ctx *base.Context, filename string) (error, error) {
-	// Verify we have file metadata.
+	// Verify we have the file ref.
 	meta, err := config.ReadFileMeta(filepath.Join(ctx.RefPath, filename))
 	if err != nil {
 		e, _ := err.(*os.PathError)
 		if e.Err == syscall.ENOENT {
-			return fmt.Errorf("meta doesn't exist"), nil
+			return fmt.Errorf("ref doesn't exist"), nil
 		}
-		return nil, fmt.Errorf("reading file metadata: %w", err)
+		return nil, fmt.Errorf("reading ref: %w", err)
 	}
 
 	// Verify timestamps match.
@@ -73,7 +73,7 @@ func updateMeta(ctx *base.Context, filename string) error {
 
 	err = writeFileMeta(ctx, filename, hash)
 	if err != nil {
-		return fmt.Errorf("writing file metadata: %w", err)
+		return fmt.Errorf("writing ref: %w", err)
 	}
 
 	return nil
@@ -97,7 +97,7 @@ func writeFileMeta(ctx *base.Context, filename, sha256 string) error {
 
 	err = config.WriteFileMeta(ctx.RefPath+"/"+filename, fm)
 	if err != nil {
-		return fmt.Errorf("writing file metadata: %w", err)
+		return fmt.Errorf("writing ref: %w", err)
 	}
 
 	return nil

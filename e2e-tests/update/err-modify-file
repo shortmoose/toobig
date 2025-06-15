@@ -4,8 +4,8 @@
 
 echo abc 123 >x/files/foo
 
-$TB update x/update.cfg
+$TB update $CFG
 
 echo abc 123 >>x/files/foo
 
-run_and_verify 1 update x/update.cfg
+run_and_verify 1 update $CFG

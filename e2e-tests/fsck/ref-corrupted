@@ -4,9 +4,9 @@
 
 echo abc 123 >x/files/foo
 echo abc 124 >x/files/foo.jpg
-$TB update x/update.cfg
+$TB update $CFG
 
 # This isn't a valid ref file.
 echo "abc 124" >>x/refs/corrupt.jpg
 
-run_and_verify 1 fsck x/update.cfg
+run_and_verify 10 fsck $CFG
