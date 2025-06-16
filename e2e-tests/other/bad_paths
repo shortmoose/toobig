@@ -1,0 +1,46 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo abc 123 >x/files/foo
+
+cat <<EOF >$CFG
+{
+"file_path": "fil",
+"ref_path": "refs",
+"blob_path": "blobs",
+"dup_path": "dup"
+}
+EOF
+cat $CFG
+run_and_verify 1 update $CFG
+
+cat <<EOF >$CFG
+{
+"file_path": "files",
+"ref_path": "update.cfg",
+"blob_path": "blobs",
+"dup_path": "dup"
+}
+EOF
+run_and_verify 1 update $CFG
+
+cat <<EOF >$CFG
+{
+"file_path": "files",
+"ref_path": "refs",
+"blob_path": "blo",
+"dup_path": "dup"
+}
+EOF
+run_and_verify 1 update $CFG
+
+cat <<EOF >$CFG
+{
+"file_path": "files",
+"ref_path": "refs",
+"blob_path": "blobs",
+"dup_path": "dupp"
+}
+EOF
+run_and_verify 1 update $CFG
