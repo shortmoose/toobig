@@ -34,7 +34,6 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 	ctx.Command = cd.Name
 	ctx.ConfigPath = args[0]
 
-	ctx.DryRun = cd.Bool("dry-run")
 	ctx.Verbose = cd.Bool("verbose")
 
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
@@ -87,13 +86,6 @@ func main() {
 				Aliases: []string{"v"},
 				Value:   false,
 			},
-			/*
-				&cli.BoolFlag{
-					Name:  "dry-run",
-					Value: false,
-					Usage: "Usage ...",
-				},
-			*/
 		},
 		Commands: []*cli.Command{
 			{
