@@ -14,10 +14,6 @@ type TooBig struct {
 	BlobPath string `json:"blob_path"`
 	RefPath  string `json:"ref_path"`
 	DupPath  string `json:"dup_path"`
-
-	// Deprecated...
-	GitRepoPath string `json:"git_path,omitempty"`
-	DataPath    string `json:"data_path,omitempty"`
 }
 
 func ReadConfig(path string) (TooBig, error) {
@@ -46,24 +42,6 @@ func readConfig(path string) (TooBig, error) {
 	err = json.Unmarshal(byteValue, &cfg)
 	if err != nil {
 		return cfg, err
-	}
-
-	if cfg.GitRepoPath != "" {
-		if cfg.RefPath == "" {
-			fmt.Fprintf(os.Stderr, "Config file: git_path has been *DEPRECATED* in favor of ref_path\n")
-			cfg.RefPath = cfg.GitRepoPath
-		} else {
-			return cfg, fmt.Errorf("can't use both git and ref_path, remove git_path and double check config")
-		}
-	}
-
-	if cfg.DataPath != "" {
-		if cfg.FilePath == "" {
-			fmt.Fprintf(os.Stderr, "Config file: data_path has been *DEPRECATED* in favor of file_path\n")
-			cfg.FilePath = cfg.DataPath
-		} else {
-			return cfg, fmt.Errorf("can't use both data and file_path, remove data_path and double check config")
-		}
 	}
 
 	if cfg.FilePath == "" ||
