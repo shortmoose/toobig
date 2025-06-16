@@ -37,7 +37,6 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 	ctx.DryRun = cd.Bool("dry-run")
 	ctx.Verbose = cd.Bool("verbose")
 
-	// TODO: Validate the configuration.
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
 		return err
