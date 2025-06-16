@@ -28,7 +28,7 @@ func createTempFile(t *testing.T, content string) string {
 
 func TestReadConfig_FileNotFound(t *testing.T) {
 	tmpFile := "nonexistent_file.json"
-	_, err := ReadConfig(tmpFile)
+	_, err := readConfig(tmpFile)
 	if err == nil {
 		t.Fatalf("Expected error for missing file, got nil")
 	}
@@ -42,7 +42,7 @@ func TestReadConfig_InvalidJSON(t *testing.T) {
 	tmpFile := createTempFile(t, `{"name": "test", "size": }`)
 	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
-	_, err := ReadConfig(tmpFile)
+	_, err := readConfig(tmpFile)
 	if err == nil {
 		t.Fatalf("Expected JSON parse error, got nil")
 	}
@@ -56,7 +56,7 @@ func TestReadConfig_EmptyFile(t *testing.T) {
 	tmpFile := createTempFile(t, ``)
 	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
-	_, err := ReadConfig(tmpFile)
+	_, err := readConfig(tmpFile)
 	if err == nil {
 		t.Fatalf("Expected error for empty file, got nil")
 	}
@@ -73,7 +73,7 @@ func TestReadConfig_InvalidConfig(t *testing.T) {
 	"dup_path": "z" }`)
 	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
-	_, err := ReadConfig(tmpFile)
+	_, err := readConfig(tmpFile)
 	if err == nil {
 		t.Fatalf("Expected configuration to be invalid, blob_path is missing.")
 	}
@@ -87,7 +87,7 @@ func TestReadConfig_Success(t *testing.T) {
 	"dup_path": "z" }`)
 	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
-	_, err := ReadConfig(tmpFile)
+	_, err := readConfig(tmpFile)
 	if err != nil {
 		t.Fatalf("Configuration should be valid: %v", err)
 	}

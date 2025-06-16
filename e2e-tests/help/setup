@@ -1,10 +1,17 @@
 #!/bin/bash
 
-set -e -x
+set -e
 
 warn() {
     echo "$1"
     exit 1
+}
+
+# A comment... but the comment ends up in the script output.
+X##() {
+    PURPLE='\033[0;36m'
+    NC='\033[0m' # No Color
+    echo -e "$PURPLE$1$NC"
 }
 
 # Normally we use this to verify we are getting an exit code of 1
@@ -16,7 +23,9 @@ run_and_verify() {
     $TB "$@" || exit_code=$?
 
     if [ $exit_code -ne $expected ]; then
-        echo "Test failed with error code: $exit_code, expected $expected."
+        RED='\033[0;31m'
+        NC='\033[0m' # No Color
+        echo -e "${RED}Test failed with error code: $exit_code, expected $expected.$NC"
         exit 1
     fi
 }

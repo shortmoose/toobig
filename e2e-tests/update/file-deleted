@@ -1,16 +1,11 @@
 #!/bin/bash
-# Verify that if a files file gets deleted that the matching
-# git repo file is also deleted.
 
 . e2e-tests/help/setup
 
 echo abc 123 >x/files/foo
-echo abc 124 >x/files/foo.jpg
+run_and_verify 0 update $CFG
+if [ ! -f x/refs/foo ]; then exit 1; fi
 
-$TB update $CFG
-
-rm -f files/foo.jpg
-
-$TB update $CFG
-
-. e2e-tests/help/validate
+rm -f x/files/foo
+run_and_verify 0 update $CFG
+if [ -f x/refs/foo ]; then exit 1; fi

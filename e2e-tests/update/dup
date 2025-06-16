@@ -9,12 +9,9 @@ mkdir x/files/a
 echo abc 123 >x/files/a/foo
 echo abc 123 >x/files/a/foo.jpg
 
-$TB update $CFG
+run_and_verify 0 update $CFG
 
 diff x/refs/a/foo x/refs/a/foo.jpg
-
-diff x/dup/a-foo.jpg - <<EOF
-abc 123
-EOF
+diff x/dup/a-foo.jpg x/files/a/foo
 
 . e2e-tests/help/validate

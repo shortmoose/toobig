@@ -21,7 +21,21 @@ func ReadConfig(path string) (TooBig, error) {
 	if err != nil {
 		return cfg, fmt.Errorf("reading config file %s: %w", path, err)
 	}
-	return cfg, err
+
+	if !is_dir(cfg.FilePath) {
+		return cfg, fmt.Errorf("file_path, %s, is not a directory", cfg.FilePath)
+	}
+	if !is_dir(cfg.BlobPath) {
+		return cfg, fmt.Errorf("blob_path, %s, is not a directory", cfg.BlobPath)
+	}
+	if !is_dir(cfg.RefPath) {
+		return cfg, fmt.Errorf("ref_path, %s, is not a directory", cfg.RefPath)
+	}
+	if !is_dir(cfg.DupPath) {
+		return cfg, fmt.Errorf("dup_path, %s, is not a directory", cfg.DupPath)
+	}
+
+	return cfg, nil
 }
 
 // ReadConfig reads and deserializes TooBig from a file.
@@ -76,8 +90,21 @@ func readConfig(path string) (TooBig, error) {
 	return cfg, nil
 }
 
+func is_dir(dir string) bool {
+	fileInfo, err := os.Stat(dir)
+	if err != nil || !fileInfo.IsDir() {
+		return false
+	}
+
+	return true
+}
+
 func WriteExampleConfig() {
 	var cfg TooBig
+	cfg.FilePath = "files"
+	cfg.BlobPath = "blobs"
+	cfg.RefPath = "refs"
+	cfg.DupPath = "dups"
 
 	out, err := json.MarshalIndent(cfg, "", " ")
 	if err != nil {

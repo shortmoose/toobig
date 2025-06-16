@@ -60,7 +60,6 @@ func verifyMeta(ctx *base.Context, filename string) (error, error) {
 func updateMeta(ctx *base.Context, filename string) error {
 	// TODO: For some situations (older format repos) we should use
 	// meta.Sha256 instead of re-hashing.
-	fmt.Printf("hashing... ")
 	hash, err := base.GetSha256(filename)
 	if err != nil {
 		return fmt.Errorf("getting sha256: %w", err)

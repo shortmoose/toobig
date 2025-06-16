@@ -14,15 +14,6 @@ import (
 // This is ugly, not sure how to get the parent.
 type do func(ctx *base.Context) error
 
-func is_dir(dir string) bool {
-	fileInfo, err := os.Stat(dir)
-	if err != nil || !fileInfo.IsDir() {
-		return false
-	}
-
-	return true
-}
-
 func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 	args := cd.Args().Slice()
 	if len(args) != 1 {
@@ -38,26 +29,10 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
-		return err
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		os.Exit(11)
 	}
 	ctx.TooBig = cfg
-
-	if !is_dir(cfg.FilePath) {
-		fmt.Println("Error: file_path", cfg.FilePath, "is not a directory.")
-		os.Exit(1)
-	}
-	if !is_dir(cfg.BlobPath) {
-		fmt.Println("Error: blob_path", cfg.BlobPath, "is not a directory.")
-		os.Exit(1)
-	}
-	if !is_dir(cfg.RefPath) {
-		fmt.Println("Error: ref_path", cfg.RefPath, "is not a directory.")
-		os.Exit(1)
-	}
-	if !is_dir(cfg.DupPath) {
-		fmt.Println("Error: dup_path", cfg.DupPath, "is not a directory.")
-		os.Exit(1)
-	}
 
 	return fn(&ctx)
 }
@@ -136,7 +111,7 @@ func main() {
 
 	err := app.Run(context.Background(), os.Args)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed: %s\n", err)
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 
 		os.Exit(1)
 	}
