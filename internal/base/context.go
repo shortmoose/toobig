@@ -11,6 +11,4 @@ type Context struct {
 	config.TooBig
 
 	Verbose bool
-
-	DryRun bool
 }
