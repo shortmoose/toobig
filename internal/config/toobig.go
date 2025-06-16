@@ -23,16 +23,16 @@ func ReadConfig(path string) (TooBig, error) {
 	}
 
 	if !is_dir(cfg.FilePath) {
-		return cfg, fmt.Errorf("file_path, %s, is not a directory.", cfg.FilePath)
+		return cfg, fmt.Errorf("file_path, %s, is not a directory", cfg.FilePath)
 	}
 	if !is_dir(cfg.BlobPath) {
-		return cfg, fmt.Errorf("blob_path, %s, is not a directory.", cfg.BlobPath)
+		return cfg, fmt.Errorf("blob_path, %s, is not a directory", cfg.BlobPath)
 	}
 	if !is_dir(cfg.RefPath) {
-		return cfg, fmt.Errorf("ref_path, %s, is not a directory.", cfg.RefPath)
+		return cfg, fmt.Errorf("ref_path, %s, is not a directory", cfg.RefPath)
 	}
 	if !is_dir(cfg.DupPath) {
-		return cfg, fmt.Errorf("dup_path, %s, is not a directory.", cfg.DupPath)
+		return cfg, fmt.Errorf("dup_path, %s, is not a directory", cfg.DupPath)
 	}
 
 	return cfg, nil
