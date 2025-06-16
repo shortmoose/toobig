@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/shortmoose/toobig/internal/base"
 	"github.com/shortmoose/toobig/internal/config"
@@ -18,14 +19,27 @@ func Fsck(ctx *base.Context) error {
 
 	// ########
 	fmt.Println("\nValidating blobs:")
-	curr, cnt, cnt_e := "", 0, 0
+	curr, cnt, cnt_e := "/", 0, 0
+	start := time.Now()
+	waiting := true
+
 	err := base.ChdirWalk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
 		filename := filepath.Base(path)
 
 		// Display a progress bar (sort of).
-		if !ctx.Verbose && curr != filename[:1] {
-			curr = filename[:1]
-			fmt.Printf("%s...", curr)
+		if !ctx.Verbose {
+			if len(filename) > len(curr) && curr != filename[:len(curr)] {
+				curr = filename[:len(curr)]
+				fmt.Printf("%s..", curr)
+			}
+
+			// Increase granularity if this is going to take a long time.
+			if waiting && time.Since(start).Seconds() > 100 {
+				waiting = false
+				if curr == "0" {
+					curr = "00"
+				}
+			}
 		}
 
 		sha, er := base.GetSha256(path)
