@@ -70,7 +70,7 @@ func Fsck(ctx *base.Context) error {
 		fmt.Println("")
 	}
 	if cnt_e != 0 {
-		fmt.Fprintf(os.Stderr, "Fsck failed: %d blobs validated, %d errors", cnt, cnt_e)
+		fmt.Fprintf(os.Stderr, "Fsck failed: %d blobs validated, %d errors\n", cnt, cnt_e)
 		os.Exit(10)
 	}
 	fmt.Printf("%d blobs validated, %d errors.\n", cnt, cnt_e)
@@ -107,7 +107,7 @@ func Fsck(ctx *base.Context) error {
 	}
 
 	if cnt_e != 0 {
-		fmt.Fprintf(os.Stderr, "Fsck failed: %d refs validated, %d errors", cnt, cnt_e)
+		fmt.Fprintf(os.Stderr, "Fsck failed: %d refs validated, %d errors\n", cnt, cnt_e)
 		os.Exit(10)
 	}
 	fmt.Printf("%d refs validated, %d errors.\n", cnt, cnt_e)

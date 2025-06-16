@@ -2,8 +2,6 @@
 
 . e2e-tests/help/setup
 
-echo abc 123 >x/files/foo
-
 cat <<EOF >$CFG
 {
 "file_path": "fil",
@@ -13,7 +11,7 @@ cat <<EOF >$CFG
 }
 EOF
 cat $CFG
-run_and_verify 1 update $CFG
+run_and_verify 11 update $CFG
 
 cat <<EOF >$CFG
 {
@@ -23,7 +21,7 @@ cat <<EOF >$CFG
 "dup_path": "dup"
 }
 EOF
-run_and_verify 1 update $CFG
+run_and_verify 11 update $CFG
 
 cat <<EOF >$CFG
 {
@@ -33,7 +31,7 @@ cat <<EOF >$CFG
 "dup_path": "dup"
 }
 EOF
-run_and_verify 1 update $CFG
+run_and_verify 11 update $CFG
 
 cat <<EOF >$CFG
 {
@@ -43,4 +41,4 @@ cat <<EOF >$CFG
 "dup_path": "dupp"
 }
 EOF
-run_and_verify 1 update $CFG
+run_and_verify 11 update $CFG

@@ -5,17 +5,13 @@
 echo abc 123 >x/files/boo
 echo abc 123 >x/files/foo
 ln x/files/foo x/files/aoo
+run_and_verify 0 update $CFG
 
-$TB update $CFG
-
-cat <<EOF >x/tmp
+# Validate the set of files that was moved to the dup directory.
+cat <<EOF | diff <(ls x/dup) -
 boo
 EOF
 
-/bin/ls x/dup | diff x/tmp -
-
-diff x/dup/boo - <<EOF
-abc 123
-EOF
+echo "abc 123" | diff x/dup/boo -
 
 . e2e-tests/help/validate

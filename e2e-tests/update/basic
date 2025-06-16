@@ -3,9 +3,9 @@
 . e2e-tests/help/setup
 
 echo abc 123 >x/files/foo
-$TB update $CFG
+run_and_verify 0 update $CFG
 
 echo abc 1234 >x/files/boo
-$TB update $CFG
+run_and_verify 0 update $CFG
 
 . e2e-tests/help/validate
