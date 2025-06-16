@@ -10,6 +10,8 @@
 
 10+ - These are what we will be using for specific exit codes.
 
-10 - status found changes needing update, fsck found problems
+10 - status found changes needing update, fsck found problems.
+
+11 - problem found with the toobig config file.
 
 100+ - We aren't using anything up here.
