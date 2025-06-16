@@ -37,7 +37,7 @@ func Fsck(ctx *base.Context) error {
 			if waiting && time.Since(start).Seconds() > 100 {
 				waiting = false
 				if curr == "0" {
-					curr = "00"
+					curr = "//"
 				}
 			}
 		}
