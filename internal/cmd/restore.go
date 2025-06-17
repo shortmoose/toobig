@@ -15,41 +15,50 @@ import (
 func Restore(ctx *base.Context) error {
 	fmt.Println("Performing restore")
 
-	fmt.Printf("Restoring files:\n")
-	cnt := 0
-	restored := 0
+	fmt.Println("\nRestoring files:")
+	cnt, cnt_e := 0, 0
 	err := base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		// Ignore the config file.
-		cnt += 1
+		// IGNORE IGNORE IGNORE
 
-		sha, er := config.ReadFileMeta(path)
+		ref, er := config.ReadFileMeta(path)
 		if er != nil {
-			return fmt.Errorf("ReadFileMeta failed %s: %w", path, er)
+			fmt.Fprintf(os.Stderr, "ReadFileMeta failed %s: %v", path, er)
+			cnt_e += 1
+			return nil
 		}
 
-		hashFile := filepath.Join(ctx.BlobPath, sha.Sha256)
-
-		e, er := base.FileExists(hashFile)
+		blob_path := filepath.Join(ctx.BlobPath, ref.Sha256)
+		// What is this?
+		e, er := base.FileExists(blob_path)
 		if !e || er != nil {
-			return fmt.Errorf("file not found %s: %w", hashFile, er)
+			fmt.Fprintf(os.Stderr, "file not found %s: %v", blob_path, er)
+			cnt_e += 1
+			return nil
 		}
 
-		dataPath := filepath.Join(ctx.FilePath, path)
-		d := filepath.Dir(dataPath)
+		files_path := filepath.Join(ctx.FilePath, path)
+		d := filepath.Dir(files_path)
 		er = os.MkdirAll(d, 0700)
 		if er != nil {
-			return fmt.Errorf("unable to create directory: %s", dataPath)
+			fmt.Fprintf(os.Stderr, "unable to create directory: %s", files_path)
+			cnt_e += 1
+			return nil
 		}
 
-		er = os.Link(hashFile, dataPath)
+		er = os.Link(blob_path, files_path)
 		if er != nil {
 			e, _ := er.(*os.LinkError)
 			if e.Err != syscall.EEXIST {
-				return fmt.Errorf("file not found %s:%w", hashFile, e)
+				fmt.Fprintf(os.Stderr, "file not found %s:%v", blob_path, e)
+				cnt_e += 1
+				return nil
 			}
 			return nil
 		}
-		restored += 1
+
+		cnt += 1
+		// Verbose??
 		fmt.Printf("%s... LINKED\n", path)
 
 		return nil
@@ -57,7 +66,8 @@ func Restore(ctx *base.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%d files checked, %d restored.\n\n", cnt, restored)
+	fmt.Printf("%d files restored, %d errors.\n", cnt, cnt_e)
 
+	fmt.Println("\nRestore complete.")
 	return nil
 }
