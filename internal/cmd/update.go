@@ -85,9 +85,10 @@ func Update(ctx *base.Context) error {
 
 	fmt.Println("\nUpdate complete.")
 
-	// TODO: How many hashes are no longer needed? Space savings if we delete?
+	// TODO: How many blobs are no longer needed? Space savings if we delete?
 	// TODO: Are there duplicate files?
 
+	// TODO:v3 Fix this verbose hack
 	if ctx.Verbose && (cnt_u > 0 || u) {
 		os.Exit(13)
 	}

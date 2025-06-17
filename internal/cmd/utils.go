@@ -106,15 +106,6 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 	// Create a hard link.
 	// - If we are already linked is it the correct sha file?
 	// - If we aren't already linked, then make it so.
-	nlink, err := countHardLinks(filename)
-	if err != nil {
-		return fmt.Errorf("counting hard links: %w", err)
-	}
-
-	if nlink == 1 {
-		return createHardLink(ctx, filename, sha256)
-	}
-
 	inode, err := base.GetInode(filename)
 	if err != nil {
 		return fmt.Errorf("get inode of file: %w", err)
@@ -195,23 +186,4 @@ func findInodeHash(ctx *base.Context, inode uint64) (string, error) {
 	}
 
 	return hash, nil
-}
-
-func countHardLinks(filename string) (uint64, error) {
-	fi, err := os.Stat(filename)
-	if err != nil {
-		return 0, fmt.Errorf("stat file: %w", err)
-	}
-	nlink := uint64(0)
-	if sys := fi.Sys(); sys != nil {
-		if stat, ok := sys.(*syscall.Stat_t); ok {
-			nlink = uint64(stat.Nlink)
-		}
-	}
-
-	if nlink == 0 {
-		return 0, fmt.Errorf("impossible, how does a file exist with a link count of zero?")
-	}
-
-	return nlink, nil
 }
