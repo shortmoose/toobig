@@ -11,4 +11,5 @@ type Context struct {
 	config.TooBig
 
 	Verbose bool
+	UpdateIsError bool
 }

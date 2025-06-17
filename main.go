@@ -26,6 +26,7 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 	ctx.ConfigPath = args[0]
 
 	ctx.Verbose = cd.Bool("verbose")
+	ctx.UpdateIsError = cd.Bool("update-is-error")
 
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
@@ -59,6 +60,10 @@ func main() {
 			&cli.BoolFlag{
 				Name:    "verbose",
 				Aliases: []string{"v"},
+				Value:   false,
+			},
+			&cli.BoolFlag{
+				Name:    "update-is-error",
 				Value:   false,
 			},
 		},

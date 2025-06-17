@@ -71,7 +71,7 @@ func Status(ctx *base.Context) error {
 	fmt.Printf("%d refs validated, %d errors.\n", cnt, cnt_e)
 
 	fmt.Println("\nStatus complete.")
-	if ctx.Verbose && (cnt_u > 0 || u) {
+	if ctx.UpdateIsError && (cnt_u > 0 || u) {
 		os.Exit(10)
 	}
 	return nil

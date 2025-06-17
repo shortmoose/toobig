@@ -20,7 +20,7 @@ run_and_verify() {
     expected=$1
     exit_code=0
     shift
-    $TB "$@" || exit_code=$?
+    $TB --update-is-error "$@" || exit_code=$?
 
     if [ $exit_code -ne $expected ]; then
         RED='\033[0;31m'

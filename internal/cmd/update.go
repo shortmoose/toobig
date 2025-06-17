@@ -88,8 +88,7 @@ func Update(ctx *base.Context) error {
 	// TODO: How many blobs are no longer needed? Space savings if we delete?
 	// TODO: Are there duplicate files?
 
-	// TODO:v3 Fix this verbose hack
-	if ctx.Verbose && (cnt_u > 0 || u) {
+	if ctx.UpdateIsError && (cnt_u > 0 || u) {
 		os.Exit(10)
 	}
 	return nil
