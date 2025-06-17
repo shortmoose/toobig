@@ -1,0 +1,18 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo "abc 123" >x/files/boo
+echo "abc 123" >x/files/foo
+ln x/files/foo x/files/aoo
+
+run_and_verify 13 -v update $CFG
+
+set -x
+cat <<EOF | diff <(ls x/dup) -
+boo
+EOF
+diff x/dup/boo x/files/boo
+set +x
+
+. e2e-tests/help/validate

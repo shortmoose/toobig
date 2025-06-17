@@ -1,0 +1,16 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo abc 123 >x/files/foo
+echo abc 124 >x/files/foo.jpg
+$TB update $CFG
+
+X## "Create duplicate ref"
+cp x/refs/foo x/refs/cp_of_foo
+run_and_verify 13 -v status $CFG
+run_and_verify 13 -v update $CFG
+if [ -f x/refs/cp_of_foo ]; then
+    echo "This file shouldn't exist"
+    exit 1
+fi

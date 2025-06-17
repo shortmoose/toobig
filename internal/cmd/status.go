@@ -13,20 +13,21 @@ func Status(ctx *base.Context) error {
 
 	// ########
 	fmt.Println("\nValidating files:")
-	cnt, cnt_e := 0, 0
+	cnt, cnt_u, cnt_e := 0, 0, 0
 	err := base.ChdirWalk(ctx.FilePath, func(path string, info fs.DirEntry) error {
+		cnt += 1
 		ix, er := verifyMeta(ctx, path)
 		if er != nil {
-			ix = er
-		}
-
-		if ix != nil {
-			fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, ix)
 			cnt_e += 1
+			fmt.Fprintf(os.Stderr, "%s: %v\n", path, er)
+			return nil
+		}
+		if ix == nil {
 			return nil
 		}
 
-		cnt += 1
+		cnt_u += 1
+		fmt.Printf("%s: %v\n", path, ix)
 		return nil
 	})
 	if err != nil {
@@ -34,32 +35,29 @@ func Status(ctx *base.Context) error {
 	}
 
 	if cnt_e != 0 {
-		return fmt.Errorf("%d files validated, %d errors", cnt, cnt_e)
+		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors", cnt, cnt_u, cnt_e)
+		os.Exit(14)
 	}
-	fmt.Printf("%d files validated, %d errors.\n", cnt, cnt_e)
+	u := (cnt_u > 0)
+	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
 
 	// ########
-	fmt.Println("\nValidating refs:")
-	cnt, cnt_e = 0, 0
+	fmt.Printf("\nValidating refs:\n")
+	cnt, cnt_u, cnt_e = 0, 0, 0
 	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
+		cnt += 1
 		exists, er := base.FileExists(ctx.FilePath + "/" + path)
 		if er != nil {
+			cnt_e += 1
 			fmt.Fprintf(os.Stderr, "Ref '%s' err: %v\n", path, er)
-			cnt_e += 1
+			return nil
+		}
+		if exists {
 			return nil
 		}
 
-		if !exists {
-			fmt.Fprintf(os.Stderr, "Stale ref '%s' (will be deleted on update)\n", path)
-			cnt_e += 1
-			return nil
-		}
-
-		if ctx.Verbose {
-			fmt.Printf("Ref '%s' matches file.\n", path)
-		}
-
-		cnt += 1
+		cnt_u += 1
+		fmt.Printf("Ref:%s to be deleted.\n", path)
 		return nil
 	})
 	if err != nil {
@@ -67,10 +65,14 @@ func Status(ctx *base.Context) error {
 	}
 
 	if cnt_e != 0 {
-		return fmt.Errorf("%d refs validated, %d errors", cnt, cnt_e)
+		fmt.Fprintf(os.Stderr, "%d refs validated, %d errors", cnt, cnt_e)
+		os.Exit(14)
 	}
 	fmt.Printf("%d refs validated, %d errors.\n", cnt, cnt_e)
 
-	fmt.Printf("Status complete.\n")
+	fmt.Println("\nStatus complete.")
+	if ctx.Verbose && (cnt_u > 0 || u) {
+		os.Exit(13)
+	}
 	return nil
 }

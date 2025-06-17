@@ -117,7 +117,7 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 
 	inode, err := base.GetInode(filename)
 	if err != nil {
-		return fmt.Errorf("get inode of data file: %w", err)
+		return fmt.Errorf("get inode of file: %w", err)
 	}
 
 	inode2, err := base.GetInode(ctx.BlobPath + "/" + sha256)
@@ -129,8 +129,8 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 		}
 	}
 
+	// Looks good.
 	if inode == inode2 {
-		fmt.Printf("link exists... ")
 		return nil
 	}
 

@@ -7,4 +7,7 @@ echo abc 124 >x/files/foo.jpg
 $TB update $CFG
 
 echo abc 124 >x/files/extra
-run_and_verify 1 status $CFG
+run_and_verify 13 -v status $CFG
+run_and_verify 13 -v update $CFG
+run_and_verify 0 fsck $CFG
+. e2e-tests/help/validate

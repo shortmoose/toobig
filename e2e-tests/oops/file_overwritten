@@ -1,0 +1,14 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo abc 123 >x/files/foo
+echo abc 124 >x/files/foo.jpg
+$TB update $CFG
+
+X## "This will corrupt the hash file"
+echo abc 125 >x/files/foo
+# TODO: Status should catch this error!
+run_and_verify 13 -v status $CFG
+run_and_verify 14 -v update $CFG
+run_and_verify 10 fsck $CFG
