@@ -6,7 +6,7 @@ echo "abc 123" >x/files/boo
 echo "abc 123" >x/files/foo
 ln x/files/foo x/files/aoo
 
-run_and_verify 10 -v update $CFG
+run_and_verify 10 update $CFG
 
 set -x
 cat <<EOF | diff <(ls x/dup) -

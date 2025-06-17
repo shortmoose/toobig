@@ -12,6 +12,6 @@ echo abc 125 >x/files/foo
 set +x
 
 # TODO:v3 Status should catch this error!
-run_and_verify 10 -v status $CFG
-run_and_verify 11 -v update $CFG
+run_and_verify 10 status $CFG
+run_and_verify 11 update $CFG
 run_and_verify 11 fsck $CFG
