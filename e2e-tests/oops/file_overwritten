@@ -7,7 +7,10 @@ echo abc 124 >x/files/foo.jpg
 $TB update $CFG
 
 X## "This will corrupt the hash file"
+set -x
 echo abc 125 >x/files/foo
+set +x
+
 # TODO: Status should catch this error!
 run_and_verify 13 -v status $CFG
 run_and_verify 14 -v update $CFG
