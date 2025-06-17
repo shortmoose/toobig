@@ -26,7 +26,6 @@ func Update(ctx *base.Context) error {
 			return nil
 		}
 
-		fmt.Printf("%s: ", path)
 		er = updateMeta(ctx, path)
 		if er != nil {
 			cnt_e += 1
@@ -42,7 +41,7 @@ func Update(ctx *base.Context) error {
 	}
 
 	if cnt_e != 0 {
-		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors", cnt, cnt_u, cnt_e)
+		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors\n", cnt, cnt_u, cnt_e)
 		os.Exit(11)
 	}
 	u := (cnt_u > 0)
@@ -74,11 +73,11 @@ func Update(ctx *base.Context) error {
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("removing files: %w", err)
+		return err
 	}
 
 	if cnt_e != 0 {
-		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors", cnt, cnt_u, cnt_e)
+		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors\n", cnt, cnt_u, cnt_e)
 		os.Exit(11)
 	}
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
