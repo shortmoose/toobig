@@ -6,12 +6,14 @@ echo abc 123 >x/files/foo
 echo abc 124 >x/files/foo.jpg
 $TB update $CFG
 
-# The blob file referenced here doesn't exist.
+X## "Create invalid ref."
+set -x
 cat <<HERE >x/refs/no-sha.jpg
 {
  "sha256": "c5d982dc040081e09cad25209fed928b334a21fb2ff34db5202178a7b1a81988",
  "unixnano": 1749858394741289104
 }
 HERE
+set +x
 
 run_and_verify 10 fsck $CFG
