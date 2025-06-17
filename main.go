@@ -42,7 +42,7 @@ func wrap0(ct context.Context, cd *cli.Command, fn do) error {
 	args := cd.Args().Slice()
 	if len(args) != 0 {
 		_ = cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
-		os.Exit(1)
+		os.Exit(3)
 	}
 
 	var ctx base.Context

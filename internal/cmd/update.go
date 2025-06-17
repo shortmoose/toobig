@@ -73,7 +73,7 @@ func Update(ctx *base.Context) error {
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("removing files: %w", err)
+		return err
 	}
 
 	if cnt_e != 0 {
