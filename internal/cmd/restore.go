@@ -19,7 +19,7 @@ func Restore(ctx *base.Context) error {
 	cnt, cnt_e := 0, 0
 	err := base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		// Ignore the config file.
-		// IGNORE IGNORE IGNORE
+		// IGNORE IGNORE IGNORE hi
 
 		ref, er := config.ReadFileMeta(path)
 		if er != nil {
