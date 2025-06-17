@@ -7,9 +7,13 @@ echo abc 124 >x/files/foo.jpg
 $TB update $CFG
 
 X## "Create duplicate ref"
+set -x
 cp x/refs/foo x/refs/cp_of_foo
+set +x
+
 run_and_verify 13 -v status $CFG
 run_and_verify 13 -v update $CFG
+# TODO: find more standard way to test.
 if [ -f x/refs/cp_of_foo ]; then
     echo "This file shouldn't exist"
     exit 1

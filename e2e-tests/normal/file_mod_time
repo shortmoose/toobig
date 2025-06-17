@@ -7,11 +7,15 @@ echo abc 124 >x/files/foo.jpg
 $TB update $CFG
 
 X## "foo was touched"
+set -x
 touch x/files/foo
+set +x
 run_and_verify 13 -v status $CFG
 run_and_verify 13 -v update $CFG
 
 X## "foo was updated into the past"
+set -x
 touch -d "2 hours ago" x/files/foo
+set +x
 run_and_verify 13 -v status $CFG
 run_and_verify 13 -v update $CFG
