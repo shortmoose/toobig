@@ -15,7 +15,7 @@ import (
 // Validate that all three files (file, ref, and blob) fully match each other.
 func verifyMeta(ctx *base.Context, filename string) (error, error) {
 	// Verify we have the file ref.
-	meta, err := config.ReadFileMeta(filepath.Join(ctx.RefPath, filename))
+	ref, err := config.ReadFileMeta(filepath.Join(ctx.RefPath, filename))
 	if err != nil {
 		e, _ := err.(*os.PathError)
 		if e.Err == syscall.ENOENT {
@@ -27,10 +27,10 @@ func verifyMeta(ctx *base.Context, filename string) (error, error) {
 	// Verify timestamps match.
 	info, err := os.Stat(filename)
 	if err != nil {
-		return nil, fmt.Errorf("stating file: %w", err)
+		return nil, fmt.Errorf("getting file info: %w", err)
 	}
 
-	if meta.UnixNano != info.ModTime().UnixNano() {
+	if ref.UnixNano != info.ModTime().UnixNano() {
 		return fmt.Errorf("file modified"), nil
 	}
 
@@ -40,37 +40,35 @@ func verifyMeta(ctx *base.Context, filename string) (error, error) {
 		return nil, fmt.Errorf("getting inode: %w", err)
 	}
 
-	inode2, err := base.GetInode(filepath.Join(ctx.BlobPath, meta.Sha256))
+	inode2, err := base.GetInode(filepath.Join(ctx.BlobPath, ref.Sha256))
 	if err != nil {
 		// If the file doesn't exist that isn't really an error.
 		e, _ := err.(*os.PathError)
 		if e.Err == syscall.ENOENT {
 			return fmt.Errorf("blob missing"), nil
 		}
-		return nil, fmt.Errorf("getting inode of hash path: %w", err)
+		return nil, fmt.Errorf("getting inode of blob path: %w", err)
 	}
 
 	if inode != inode2 {
-		return fmt.Errorf("file updated"), nil
+		return fmt.Errorf("file modified"), nil
 	}
 	return nil, nil
 }
 
 // Assume "filename" is the source of truth.
 func updateMeta(ctx *base.Context, filename string) error {
-	// TODO: For some situations (older format repos) we should use
-	// meta.Sha256 instead of re-hashing.
-	hash, err := base.GetSha256(filename)
+	sha256, err := base.GetSha256(filename)
 	if err != nil {
-		return fmt.Errorf("getting sha256: %w", err)
+		return fmt.Errorf("calculating SHA-256: %w", err)
 	}
 
-	err = createHardLinkIfNeeded(ctx, filename, hash)
+	err = createHardLinkIfNeeded(ctx, filename, sha256)
 	if err != nil {
-		return fmt.Errorf("creating hard link: %w", err)
+		return fmt.Errorf("writing blob: %w", err)
 	}
 
-	err = writeFileMeta(ctx, filename, hash)
+	err = writeFileMeta(ctx, filename, sha256)
 	if err != nil {
 		return fmt.Errorf("writing ref: %w", err)
 	}
@@ -116,7 +114,7 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 		// If the file doesn't exist that isn't really an error.
 		e, _ := err.(*os.PathError)
 		if e.Err != syscall.ENOENT {
-			return fmt.Errorf("get inode of hash path: %w", err)
+			return fmt.Errorf("get inode of blob path: %w", err)
 		}
 	}
 
@@ -132,7 +130,7 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 
 	if currLinkedFile != "" {
 		if sha256 != currLinkedFile {
-			return fmt.Errorf("corrupted hash file: %s", currLinkedFile)
+			return fmt.Errorf("corrupted blob: %s", currLinkedFile)
 		}
 		return fmt.Errorf("but... we already checked??")
 	}
@@ -149,7 +147,7 @@ func createHardLink(ctx *base.Context, filename, sha256 string) error {
 
 	e, _ := err.(*os.LinkError)
 	if e.Err != syscall.EEXIST {
-		return fmt.Errorf("link file to hash file: %w", err)
+		return fmt.Errorf("link file to blob file: %w", err)
 	}
 	fmt.Print("dup found...")
 	fmt.Printf("%s\n", filepath.Join(ctx.DupPath, strings.ReplaceAll(filename, "/", "-")))
@@ -161,7 +159,7 @@ func createHardLink(ctx *base.Context, filename, sha256 string) error {
 
 	err = os.Link(ctx.BlobPath+"/"+sha256, filename)
 	if err != nil {
-		return fmt.Errorf("link file to hash file: %w", err)
+		return fmt.Errorf("link file to blob file: %w", err)
 	}
 
 	fmt.Printf("link created... ")

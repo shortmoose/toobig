@@ -1,0 +1,30 @@
+#!/bin/bash
+
+. e2e-tests/help/setup
+
+echo "abc 123" >x/files/foo
+echo "abc 124" >x/files/foo.jpg
+$TB update $CFG
+
+X## "Update the file."
+set -x
+rm x/files/foo
+echo "abc 125" >x/files/foo
+set +x
+
+run_and_verify 10 status $CFG
+run_and_verify 10 update $CFG
+
+X## "Update the file. Make sure this works even if the timestamp didn't change."
+set -x
+# Hacky way to save the timestamp.
+touch -r x/files/foo x/files/foo.jpg
+rm x/files/foo
+echo "abc 186" >x/files/foo
+# And set the timestamp back to what it was.
+touch -r x/files/foo.jpg x/files/foo
+set +x
+
+run_and_verify 10 status $CFG
+run_and_verify 10 update $CFG
+. e2e-tests/help/validate
