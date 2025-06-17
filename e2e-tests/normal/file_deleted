@@ -13,7 +13,7 @@ set +x
 
 # TODO: Are these ifs really the best way to do this?
 if [ ! -f x/refs/foo ]; then exit 1; fi
-run_and_verify 13 -v status $CFG
-run_and_verify 13 -v update $CFG
+run_and_verify 10 -v status $CFG
+run_and_verify 10 -v update $CFG
 if [ -f x/refs/foo ]; then exit 1; fi
 . e2e-tests/help/validate

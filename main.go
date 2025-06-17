@@ -30,7 +30,7 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-		os.Exit(11)
+		os.Exit(12)
 	}
 	ctx.TooBig = cfg
 

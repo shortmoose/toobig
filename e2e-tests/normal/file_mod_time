@@ -10,12 +10,12 @@ X## "foo was touched"
 set -x
 touch x/files/foo
 set +x
-run_and_verify 13 -v status $CFG
-run_and_verify 13 -v update $CFG
+run_and_verify 10 -v status $CFG
+run_and_verify 10 -v update $CFG
 
 X## "foo was updated into the past"
 set -x
 touch -d "2 hours ago" x/files/foo
 set +x
-run_and_verify 13 -v status $CFG
-run_and_verify 13 -v update $CFG
+run_and_verify 10 -v status $CFG
+run_and_verify 10 -v update $CFG

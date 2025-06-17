@@ -43,7 +43,7 @@ func Update(ctx *base.Context) error {
 
 	if cnt_e != 0 {
 		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors", cnt, cnt_u, cnt_e)
-		os.Exit(14)
+		os.Exit(11)
 	}
 	u := (cnt_u > 0)
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
@@ -79,7 +79,7 @@ func Update(ctx *base.Context) error {
 
 	if cnt_e != 0 {
 		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors", cnt, cnt_u, cnt_e)
-		os.Exit(14)
+		os.Exit(11)
 	}
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
 
@@ -90,7 +90,7 @@ func Update(ctx *base.Context) error {
 
 	// TODO:v3 Fix this verbose hack
 	if ctx.Verbose && (cnt_u > 0 || u) {
-		os.Exit(13)
+		os.Exit(10)
 	}
 	return nil
 }
