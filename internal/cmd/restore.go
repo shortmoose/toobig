@@ -15,33 +15,32 @@ import (
 func Restore(ctx *base.Context) error {
 	fmt.Println("Performing restore")
 
+	// TODO: This shouldn't be coming from the file path anymore.
+	OutPath := ctx.FilePath
+
 	fmt.Println("\nRestoring files:")
 	cnt, cnt_e := 0, 0
 	err := base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
-		// Ignore the config file.
-		// IGNORE IGNORE IGNORE hi
-
 		ref, er := config.ReadFileMeta(path)
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "ReadFileMeta failed %s: %v", path, er)
+			fmt.Fprintf(os.Stderr, "Failed to read %s: %v\n", path, er)
 			cnt_e += 1
 			return nil
 		}
 
 		blob_path := filepath.Join(ctx.BlobPath, ref.Sha256)
-		// What is this?
 		e, er := base.FileExists(blob_path)
 		if !e || er != nil {
-			fmt.Fprintf(os.Stderr, "file not found %s: %v", blob_path, er)
+			fmt.Fprintf(os.Stderr, "Looking for %s: %v\n", blob_path, er)
 			cnt_e += 1
 			return nil
 		}
 
-		files_path := filepath.Join(ctx.FilePath, path)
+		files_path := filepath.Join(OutPath, path)
 		d := filepath.Dir(files_path)
 		er = os.MkdirAll(d, 0700)
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "unable to create directory: %s", files_path)
+			fmt.Fprintf(os.Stderr, "Failed to mkdir %s: %v\n", d, er)
 			cnt_e += 1
 			return nil
 		}
@@ -50,7 +49,7 @@ func Restore(ctx *base.Context) error {
 		if er != nil {
 			e, _ := er.(*os.LinkError)
 			if e.Err != syscall.EEXIST {
-				fmt.Fprintf(os.Stderr, "file not found %s:%v", blob_path, e)
+				fmt.Fprintf(os.Stderr, "Linking %s to %s: %v\n", files_path, blob_path, e)
 				cnt_e += 1
 				return nil
 			}

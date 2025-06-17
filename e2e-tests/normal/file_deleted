@@ -17,4 +17,3 @@ run_and_verify 10 status $CFG
 run_and_verify 10 update $CFG
 if [ -f x/refs/foo ]; then exit 1; fi
 . e2e-tests/help/validate
-exit 5
