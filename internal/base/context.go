@@ -10,6 +10,6 @@ type Context struct {
 
 	config.TooBig
 
-	Verbose bool
+	Verbose       bool
 	UpdateIsError bool
 }

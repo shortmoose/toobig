@@ -63,8 +63,8 @@ func main() {
 				Value:   false,
 			},
 			&cli.BoolFlag{
-				Name:    "update-is-error",
-				Value:   false,
+				Name:  "update-is-error",
+				Value: false,
 			},
 		},
 		Commands: []*cli.Command{
