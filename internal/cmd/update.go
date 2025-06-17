@@ -43,7 +43,7 @@ func Update(ctx *base.Context) error {
 
 	if cnt_e != 0 {
 		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors", cnt, cnt_u, cnt_e)
-		os.Exit(14)
+		os.Exit(11)
 	}
 	u := (cnt_u > 0)
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
@@ -79,7 +79,7 @@ func Update(ctx *base.Context) error {
 
 	if cnt_e != 0 {
 		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors", cnt, cnt_u, cnt_e)
-		os.Exit(14)
+		os.Exit(11)
 	}
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
 
@@ -88,9 +88,8 @@ func Update(ctx *base.Context) error {
 	// TODO: How many blobs are no longer needed? Space savings if we delete?
 	// TODO: Are there duplicate files?
 
-	// TODO:v3 Fix this verbose hack
-	if ctx.Verbose && (cnt_u > 0 || u) {
-		os.Exit(13)
+	if ctx.UpdateIsError && (cnt_u > 0 || u) {
+		os.Exit(10)
 	}
 	return nil
 }

@@ -12,4 +12,4 @@ mv x/blobs/79cec447bf708b719ce9fe5a2eb9921393921542d65bbb81ff113d908b56419a \
     x/blobs/79cec447bf708b719ce9fe5a2eb9921393921542d65bbb81ff113d908b56419b
 set +x
 
-run_and_verify 10 fsck $CFG
+run_and_verify 11 fsck $CFG

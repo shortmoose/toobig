@@ -11,4 +11,4 @@ set -x
 echo "abc 124" >>x/refs/corrupt.jpg
 set +x
 
-run_and_verify 10 fsck $CFG
+run_and_verify 11 fsck $CFG

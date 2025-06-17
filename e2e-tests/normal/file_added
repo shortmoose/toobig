@@ -11,7 +11,7 @@ set -x
 echo abc 124 >x/files/extra
 set +x
 
-run_and_verify 13 -v status $CFG
-run_and_verify 13 -v update $CFG
+run_and_verify 10 status $CFG
+run_and_verify 10 update $CFG
 run_and_verify 0 fsck $CFG
 . e2e-tests/help/validate

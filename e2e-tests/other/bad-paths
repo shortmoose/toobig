@@ -11,7 +11,7 @@ cat <<EOF >$CFG
 }
 EOF
 cat $CFG
-run_and_verify 11 update $CFG
+run_and_verify 12 update $CFG
 
 cat <<EOF >$CFG
 {
@@ -21,7 +21,7 @@ cat <<EOF >$CFG
 "dup_path": "dup"
 }
 EOF
-run_and_verify 11 update $CFG
+run_and_verify 12 update $CFG
 
 cat <<EOF >$CFG
 {
@@ -31,7 +31,7 @@ cat <<EOF >$CFG
 "dup_path": "dup"
 }
 EOF
-run_and_verify 11 update $CFG
+run_and_verify 12 update $CFG
 
 cat <<EOF >$CFG
 {
@@ -41,4 +41,4 @@ cat <<EOF >$CFG
 "dup_path": "dupp"
 }
 EOF
-run_and_verify 11 update $CFG
+run_and_verify 12 update $CFG

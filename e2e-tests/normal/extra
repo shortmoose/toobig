@@ -18,4 +18,4 @@ set -x
 cp x/refs/foo x/refs/cp_of_foo
 set +x
 run_and_verify 0 fsck $CFG
-run_and_verify 0 status $CFG
+run_and_verify 10 status $CFG

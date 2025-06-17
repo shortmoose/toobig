@@ -10,4 +10,4 @@ file_path": "fil",
 }
 EOF
 cat $CFG
-run_and_verify 11 update $CFG
+run_and_verify 12 update $CFG
