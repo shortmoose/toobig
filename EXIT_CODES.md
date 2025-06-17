@@ -14,4 +14,8 @@
 
 11 - problem found with the toobig config file.
 
+12 - status and update - files need or were updated.
+
+13 - status and update - errors that couldn't be updated.
+
 100+ - We aren't using anything up here.
