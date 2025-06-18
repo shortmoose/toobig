@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -x -e
+
+go build --cover -o . ./...
+
+./test
+
+go tool covdata textfmt -i=gocov-datafiles -o=gocov.txt
+go tool cover -html=gocov.txt -o=gocov.html
+go tool covdata func -i=gocov-datafiles

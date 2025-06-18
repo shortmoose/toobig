@@ -20,7 +20,8 @@ run_and_verify() {
     expected=$1
     exit_code=0
     shift
-    $TB --update-is-error "$@" || exit_code=$?
+    GOCOVERDIR=$PWD/gocov-datafiles \
+        $TB --update-is-error "$@" || exit_code=$?
 
     if [ $exit_code -ne $expected ]; then
         RED='\033[0;31m'
