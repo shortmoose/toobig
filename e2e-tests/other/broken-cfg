@@ -5,10 +5,10 @@
 # This config is very dangerous, make sure this doesn't work.
 cat <<EOF >$CFG
 {
-"file_path": "files",
-"ref_path": "files",
-"blob_path": "blobs",
-"dup_path": "dup"
+"file-path": "files",
+"ref-path": "files",
+"blob-path": "blobs",
+"dup-path": "dup"
 }
 EOF
 

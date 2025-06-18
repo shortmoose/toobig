@@ -3,10 +3,10 @@
 . e2e-tests/help/setup
 
 cat <<EOF >$CFG
-file_path": "fil",
-"ref_path": "refs",
-"blob_path": "blobs",
-"dup_path": "dup"
+file-path": "fil",
+"ref-path": "refs",
+"blob-path": "blobs",
+"dup-path": "dup"
 }
 EOF
 cat $CFG

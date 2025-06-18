@@ -40,9 +40,9 @@ mkdir x/{files,files2,blobs,blobs2,refs,refs2,dup}
 CFG="x/update.cfg"
 cat <<EOF >$CFG
 {
-"file_path": "files",
-"ref_path": "refs",
-"blob_path": "blobs",
-"dup_path": "dup"
+"file-path": "files",
+"ref-path": "refs",
+"blob-path": "blobs",
+"dup-path": "dup"
 }
 EOF

@@ -10,10 +10,10 @@ import (
 
 // TooBig represents a TooBig repository configuration.
 type TooBig struct {
-	FilePath string `json:"file_path"`
-	BlobPath string `json:"blob_path"`
-	RefPath  string `json:"ref_path"`
-	DupPath  string `json:"dup_path"`
+	FilePath string `json:"file-path"`
+	BlobPath string `json:"blob-path"`
+	RefPath  string `json:"ref-path"`
+	DupPath  string `json:"dup-path"`
 }
 
 func ReadConfig(path string) (TooBig, error) {
@@ -23,16 +23,16 @@ func ReadConfig(path string) (TooBig, error) {
 	}
 
 	if !is_dir(cfg.FilePath) {
-		return cfg, fmt.Errorf("file_path, %s, is not a directory", cfg.FilePath)
+		return cfg, fmt.Errorf("file-path, %s, is not a directory", cfg.FilePath)
 	}
 	if !is_dir(cfg.BlobPath) {
-		return cfg, fmt.Errorf("blob_path, %s, is not a directory", cfg.BlobPath)
+		return cfg, fmt.Errorf("blob-path, %s, is not a directory", cfg.BlobPath)
 	}
 	if !is_dir(cfg.RefPath) {
-		return cfg, fmt.Errorf("ref_path, %s, is not a directory", cfg.RefPath)
+		return cfg, fmt.Errorf("ref-path, %s, is not a directory", cfg.RefPath)
 	}
 	if !is_dir(cfg.DupPath) {
-		return cfg, fmt.Errorf("dup_path, %s, is not a directory", cfg.DupPath)
+		return cfg, fmt.Errorf("dup-path, %s, is not a directory", cfg.DupPath)
 	}
 
 	return cfg, nil
@@ -62,7 +62,7 @@ func readConfig(path string) (TooBig, error) {
 		cfg.BlobPath == "" ||
 		cfg.RefPath == "" ||
 		cfg.DupPath == "" {
-		return cfg, fmt.Errorf("file_path, blob_path, ref_path, and dup_path must be valid directories")
+		return cfg, fmt.Errorf("file-path, blob-path, ref-path, and dup-path must be valid directories")
 	}
 
 	p, err := filepath.Abs(filepath.Dir(path))
@@ -82,10 +82,10 @@ func readConfig(path string) (TooBig, error) {
 	cfg.BlobPath = join(p, cfg.BlobPath)
 	cfg.DupPath = join(p, cfg.DupPath)
 
-	fmt.Printf("  file_path: %s\n", cfg.FilePath)
-	fmt.Printf("  ref_path:  %s\n", cfg.RefPath)
-	fmt.Printf("  blob_path: %s\n", cfg.BlobPath)
-	fmt.Printf("  dup_path:  %s\n\n", cfg.DupPath)
+	fmt.Printf("  file-path: %s\n", cfg.FilePath)
+	fmt.Printf("  ref-path:  %s\n", cfg.RefPath)
+	fmt.Printf("  blob-path: %s\n", cfg.BlobPath)
+	fmt.Printf("  dup-path:  %s\n\n", cfg.DupPath)
 
 	return cfg, nil
 }
