@@ -68,23 +68,23 @@ func TestReadConfig_EmptyFile(t *testing.T) {
 
 func TestReadConfig_InvalidConfig(t *testing.T) {
 	tmpFile := createTempFile(t,
-		`{"file_path": "test",
-	"ref_path": "y",
-	"dup_path": "z" }`)
+		`{"file-path": "test",
+	"ref-path": "y",
+	"dup-path": "z" }`)
 	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
 	_, err := readConfig(tmpFile)
 	if err == nil {
-		t.Fatalf("Expected configuration to be invalid, blob_path is missing.")
+		t.Fatalf("Expected configuration to be invalid, blob-path is missing.")
 	}
 }
 
 func TestReadConfig_Success(t *testing.T) {
 	tmpFile := createTempFile(t,
-		`{"file_path": "test",
-	"blob_path": "y",
-	"ref_path": "y",
-	"dup_path": "z" }`)
+		`{"file-path": "test",
+	"blob-path": "y",
+	"ref-path": "y",
+	"dup-path": "z" }`)
 	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
 	_, err := readConfig(tmpFile)
