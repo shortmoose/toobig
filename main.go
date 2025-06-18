@@ -27,6 +27,7 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 
 	ctx.Verbose = cd.Bool("verbose")
 	ctx.UpdateIsError = cd.Bool("update-is-error")
+	ctx.FilePathOverride = cd.String("file-path")
 
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
@@ -80,6 +81,13 @@ func main() {
 				Usage: "restore files to match blobs and metadata files",
 				Action: func(ctx context.Context, c *cli.Command) error {
 					return wrap_cfg(ctx, c, cmd.Restore)
+				},
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Usage:    "path to restore TooBig files",
+						Name:     "file-path",
+						Required: true,
+					},
 				},
 			},
 			{

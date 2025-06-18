@@ -2,15 +2,6 @@
 
 mkdir x/files-validate
 
-cat <<EOF >x/validate.cfg
-{
-"file_path": "files-validate",
-"ref_path": "refs",
-"blob_path": "blobs",
-"dup_path": "dup"
-}
-EOF
-
-$TB restore x/validate.cfg
+$TB restore --file-path=$PWD/x/files-validate $CFG
 
 diff -r x/files x/files-validate

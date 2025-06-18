@@ -112,6 +112,6 @@ func Fsck(ctx *base.Context) error {
 	}
 	fmt.Printf("%d refs validated, %d errors.\n", cnt, cnt_e)
 
-	fmt.Println("\nFsck complete.")
+	fmt.Println("\nfsck complete.")
 	return nil
 }
