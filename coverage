@@ -4,8 +4,13 @@ set -x -e
 
 go build --cover -o . ./...
 
+mkdir gocov-datafiles
+
 ./test
 
 go tool covdata textfmt -i=gocov-datafiles -o=gocov.txt
 go tool cover -html=gocov.txt -o=gocov.html
 go tool covdata func -i=gocov-datafiles
+go tool covdata percent -i=gocov-datafiles
+
+rm -fr gocov-datafiles gocov.txt
