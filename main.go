@@ -39,19 +39,6 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 	return fn(&ctx)
 }
 
-func wrap0(ct context.Context, cd *cli.Command, fn do) error {
-	args := cd.Args().Slice()
-	if len(args) != 0 {
-		_ = cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
-		os.Exit(3)
-	}
-
-	var ctx base.Context
-	ctx.Command = cd.Name
-
-	return fn(&ctx)
-}
-
 func main() {
 	app := &cli.Command{
 		EnableShellCompletion: true,
@@ -108,7 +95,12 @@ func main() {
 				Name:  "config",
 				Usage: "print an example config",
 				Action: func(ctx context.Context, c *cli.Command) error {
-					return wrap0(ctx, c, cmd.Config)
+					fmt.Println(`Here is an example config.
+Add a path to a directory for each of these settings.
+Remember all paths are relative to wherever the config file is located.`)
+					fmt.Println("")
+					config.WriteExampleConfig()
+					return nil
 				},
 			},
 			{

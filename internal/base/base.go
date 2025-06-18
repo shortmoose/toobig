@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"syscall"
 )
@@ -18,7 +17,7 @@ func GetInode(filename string) (uint64, error) {
 
 	stat, ok := fileinfo.Sys().(*syscall.Stat_t)
 	if !ok {
-		log.Fatal("Hmmm")
+		return 0, fmt.Errorf("unable to get syscall.stat_t")
 	}
 	return stat.Ino, nil
 }

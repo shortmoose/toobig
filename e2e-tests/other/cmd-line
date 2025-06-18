@@ -14,5 +14,8 @@ run_and_verify 0 update -h
 # This is annoying, urface/cli should return a status of 3 here.
 run_and_verify 1 restore $CFG
 
-# Test config subcommand - mostly just to boost code coverage.
+# Test config, just to make sure we don't hit any errors.
 run_and_verify 0 config
+
+# Just make sure it doesn't fail.
+run_and_verify 0 version
