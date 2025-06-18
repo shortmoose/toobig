@@ -1,7 +1,6 @@
 package base
 
 import (
-	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -32,7 +31,7 @@ func Walk(path string, walkFn WalkFunc) error {
 func ChdirWalk(path string, walkFn WalkFunc) error {
 	err := os.Chdir(path)
 	if err != nil {
-		return fmt.Errorf("cd %s: %w", path, err)
+		return err
 	}
 
 	return Walk(".", walkFn)

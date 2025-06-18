@@ -89,8 +89,13 @@ func Fsck(ctx *base.Context) error {
 		}
 
 		ex, er := base.FileExists(filepath.Join(ctx.BlobPath, sha.Sha256))
-		if !ex || er != nil {
+		if er != nil {
 			fmt.Printf("Ref '%s' doesn't point to a blob: %v\n", path, er)
+			cnt_e += 1
+			return nil
+		}
+		if !ex {
+			fmt.Printf("Ref '%s' doesn't point to a blob\n", path)
 			cnt_e += 1
 			return nil
 		}

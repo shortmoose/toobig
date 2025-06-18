@@ -24,9 +24,6 @@ for x in e2e-tests/*/*; do
 
     echo "$x"
     echo "#####################"
-
-    # Uncomment this if you want to walk through each test output.
-    # read z
 done
 
 rm -fr x/

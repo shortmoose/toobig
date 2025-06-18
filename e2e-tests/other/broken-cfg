@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. e2e-tests/help/setup
+. e2e-tests/setup
 
 # This config is very dangerous, make sure this doesn't work.
 cat <<EOF >$CFG
