@@ -42,13 +42,3 @@ cat <<EOF >$CFG
 }
 EOF
 run_and_verify 12 update $CFG
-
-
-cat <<EOF >$CFG
-{
-"file-path": "files",
-"ref-path": "refs",
-"blob-path": "blobs",
-"dup-path": "dup"
-}
-EOF
