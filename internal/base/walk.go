@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 )
 
-// WalkFunc TODO
 type WalkFunc func(path string, info fs.DirEntry) error
 
 // Walk the given path, mostly a simple wrapper around filepath.Walk.
