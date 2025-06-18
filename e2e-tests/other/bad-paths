@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. e2e-tests/help/setup
+. e2e-tests/setup
 
 cat <<EOF >$CFG
 {
@@ -42,3 +42,13 @@ cat <<EOF >$CFG
 }
 EOF
 run_and_verify 12 update $CFG
+
+
+cat <<EOF >$CFG
+{
+"file-path": "files",
+"ref-path": "refs",
+"blob-path": "blobs",
+"dup-path": "dup"
+}
+EOF

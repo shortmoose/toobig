@@ -1,0 +1,7 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+mkdir x/files/.dot
+echo abc 123 >x/files/.dot/foo
+run_and_verify 0 update $CFG

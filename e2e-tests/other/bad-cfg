@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. e2e-tests/help/setup
+. e2e-tests/setup
 
 cat <<EOF >$CFG
 file-path": "fil",

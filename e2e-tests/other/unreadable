@@ -1,0 +1,17 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+set -x
+
+chmod 000 x/files
+run_and_verify 1 update $CFG
+chmod 700 x/files
+
+X## "TODO: Don't really like the error message this gives."
+# Need to handle this in the walk function (Proper error and then skip directory)
+mkdir x/files/nope
+mkdir x/files/nope/nope
+chmod 000 x/files/nope/nope
+run_and_verify 1 update $CFG
+chmod 700 x/files/nope/nope

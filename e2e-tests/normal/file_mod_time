@@ -1,10 +1,11 @@
 #!/bin/bash
 
-. e2e-tests/help/setup
+. e2e-tests/setup
 
 echo abc 123 >x/files/foo
 echo abc 124 >x/files/foo.jpg
 $TB update $CFG
+exit 1
 
 X## "foo was touched"
 set -x
