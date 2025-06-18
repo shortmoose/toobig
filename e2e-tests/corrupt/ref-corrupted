@@ -12,3 +12,4 @@ echo "abc 124" >>x/refs/corrupt.jpg
 set +x
 
 run_and_verify 11 fsck $CFG
+run_and_verify 11 restore --file-path=$PWD/x/files2 $CFG

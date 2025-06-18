@@ -10,3 +10,6 @@ run_and_verify 3 update
 
 # Output will be the same as above, but -h means it was expected.
 run_and_verify 0 update -h
+
+# This is annoying, urface/cli should return a status of 3 here.
+run_and_verify 1 restore $CFG
