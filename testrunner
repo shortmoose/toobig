@@ -11,10 +11,7 @@ while true; do
     COLOR="$GREEN"
 
     test $? -eq 0 && echo building... && go build -o . ./...
-    # test $? -eq 0 && echo shadows?... && shadow ./...
     test $? -eq 0 && echo unittesting... && go test ./...
-    # test $? -eq 0 && echo testing... && run_tests
-    # test $? -eq 0 && echo linting... && golint ./...
 
     test $? -eq 0 && echo e2e-test... && time ./test "$GREP"
 
@@ -28,6 +25,6 @@ while true; do
     echo "WAITING..."
 
     inotifywait -q -r -e modify,create,delete,move .
-    sleep 1 # Let filesystem settle down, don't want files in a partially saved state.
+    sleep 0.2 # Let filesystem settle down, don't want files in a partially saved state.
 
 done

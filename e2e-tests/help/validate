@@ -1,7 +1,0 @@
-#!/bin/bash
-
-mkdir x/files-validate
-
-$TB restore --file-path=$PWD/x/files-validate $CFG
-
-diff -r x/files x/files-validate

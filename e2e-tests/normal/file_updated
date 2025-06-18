@@ -27,4 +27,4 @@ set +x
 
 run_and_verify 10 status $CFG
 run_and_verify 10 update $CFG
-. e2e-tests/help/validate
+validate

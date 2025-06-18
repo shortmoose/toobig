@@ -15,4 +15,4 @@ EOF
 diff x/dup/boo x/files/boo
 set +x
 
-. e2e-tests/help/validate
+validate
