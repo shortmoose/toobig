@@ -40,9 +40,7 @@ validate() {
 
 TB=./toobig
 
-test -x
 rm -fr x
-
 mkdir x
 mkdir x/{files,files2,blobs,blobs2,refs,refs2,dup}
 

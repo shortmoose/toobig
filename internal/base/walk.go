@@ -16,8 +16,6 @@ func Walk(path string, walkFn WalkFunc) error {
 			return err
 		}
 
-		fmt.Printf("%s\n", path)
-
 		if info.IsDir() {
 			base := filepath.Base(path)
 			if base != "." && base[0] == '.' {
