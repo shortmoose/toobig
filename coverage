@@ -2,13 +2,17 @@
 
 set -x -e
 
-go build --cover -o . ./...
-
 rm -fr gocov-datafiles
 mkdir gocov-datafiles
 
+# Run unit tests.
+go test ./... -cover -args -test.gocoverdir=$PWD/gocov-datafiles
+
+# Run e2e tests
+go build --cover -o . ./...
 ./test
 
+# Process the coverage data
 go tool covdata textfmt -i=gocov-datafiles -o=gocov.txt
 go tool cover -html=gocov.txt -o=gocov.html
 # Why 25-, it needs to be a multiple of 8 +1 so tabs work...
