@@ -15,8 +15,10 @@ import (
 func Restore(ctx *base.Context) error {
 	fmt.Println("Performing restore")
 
-	// TODO: This shouldn't be coming from the file path anymore.
-	OutPath := ctx.FilePath
+	if !filepath.IsAbs(ctx.FilePathOverride) {
+		fmt.Fprintf(os.Stderr, "--file-path=%s isn't a full path.\n", ctx.FilePathOverride)
+		os.Exit(3)
+	}
 
 	fmt.Println("\nRestoring files:")
 	cnt, cnt_e := 0, 0
@@ -36,7 +38,7 @@ func Restore(ctx *base.Context) error {
 			return nil
 		}
 
-		files_path := filepath.Join(OutPath, path)
+		files_path := filepath.Join(ctx.FilePathOverride, path)
 		d := filepath.Dir(files_path)
 		er = os.MkdirAll(d, 0700)
 		if er != nil {

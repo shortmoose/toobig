@@ -10,6 +10,7 @@ type Context struct {
 
 	config.TooBig
 
-	Verbose       bool
-	UpdateIsError bool
+	Verbose          bool
+	UpdateIsError    bool
+	FilePathOverride string
 }
