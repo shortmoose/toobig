@@ -29,6 +29,9 @@ run_and_verify() {
         echo -e "${RED}Test failed with error code: $exit_code, expected $expected.$NC"
         exit 1
     fi
+
+    # Uncomment this if you want to walk through each test output.
+    # read z
 }
 
 validate() {
