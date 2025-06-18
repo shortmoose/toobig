@@ -4,6 +4,7 @@ set -x -e
 
 go build --cover -o . ./...
 
+rm -fr gocov-datafiles
 mkdir gocov-datafiles
 
 ./test

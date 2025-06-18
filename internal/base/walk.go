@@ -16,6 +16,8 @@ func Walk(path string, walkFn WalkFunc) error {
 			return err
 		}
 
+		fmt.Printf("%s\n", path)
+
 		if info.IsDir() {
 			base := filepath.Base(path)
 			if base != "." && base[0] == '.' {
@@ -32,7 +34,7 @@ func Walk(path string, walkFn WalkFunc) error {
 func ChdirWalk(path string, walkFn WalkFunc) error {
 	err := os.Chdir(path)
 	if err != nil {
-		return fmt.Errorf("cd %s: %w", path, err)
+		return err
 	}
 
 	return Walk(".", walkFn)
