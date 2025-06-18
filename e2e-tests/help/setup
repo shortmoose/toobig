@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e -u
 
 warn() {
     echo "$1"
@@ -20,7 +20,8 @@ run_and_verify() {
     expected=$1
     exit_code=0
     shift
-    $TB --update-is-error "$@" || exit_code=$?
+    GOCOVERDIR=$PWD/gocov-datafiles \
+        $TB --update-is-error "$@" || exit_code=$?
 
     if [ $exit_code -ne $expected ]; then
         RED='\033[0;31m'
@@ -28,6 +29,13 @@ run_and_verify() {
         echo -e "${RED}Test failed with error code: $exit_code, expected $expected.$NC"
         exit 1
     fi
+}
+
+validate() {
+	rm -fr x/files-validate
+	mkdir x/files-validate
+	run_and_verify 0 restore --file-path=$PWD/x/files-validate $CFG
+	diff -r x/files x/files-validate
 }
 
 TB=./toobig
