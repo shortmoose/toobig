@@ -10,7 +10,10 @@ mkdir gocov-datafiles
 
 go tool covdata textfmt -i=gocov-datafiles -o=gocov.txt
 go tool cover -html=gocov.txt -o=gocov.html
-go tool covdata func -i=gocov-datafiles
-go tool covdata percent -i=gocov-datafiles
+# Why 25-, it needs to be a multiple of 8 +1 so tabs work...
+go tool covdata func -i=gocov-datafiles | cut -b 25-
+go tool covdata percent -i=gocov-datafiles | cut -b 25-
 
 rm -fr gocov-datafiles gocov.txt
+
+echo "See gocov.html for a colorized view of the actual code."
