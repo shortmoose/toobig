@@ -66,8 +66,28 @@ Basic Usage:
 ```bash
 # Dump photos from SD card to my photo directory.
 # Delete/Edit photos as needed.
+toobig status photo-toobig.cfg  # Not actually necessary
 toobig update photo-toobig.cfg
 rsync [flags] {refs,blobs} cloud-backup-dir
+```
+
+An example set up. Sort of git-esque:
+
+```bash
+cd <photos-dir>
+mkdir .toobig
+mkdir .toobig/{refs,blobs,dups}
+toobig config >.toobig/config
+# Edit config to look like:
+# {
+#  "file-path": "..",
+#  "blob-path": "blobs",
+#  "ref-path": "refs",
+#  "dup-path": "dups"
+# }
+#
+# You can know verify your config by running:
+toobig status .toobig/config
 ```
 
 *TODO:* Give more examples here...
