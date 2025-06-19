@@ -67,7 +67,6 @@ Basic Usage:
 # Dump photos from SD card to my photo directory.
 # Delete/Edit photos as needed.
 toobig update photo-toobig.cfg
-toobig fsck photo-toobig.cfg  # Occasionally run this to validate data integrity.
 rsync [flags] {refs,blobs} cloud-backup-dir
 ```
 
