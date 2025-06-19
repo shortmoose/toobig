@@ -74,13 +74,13 @@ Verifies the integrity of the refs and blobs.
 Some effort has been made to make error codes consistent and useful. Here is a
 basic list of the error codes we currently use.
 
-- **0** Success.
-- **1** General error.
-- **2** Panic, application crashed - golang defined exit code.
-- **3** Invalid arguments, invalid command, etc.
-- **10** Normal operational updates - for example a file has been added, etc. These
+- **0** - Success.
+- **1** - General error.
+- **2** - Panic, application crashed - golang defined exit code.
+- **3** - Invalid arguments, invalid command, etc.
+- **10** - Normal operational updates - for example a file has been added, etc. These
 normally exhibit as success (exit 0) but exit code 10 is used with the flag
 --update-is-error.
-- **11** Data inconsistencies, generally will need manual intervention to repair (corrupted blob, invalid ref, etc).
-- **12** Error with the config file.
-- **125+** Above this range is usually used for signal handling. For example a ctrl-c will exit with the code 130.
+- **11** - Data inconsistencies, generally will need manual intervention to repair (corrupted blob, invalid ref, etc).
+- **12** - Error with the config file.
+- **125+** - Above this range is usually used for signal handling. For example a ctrl-c will exit with the code 130.
