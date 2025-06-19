@@ -70,7 +70,7 @@ func TestReadConfig_InvalidConfig(t *testing.T) {
 	tmpFile := createTempFile(t,
 		`{"file-path": "test",
 	"ref-path": "y",
-	"dup-path": "z" }`)
+	"old-path": "z" }`)
 	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
 	_, err := readConfig(tmpFile)
@@ -84,7 +84,7 @@ func TestReadConfig_Success(t *testing.T) {
 		`{"file-path": "test",
 	"blob-path": "y",
 	"ref-path": "y",
-	"dup-path": "z" }`)
+	"old-path": "z" }`)
 	defer func() { _ = os.Remove(tmpFile) }() // Yes, we are ignoring any errors
 
 	_, err := readConfig(tmpFile)

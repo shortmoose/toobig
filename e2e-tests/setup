@@ -45,7 +45,7 @@ TB=./toobig
 
 rm -fr x
 mkdir x
-mkdir x/{files,files2,blobs,blobs2,refs,refs2,dup}
+mkdir x/{files,files2,blobs,blobs2,refs,refs2,old}
 
 CFG="x/update.cfg"
 cat <<EOF >$CFG
@@ -53,6 +53,6 @@ cat <<EOF >$CFG
 "file-path": "files",
 "ref-path": "refs",
 "blob-path": "blobs",
-"dup-path": "dup"
+"old-path": "old"
 }
 EOF

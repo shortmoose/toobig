@@ -1,0 +1,18 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+echo abc 123 >x/files/foo
+echo abc 124 >x/files/foo.jpg
+$TB update $CFG
+
+X## "Removing file 'foo'"
+set -x
+rm x/files/foo
+set +x
+
+# TODO: Are these ifs really the best way to do this?
+run_and_verify 10 update $CFG
+# find x/old -type f -printf "%-30p %-10s %t\n"
+find x/old -printf "%-40p %y %n %i %-10s\n"
+exit 1

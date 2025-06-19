@@ -7,7 +7,7 @@ cat <<EOF >$CFG
 "file-path": "fil",
 "ref-path": "refs",
 "blob-path": "blobs",
-"dup-path": "dup"
+"old-path": "old"
 }
 EOF
 cat $CFG
@@ -18,7 +18,7 @@ cat <<EOF >$CFG
 "file-path": "files",
 "ref-path": "update.cfg",
 "blob-path": "blobs",
-"dup-path": "dup"
+"old-path": "old"
 }
 EOF
 run_and_verify 12 update $CFG
@@ -28,7 +28,7 @@ cat <<EOF >$CFG
 "file-path": "files",
 "ref-path": "refs",
 "blob-path": "blo",
-"dup-path": "dup"
+"old-path": "old"
 }
 EOF
 run_and_verify 12 update $CFG
@@ -38,7 +38,7 @@ cat <<EOF >$CFG
 "file-path": "files",
 "ref-path": "refs",
 "blob-path": "blobs",
-"dup-path": "dupp"
+"old-path": "oldp"
 }
 EOF
 run_and_verify 12 update $CFG
