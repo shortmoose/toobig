@@ -55,6 +55,16 @@ data in Git.
 store only one blob to represent all of those original files.
 
 
+## Warnings
+
+Please realize that TooBig leverages hard links for much of its functionality.
+Make sure you realize what this means. Specifically you shouldn't edit files in
+place, this will make the linked blob file no longer match its checksum
+(filename). Files should break the hard link when they are edited. If you are
+unsure what the software you use does, make sure you run `toobig fsck`
+regularly to help you validate everything is working correctly.
+
+
 ## Install
 
 go install github.com/shortmoose/toobig@latest
@@ -111,3 +121,20 @@ basic list of the error codes we currently use.
 - **12** - Error with the config file.
 - **125+** - Above this range is usually used for signal handling. For example
   a ctrl-c will exit with the code 130.
+
+
+## Future
+
+- Currently we never delete old blobs, which means I normally run a bash script
+  that moves all blobs with only 1 link, ie `find -links 1 -type f`, to a
+  different directory, then run `toobig fsck`, to verify I didn't remove
+  anything I shouldn't have. This functionality should be part of the `update`
+  command.
+- The output, especially with errors, could be more consistent.
+- I have thought about breaking up the blobs directory into subdirectories,
+  sort of like git does with its objects directory. No immediate plans for this
+  I would need to see people using it with enough blobs to make it worth while.
+- A config option to *NOT* use hardlinks? It would double the space usage but
+  allow people to us work flows where they actually modify files, instead of
+  replace them.
+- Other ideas??
