@@ -61,21 +61,7 @@ go install github.com/shortmoose/toobig@latest
 
 ## Usage
 
-### toobig update <repo.cfg>
-
-Converts a set of files into a matching set of refs and blobs.
-
-### toobig restore <repo.cfg>
-
-Converts a set of refs and blobs into a matching set of files.
-
-### toobig status <repo.cfg>
-
-Which files need to be updated. (Basically a dry-run for `toobig update`.)
-
-### toobig fsck <repo.cfg>
-
-Verifies the integrity of the refs and blobs.
+*TODO:* Give actual examples here...
 
 
 ## Exit Codes
