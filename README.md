@@ -40,14 +40,14 @@ collection is trivial. `toobig fsck` can easily confirm that none of your files
 have suffered from bit rot or corruption during transfers between hard drives,
 cloud storage, or backup media over the years.
 
-### Version Control Your Files with Git
+### Version Control Your Files with git
 
-Git is powerful, but struggles with large binary files. TooBig allows you to
-commit your directory structure—the lightweight *ref* files—to a Git
+git is powerful, but struggles with large binary files. TooBig allows you to
+commit your directory structure—the lightweight *ref* files—to a git
 repository. This lets you track every change, rename, and reorganization of
 your files without bloating the repository. You get a complete version history
 for your large files without the performance penalty of storing the actual
-data in Git.
+data in git.
 
 ### Data Deduplication
 
