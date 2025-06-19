@@ -19,6 +19,7 @@ containing just the SHA-256 checksum of the original file and a timestamp.
 - `toobig update` converts files to refs/blobs.
 - `toobig restore` converts refs/blobs to files.
 
+
 ## Why Use TooBig?
 
 TooBig's architecture of separating file metadata (refs) from file content
@@ -86,7 +87,7 @@ toobig config >.toobig/config
 #  "dup-path": "dups"
 # }
 #
-# You can know verify your config by running:
+# You can verify your config by running:
 toobig status .toobig/config
 ```
 
