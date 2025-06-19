@@ -111,3 +111,17 @@ basic list of the error codes we currently use.
 - **12** - Error with the config file.
 - **125+** - Above this range is usually used for signal handling. For example
   a ctrl-c will exit with the code 130.
+
+
+## Future
+
+- Currently we never delete old blobs, which means I normally run a bash script
+  that moves all blobs with only 1 link, ie `find -links 1 -type f`, to a
+  different directory, then run `toobig fsck`, to verify I didn't remove
+  anything I shouldn't have. This functionality should be part of the `update`
+  command.
+- The output, especially with errors, could be more consistent.
+- I have thought about breaking up the blobs directory into subdirectories,
+  sort of like git does with its objects directory. No immediate plans for this
+  I would need to see people using it with enough blobs to make it worth while.
+- Other ideas??
