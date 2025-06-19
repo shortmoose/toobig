@@ -61,7 +61,17 @@ go install github.com/shortmoose/toobig@latest
 
 ## Usage
 
-*TODO:* Give actual examples here...
+Basic Usage:
+
+```bash
+# Dump photos from SD card to my photo directory.
+# Delete/Edit photos as needed.
+toobig update photo-toobig.cfg
+toobig fsck photo-toobig.cfg  # Occasionally run this to validate data integrity.
+rsync [flags] {refs,blobs} cloud-backup-dir
+```
+
+*TODO:* Give more examples here...
 
 
 ## Exit Codes
