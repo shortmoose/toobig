@@ -13,6 +13,8 @@ import (
 	"github.com/shortmoose/toobig/internal/config"
 )
 
+var once bool
+
 // Validate that all three files (file, ref, and blob) fully match each other.
 func verifyMeta(ctx *base.Context, filename string) (string, error, error) {
 	// Verify we have the file ref.
@@ -216,6 +218,11 @@ func prepareOld(ctx *base.Context) {
 }
 
 func mvToOld(ctx *base.Context, path, sub string) error {
+	if !once {
+		once = true
+		prepareOld(ctx)
+	}
+
 	new_path := filepath.Join(ctx.OldPath, sub, strings.ReplaceAll(path, "/", "-"))
 	fmt.Printf("mv %s %s\n", path, new_path)
 	err := os.Rename(path, new_path)

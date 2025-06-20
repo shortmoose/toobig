@@ -12,7 +12,6 @@ import (
 func Update(ctx *base.Context) error {
 	fmt.Println("Performing update")
 
-	prepareOld(ctx)
 	blob_index := make(map[string]bool)
 
 	fmt.Println("\nUpdating files:")
