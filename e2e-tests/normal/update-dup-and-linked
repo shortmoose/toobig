@@ -17,4 +17,3 @@ set +v
 echo
 
 validate
-exit 1
