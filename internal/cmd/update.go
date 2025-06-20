@@ -117,7 +117,7 @@ func Update(ctx *base.Context) error {
 
 	fmt.Println("\nUpdate complete.")
 
-	if ctx.UpdateIsError && u {
+	if ctx.UpdateIsError && (u || cnt_u > 0) {
 		os.Exit(10)
 	}
 	return nil
