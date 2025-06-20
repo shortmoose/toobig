@@ -2,21 +2,25 @@
 
 . e2e-tests/setup
 
+cat <<HERE | tee /dev/tty | bash
 mkdir x/files/d
 echo "abc 123" >x/files/d/foo
-echo "abc 124" >x/files/d/foo.jpg
-$TB update $CFG
+echo "abc 124" >x/files/foo.jpg
+$TB update $CFG >/dev/null
+HERE
 
 X## "Removing file 'foo'"
-set -x
+set -v
 rm x/files/d/foo
-set +x
+set +v
+echo
 
 run_and_verify 10 update $CFG
 
-set -x
+X## "Validating 'old' storage is correct."
+set -v
 cat <<EOF | diff <(cd x/old/2* && find . -type f -printf "%p\n") -
 ./refs/d\\foo
 ./blobs/c5d982dc040081e09cad25209fed928b334a21fb2ff34db5202178a7b1a8199b
 EOF
-set +x
+set +v

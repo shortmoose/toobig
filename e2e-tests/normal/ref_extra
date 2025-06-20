@@ -2,14 +2,17 @@
 
 . e2e-tests/setup
 
-echo abc 123 >x/files/foo
-echo abc 124 >x/files/foo.jpg
-$TB update $CFG
+cat <<HERE | tee /dev/tty | bash
+echo "abc 123" >x/files/foo
+echo "abc 124" >x/files/foo.jpg
+$TB update $CFG >/dev/null
+HERE
 
 X## "Create duplicate ref"
-set -x
+set -v
 cp x/refs/foo x/refs/cp_of_foo
-set +x
+set +v
+echo
 
 run_and_verify 10 status $CFG
 run_and_verify 10 update $CFG

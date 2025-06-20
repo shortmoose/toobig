@@ -2,14 +2,17 @@
 
 . e2e-tests/setup
 
-echo abc 123 >x/files/foo
-echo abc 124 >x/files/foo.jpg
-$TB update $CFG
+cat <<HERE | tee /dev/tty | bash
+echo "abc 123" >x/files/foo
+echo "abc 124" >x/files/foo.jpg
+$TB update $CFG >/dev/null
+HERE
 
 X## "This will corrupt the blob"
-set -x
-echo abc 125 >x/files/foo
-set +x
+set -v
+echo "abc 125" >x/files/foo
+set +v
+echo
 
 # TODO:v3 Status should catch this error!
 run_and_verify 10 status $CFG

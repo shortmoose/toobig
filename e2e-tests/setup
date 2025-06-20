@@ -11,6 +11,7 @@ warn() {
 X##() {
     PURPLE='\033[0;36m'
     NC='\033[0m' # No Color
+    echo
     echo -e "$PURPLE$1$NC"
 }
 
@@ -24,28 +25,33 @@ run_and_verify() {
         $TB --update-is-error "$@" || exit_code=$?
 
     if [ $exit_code -ne $expected ]; then
-        RED='\033[0;31m'
+        CLR='\033[0;31m' # RED
         NC='\033[0m' # No Color
-        echo -e "${RED}Test failed with error code: $exit_code, expected $expected.$NC"
+        echo -e "${CLR}Test failed${NC} with error code: $exit_code, expected $expected."
+	echo
         exit 1
+    else
+        CLR='\033[0;32m' # GREEN
+        NC='\033[0m'     # No Color
+        echo -e "${CLR}Test passed${NC} with error code: $exit_code"
+	echo
     fi
-
-    # Uncomment this if you want to walk through each test output.
-    # read z
 }
 
 validate() {
     rm -fr x/files-validate
     mkdir x/files-validate
     run_and_verify 0 restore --file-path=$PWD/x/files-validate $CFG
+    echo "Validating data with diff"
     diff -r x/files x/files-validate
+    echo "Success data is identical"
 }
 
 TB=./toobig
 
 rm -fr x
 mkdir x
-mkdir x/{files,files2,blobs,blobs2,refs,refs2,old}
+mkdir x/{files,blobs,refs,old}
 
 CFG="x/update.cfg"
 cat <<EOF >$CFG

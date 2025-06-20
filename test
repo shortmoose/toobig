@@ -10,20 +10,24 @@ for x in e2e-tests/*/*; do
         continue
     fi
 
-    echo "#####################"
-    echo "$x"
+    CLR='\033[0;36m' # PURPLE
+    NC='\033[0m'     # No Color
+    echo
+    echo -e "${CLR}####   $x$NC"
 
     # Run test
     $x
 
     if [ "$?" -ne 0 ]; then
+        CLR='\033[0;31m' # RED
+        echo -e "${CLR}####$NC   $x   ${CLR}FAILED$NC"
         echo
-        echo "Failed $x"
         exit 1
     fi
 
-    echo "$x"
-    echo "#####################"
+    CLR='\033[0;32m' # GREEN
+    echo -e "${CLR}####   $x$NC"
+    echo
 done
 
 rm -fr x/
