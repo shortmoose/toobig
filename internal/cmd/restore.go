@@ -34,12 +34,12 @@ func Restore(ctx *base.Context) error {
 		blob_path := filepath.Join(ctx.BlobPath, ref.Sha256)
 		ex, er := base.FileExists(blob_path)
 		if er != nil {
-			fmt.Printf("Blob '%s': %v\n", ref.Sha256, er)
+			fmt.Printf("Blob '%s...': %v\n", ref.Sha256[:8], er)
 			cnt_e += 1
 			return nil
 		}
 		if !ex {
-			fmt.Printf("Blob '%s' not found.\n", ref.Sha256)
+			fmt.Printf("Blob '%s...': not found\n", ref.Sha256[:8])
 			cnt_e += 1
 			return nil
 		}
@@ -71,7 +71,7 @@ func Restore(ctx *base.Context) error {
 	}
 
 	if cnt_e != 0 {
-		fmt.Fprintf(os.Stderr, "Restore failed: %d files restored, %d errors.\n", cnt, cnt_e)
+		fmt.Fprintf(os.Stderr, "\nRestore failed: %d files restored, %d errors.\n", cnt, cnt_e)
 		os.Exit(11)
 	}
 	fmt.Printf("%d files restored, %d errors.\n", cnt, cnt_e)

@@ -85,7 +85,7 @@ func Fsck(ctx *base.Context) error {
 
 		ref, er := config.ReadFileMeta(path)
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "'%s': %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "Ref '%s': %v\n", path, er)
 			cnt_e += 1
 			return nil
 		}

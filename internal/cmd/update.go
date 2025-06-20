@@ -29,6 +29,9 @@ func Update(ctx *base.Context) error {
 			return nil
 		}
 
+		// TODO: Should the old Ref be moved to old??
+		// See normal/file_updated test
+		// TODO: See update-dup-and-linked, link created multiple times?
 		ref, er = updateMeta(ctx, path)
 		if er != nil {
 			cnt_e += 1
