@@ -56,7 +56,7 @@ func Status(ctx *base.Context) error {
 		}
 
 		cnt_u += 1
-		fmt.Printf("Ref %s: to be deleted\n", path)
+		fmt.Printf("Ref '%s': to be deleted\n", path)
 		return nil
 	})
 	if err != nil {

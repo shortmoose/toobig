@@ -94,14 +94,19 @@ func Update(ctx *base.Context) error {
 			return nil
 		}
 
+		name := path
+		if len(name) == 64 {
+			name = name[:8]
+		}
+
 		er := mvToOld(ctx, path, "blobs")
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "Blob '%s': %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "Blob '%s': %v\n", name, er)
 			cnt_e += 1
 			return nil
 		}
 		cnt_u += 1
-		fmt.Printf("Blob '%s': moved to old.\n", path)
+		fmt.Printf("Blob '%s': moved to old.\n", name)
 		return nil
 	})
 	if err != nil {
