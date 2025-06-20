@@ -151,7 +151,7 @@ func createHardLink(ctx *base.Context, filename, sha256 string) error {
 		return fmt.Errorf("link file to blob file: %w", err)
 	}
 	fmt.Print("dup found...")
-	err = lost(ctx, filename, "dup")
+	err = mvToOld(ctx, filename, "dup")
 	if err != nil {
 		return fmt.Errorf("move file to dup directory: %w", err)
 	}
@@ -185,7 +185,7 @@ func findInodeHash(ctx *base.Context, inode uint64) (string, error) {
 	return hash, nil
 }
 
-func foo(ctx *base.Context) {
+func prepareOld(ctx *base.Context) {
 	currTime := time.Now()
 
 	path := filepath.Join(ctx.OldPath, currTime.Format("2006-01-02-15:04:05.000"))
@@ -215,8 +215,7 @@ func foo(ctx *base.Context) {
 	}
 }
 
-func lost(ctx *base.Context, path, sub string) error {
-
+func mvToOld(ctx *base.Context, path, sub string) error {
 	new_path := filepath.Join(ctx.OldPath, sub, strings.ReplaceAll(path, "/", "-"))
 	fmt.Printf("mv %s %s\n", path, new_path)
 	err := os.Rename(path, new_path)

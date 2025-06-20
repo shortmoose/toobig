@@ -12,7 +12,7 @@ import (
 func Update(ctx *base.Context) error {
 	fmt.Println("Performing update")
 
-	foo(ctx)
+	prepareOld(ctx)
 	blob_index := make(map[string]bool)
 
 	fmt.Println("\nUpdating files:")
@@ -69,7 +69,7 @@ func Update(ctx *base.Context) error {
 		}
 
 		fmt.Printf("Ref:%s deleted\n", path)
-		er = lost(ctx, path, "refs")
+		er = mvToOld(ctx, path, "refs")
 		if er != nil {
 			cnt_e += 1
 			fmt.Fprintf(os.Stderr, "Ref:%s: %v\n", path, er)
@@ -96,7 +96,7 @@ func Update(ctx *base.Context) error {
 			return nil
 		}
 
-		er := lost(ctx, path, "blobs")
+		er := mvToOld(ctx, path, "blobs")
 		if er != nil {
 			fmt.Fprintf(os.Stderr, "Ref:%s: %v\n", path, er)
 			return nil

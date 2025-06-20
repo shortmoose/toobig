@@ -15,4 +15,3 @@ set +x
 run_and_verify 10 update $CFG
 # find x/old -type f -printf "%-30p %-10s %t\n"
 find x/old -printf "%-40p %y %n %i %-10s\n"
-exit 1
