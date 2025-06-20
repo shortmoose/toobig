@@ -48,8 +48,8 @@ func Update(ctx *base.Context) error {
 		fmt.Fprintf(os.Stderr, "Update failed: %d files, %d updated, %d errors\n", cnt, cnt_u, cnt_e)
 		os.Exit(11)
 	}
-	u := (cnt_u > 0)
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
+	u := (cnt_u > 0)
 
 	fmt.Printf("\nCleaning up refs:\n")
 	cnt, cnt_u, cnt_e = 0, 0, 0
@@ -85,10 +85,11 @@ func Update(ctx *base.Context) error {
 		os.Exit(11)
 	}
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
+	u = (u || cnt_u > 0)
 
 	fmt.Printf("\nCleaning up blobs:\n")
+	cnt_u, cnt_e = 0, 0
 	err = base.ChdirWalk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
-
 		if blob_index[path] {
 			return nil
 		}
@@ -96,8 +97,10 @@ func Update(ctx *base.Context) error {
 		er := mvToOld(ctx, path, "blobs")
 		if er != nil {
 			fmt.Fprintf(os.Stderr, "%s moving to old: %v\n", path, er)
+			cnt_e += 1
 			return nil
 		}
+		cnt_u += 1
 		fmt.Printf("%s moved to old.\n", path)
 		return nil
 	})
@@ -105,9 +108,16 @@ func Update(ctx *base.Context) error {
 		return err
 	}
 
+	if cnt_e != 0 {
+		fmt.Fprintf(os.Stderr, "Clean up failed: %d moved, %d errors\n", cnt_u, cnt_e)
+		os.Exit(11)
+	}
+	fmt.Printf("%d moved.\n", cnt_u)
+	u = (u || cnt_u > 0)
+
 	fmt.Println("\nUpdate complete.")
 
-	if ctx.UpdateIsError && (cnt_u > 0 || u) {
+	if ctx.UpdateIsError && u {
 		os.Exit(10)
 	}
 	return nil
