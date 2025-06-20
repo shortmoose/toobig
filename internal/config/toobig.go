@@ -13,7 +13,7 @@ type TooBig struct {
 	FilePath string `json:"file-path"`
 	BlobPath string `json:"blob-path"`
 	RefPath  string `json:"ref-path"`
-	DupPath  string `json:"dup-path"`
+	OldPath  string `json:"old-path"`
 }
 
 func ReadConfig(path string) (TooBig, error) {
@@ -31,8 +31,8 @@ func ReadConfig(path string) (TooBig, error) {
 	if !is_dir(cfg.RefPath) {
 		return cfg, fmt.Errorf("ref-path, %s, is not a directory", cfg.RefPath)
 	}
-	if !is_dir(cfg.DupPath) {
-		return cfg, fmt.Errorf("dup-path, %s, is not a directory", cfg.DupPath)
+	if !is_dir(cfg.OldPath) {
+		return cfg, fmt.Errorf("old-path, %s, is not a directory", cfg.OldPath)
 	}
 
 	return cfg, nil
@@ -61,8 +61,8 @@ func readConfig(path string) (TooBig, error) {
 	if cfg.FilePath == "" ||
 		cfg.BlobPath == "" ||
 		cfg.RefPath == "" ||
-		cfg.DupPath == "" {
-		return cfg, fmt.Errorf("file-path, blob-path, ref-path, and dup-path must be valid directories")
+		cfg.OldPath == "" {
+		return cfg, fmt.Errorf("file-path, blob-path, ref-path, and old-path must be valid directories")
 	}
 
 	p, err := filepath.Abs(filepath.Dir(path))
@@ -80,12 +80,12 @@ func readConfig(path string) (TooBig, error) {
 	cfg.RefPath = join(p, cfg.RefPath)
 	cfg.FilePath = join(p, cfg.FilePath)
 	cfg.BlobPath = join(p, cfg.BlobPath)
-	cfg.DupPath = join(p, cfg.DupPath)
+	cfg.OldPath = join(p, cfg.OldPath)
 
 	fmt.Printf("  file-path: %s\n", cfg.FilePath)
 	fmt.Printf("  ref-path:  %s\n", cfg.RefPath)
 	fmt.Printf("  blob-path: %s\n", cfg.BlobPath)
-	fmt.Printf("  dup-path:  %s\n\n", cfg.DupPath)
+	fmt.Printf("  old-path:  %s\n\n", cfg.OldPath)
 
 	return cfg, nil
 }
@@ -104,7 +104,7 @@ func WriteExampleConfig() {
 	cfg.FilePath = "files"
 	cfg.BlobPath = "blobs"
 	cfg.RefPath = "refs"
-	cfg.DupPath = "dups"
+	cfg.OldPath = "old"
 
 	out, err := json.MarshalIndent(cfg, "", " ")
 	if err != nil {

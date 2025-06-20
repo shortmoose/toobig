@@ -7,37 +7,40 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/shortmoose/toobig/internal/base"
 	"github.com/shortmoose/toobig/internal/config"
 )
 
+var once bool
+
 // Validate that all three files (file, ref, and blob) fully match each other.
-func verifyMeta(ctx *base.Context, filename string) (error, error) {
+func verifyMeta(ctx *base.Context, filename string) (string, error, error) {
 	// Verify we have the file ref.
 	ref, err := config.ReadFileMeta(filepath.Join(ctx.RefPath, filename))
 	if err != nil {
 		e, _ := err.(*os.PathError)
 		if e.Err == syscall.ENOENT {
-			return fmt.Errorf("ref doesn't exist"), nil
+			return "", fmt.Errorf("ref doesn't exist"), nil
 		}
-		return nil, fmt.Errorf("reading ref: %w", err)
+		return "", nil, fmt.Errorf("reading ref: %w", err)
 	}
 
 	// Verify timestamps match.
 	info, err := os.Stat(filename)
 	if err != nil {
-		return nil, fmt.Errorf("getting file info: %w", err)
+		return "", nil, fmt.Errorf("getting file info: %w", err)
 	}
 
 	if ref.UnixNano != info.ModTime().UnixNano() {
-		return fmt.Errorf("file modified"), nil
+		return "", fmt.Errorf("file modified"), nil
 	}
 
 	// Verify inodes match.
 	inode, err := base.GetInode(filename)
 	if err != nil {
-		return nil, fmt.Errorf("getting inode: %w", err)
+		return "", nil, fmt.Errorf("getting inode: %w", err)
 	}
 
 	inode2, err := base.GetInode(filepath.Join(ctx.BlobPath, ref.Sha256))
@@ -45,35 +48,35 @@ func verifyMeta(ctx *base.Context, filename string) (error, error) {
 		// If the file doesn't exist that isn't really an error.
 		e, _ := err.(*os.PathError)
 		if e.Err == syscall.ENOENT {
-			return fmt.Errorf("blob missing"), nil
+			return "", fmt.Errorf("blob missing"), nil
 		}
-		return nil, fmt.Errorf("getting inode of blob path: %w", err)
+		return "", nil, fmt.Errorf("getting inode of blob path: %w", err)
 	}
 
 	if inode != inode2 {
-		return fmt.Errorf("file modified"), nil
+		return "", fmt.Errorf("file modified"), nil
 	}
-	return nil, nil
+	return ref.Sha256, nil, nil
 }
 
 // Assume "filename" is the source of truth.
-func updateMeta(ctx *base.Context, filename string) error {
+func updateMeta(ctx *base.Context, filename string) (string, error) {
 	sha256, err := base.GetSha256(filename)
 	if err != nil {
-		return fmt.Errorf("calculating SHA-256: %w", err)
+		return "", fmt.Errorf("calculating SHA-256: %w", err)
 	}
 
 	err = createHardLinkIfNeeded(ctx, filename, sha256)
 	if err != nil {
-		return fmt.Errorf("writing blob: %w", err)
+		return "", fmt.Errorf("writing blob: %w", err)
 	}
 
 	err = writeFileMeta(ctx, filename, sha256)
 	if err != nil {
-		return fmt.Errorf("writing ref: %w", err)
+		return "", fmt.Errorf("writing ref: %w", err)
 	}
 
-	return nil
+	return sha256, nil
 }
 
 func writeFileMeta(ctx *base.Context, filename, sha256 string) error {
@@ -150,9 +153,7 @@ func createHardLink(ctx *base.Context, filename, sha256 string) error {
 		return fmt.Errorf("link file to blob file: %w", err)
 	}
 	fmt.Print("dup found...")
-	fmt.Printf("%s\n", filepath.Join(ctx.DupPath, strings.ReplaceAll(filename, "/", "-")))
-
-	err = os.Rename(filename, filepath.Join(ctx.DupPath, strings.ReplaceAll(filename, "/", "-")))
+	err = mvToOld(ctx, filename, "dup")
 	if err != nil {
 		return fmt.Errorf("move file to dup directory: %w", err)
 	}
@@ -184,4 +185,47 @@ func findInodeHash(ctx *base.Context, inode uint64) (string, error) {
 	}
 
 	return hash, nil
+}
+
+func prepareOld(ctx *base.Context) {
+	currTime := time.Now()
+	path := filepath.Join(ctx.OldPath, currTime.Format("2006-01-02-15:04:05.000"))
+	err := os.Mkdir(path, 0755)
+	if err != nil {
+		panic(err)
+	}
+	ctx.OldPath = path
+
+	path = filepath.Join(ctx.OldPath, "dup")
+	err = os.Mkdir(path, 0755)
+	if err != nil {
+		panic(err)
+	}
+
+	path = filepath.Join(ctx.OldPath, "refs")
+	err = os.Mkdir(path, 0755)
+	if err != nil {
+		panic(err)
+	}
+
+	path = filepath.Join(ctx.OldPath, "blobs")
+	err = os.Mkdir(path, 0755)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func mvToOld(ctx *base.Context, path, sub string) error {
+	if !once {
+		once = true
+		prepareOld(ctx)
+	}
+
+	new_path := filepath.Join(ctx.OldPath, sub, strings.ReplaceAll(path, "/", "\\"))
+	err := os.Rename(path, new_path)
+	if err != nil {
+		return fmt.Errorf("move file to dup directory: %w", err)
+	}
+
+	return nil
 }

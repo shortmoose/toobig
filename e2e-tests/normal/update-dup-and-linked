@@ -9,10 +9,10 @@ ln x/files/foo x/files/aoo
 run_and_verify 10 update $CFG
 
 set -x
-cat <<EOF | diff <(ls x/dup) -
+cat <<EOF | diff <(ls x/old/2*/dup) -
 boo
 EOF
-diff x/dup/boo x/files/boo
+diff x/old/2*/dup/boo x/files/boo
 set +x
 
 validate

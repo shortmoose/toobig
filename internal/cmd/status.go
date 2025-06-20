@@ -16,7 +16,7 @@ func Status(ctx *base.Context) error {
 	cnt, cnt_u, cnt_e := 0, 0, 0
 	err := base.ChdirWalk(ctx.FilePath, func(path string, info fs.DirEntry) error {
 		cnt += 1
-		ix, er := verifyMeta(ctx, path)
+		_, ix, er := verifyMeta(ctx, path)
 		if er != nil {
 			cnt_e += 1
 			fmt.Fprintf(os.Stderr, "%s: %v\n", path, er)

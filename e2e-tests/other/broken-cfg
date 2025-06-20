@@ -8,12 +8,12 @@ cat <<EOF >$CFG
 "file-path": "files",
 "ref-path": "files",
 "blob-path": "blobs",
-"dup-path": "dup"
+"old-path": "old"
 }
 EOF
 
-echo abc 123 >x/files/foo
-echo abc 124 >x/files/foo.jpg
+echo "abc 123" >x/files/foo
+echo "abc 124" >x/files/foo.jpg
 run_and_verify 2 update $CFG
 # TODO, this crashes which is certainly better than working, but it would
 # be good if it gave the user a better understanding of why it crashed.

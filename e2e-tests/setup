@@ -35,17 +35,17 @@ run_and_verify() {
 }
 
 validate() {
-	rm -fr x/files-validate
-	mkdir x/files-validate
-	run_and_verify 0 restore --file-path=$PWD/x/files-validate $CFG
-	diff -r x/files x/files-validate
+    rm -fr x/files-validate
+    mkdir x/files-validate
+    run_and_verify 0 restore --file-path=$PWD/x/files-validate $CFG
+    diff -r x/files x/files-validate
 }
 
 TB=./toobig
 
 rm -fr x
 mkdir x
-mkdir x/{files,files2,blobs,blobs2,refs,refs2,dup}
+mkdir x/{files,files2,blobs,blobs2,refs,refs2,old}
 
 CFG="x/update.cfg"
 cat <<EOF >$CFG
@@ -53,6 +53,6 @@ cat <<EOF >$CFG
 "file-path": "files",
 "ref-path": "refs",
 "blob-path": "blobs",
-"dup-path": "dup"
+"old-path": "old"
 }
 EOF
