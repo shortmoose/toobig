@@ -17,7 +17,6 @@ echo
 run_and_verify 0 fsck $CFG
 run_and_verify 0 status $CFG
 
-
 X## "Duplicate refs are okay."
 set -v
 cp x/refs/foo x/refs/cp_of_foo
