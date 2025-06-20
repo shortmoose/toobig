@@ -21,7 +21,7 @@ func Update(ctx *base.Context) error {
 		ref, ix, er := verifyMeta(ctx, path)
 		if er != nil {
 			cnt_e += 1
-			fmt.Fprintf(os.Stderr, "%s: %v", path, er)
+			fmt.Fprintf(os.Stderr, "File '%s': %v", path, er)
 			return nil
 		}
 		if ix == nil {
@@ -32,7 +32,7 @@ func Update(ctx *base.Context) error {
 		ref, er = updateMeta(ctx, path)
 		if er != nil {
 			cnt_e += 1
-			fmt.Fprintf(os.Stderr, "%s: %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
 			return nil
 		}
 		blob_index[ref] = true
@@ -58,7 +58,7 @@ func Update(ctx *base.Context) error {
 		exists, er := base.FileExists(ctx.FilePath + "/" + path)
 		if er != nil {
 			cnt_e += 1
-			fmt.Fprintf(os.Stderr, "Ref:%s: %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "Ref '%s': %v\n", path, er)
 			return nil
 		}
 		if exists {
@@ -68,11 +68,11 @@ func Update(ctx *base.Context) error {
 		er = mvToOld(ctx, path, "refs")
 		if er != nil {
 			cnt_e += 1
-			fmt.Fprintf(os.Stderr, "%s moving to old : %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "Ref %s: %v\n", path, er)
 			return nil
 		}
 
-		fmt.Printf("%s moved to old.\n", path)
+		fmt.Printf("Ref '%s': moved to old.\n", path)
 		cnt_u += 1
 		return nil
 	})
@@ -96,12 +96,12 @@ func Update(ctx *base.Context) error {
 
 		er := mvToOld(ctx, path, "blobs")
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "%s moving to old: %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "Blob '%s': %v\n", path, er)
 			cnt_e += 1
 			return nil
 		}
 		cnt_u += 1
-		fmt.Printf("%s moved to old.\n", path)
+		fmt.Printf("Blob '%s': moved to old.\n", path)
 		return nil
 	})
 	if err != nil {

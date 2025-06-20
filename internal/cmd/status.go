@@ -19,7 +19,7 @@ func Status(ctx *base.Context) error {
 		_, ix, er := verifyMeta(ctx, path)
 		if er != nil {
 			cnt_e += 1
-			fmt.Fprintf(os.Stderr, "%s: %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
 			return nil
 		}
 		if ix == nil {
@@ -27,7 +27,7 @@ func Status(ctx *base.Context) error {
 		}
 
 		cnt_u += 1
-		fmt.Printf("%s: %v\n", path, ix)
+		fmt.Printf("File '%s': %v\n", path, ix)
 		return nil
 	})
 	if err != nil {
@@ -41,7 +41,6 @@ func Status(ctx *base.Context) error {
 	u := (cnt_u > 0)
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
 
-	// ########
 	fmt.Printf("\nValidating refs:\n")
 	cnt, cnt_u, cnt_e = 0, 0, 0
 	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
@@ -49,7 +48,7 @@ func Status(ctx *base.Context) error {
 		exists, er := base.FileExists(ctx.FilePath + "/" + path)
 		if er != nil {
 			cnt_e += 1
-			fmt.Fprintf(os.Stderr, "Ref '%s' err: %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "Ref '%s': %v\n", path, er)
 			return nil
 		}
 		if exists {
@@ -57,7 +56,7 @@ func Status(ctx *base.Context) error {
 		}
 
 		cnt_u += 1
-		fmt.Printf("Ref:%s to be deleted.\n", path)
+		fmt.Printf("Ref %s: to be deleted\n", path)
 		return nil
 	})
 	if err != nil {

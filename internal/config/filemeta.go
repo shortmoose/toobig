@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 )
@@ -22,14 +23,18 @@ func ReadFileMeta(path string) (FileMeta, error) {
 	}
 	defer func() { _ = f.Close() }() // Explicitly ignore the error
 
-	sha256, err := io.ReadAll(f)
+	file, err := io.ReadAll(f)
 	if err != nil {
 		return fm, err
 	}
 
-	err = json.Unmarshal(sha256, &fm)
+	err = json.Unmarshal(file, &fm)
 	if err != nil {
 		return fm, err
+	}
+
+	if len(fm.Sha256) != 64 {
+		return fm, fmt.Errorf("invalid checksum length")
 	}
 
 	return fm, nil

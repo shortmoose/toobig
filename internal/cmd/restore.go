@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"syscall"
 
 	"github.com/shortmoose/toobig/internal/base"
 	"github.com/shortmoose/toobig/internal/config"
@@ -24,21 +23,23 @@ func Restore(ctx *base.Context) error {
 	fmt.Println("\nRestoring files:")
 	cnt, cnt_e := 0, 0
 	err := base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
+
 		ref, er := config.ReadFileMeta(path)
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "%s unreadable: %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "Ref '%s': %v\n", path, er)
 			cnt_e += 1
 			return nil
 		}
 
 		blob_path := filepath.Join(ctx.BlobPath, ref.Sha256)
-		e, er := base.FileExists(blob_path)
-		if !e || er != nil {
-			if er != nil {
-				fmt.Fprintf(os.Stderr, "%s no blob %s: %v\n", path, ref.Sha256, er)
-			} else {
-				fmt.Fprintf(os.Stderr, "%s no blob %s\n", path, ref.Sha256)
-			}
+		ex, er := base.FileExists(blob_path)
+		if er != nil {
+			fmt.Printf("Blob '%s': %v\n", ref.Sha256, er)
+			cnt_e += 1
+			return nil
+		}
+		if !ex {
+			fmt.Printf("Blob '%s' not found.\n", ref.Sha256)
 			cnt_e += 1
 			return nil
 		}
@@ -47,27 +48,22 @@ func Restore(ctx *base.Context) error {
 		d := filepath.Dir(files_path)
 		er = os.MkdirAll(d, 0700)
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "%s failed to mkdir: %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "mkdir '%s': %v\n", d, er)
 			cnt_e += 1
 			return nil
 		}
 
 		er = os.Link(blob_path, files_path)
 		if er != nil {
-			e, _ := er.(*os.LinkError)
-			if e.Err != syscall.EEXIST {
-				fmt.Fprintf(os.Stderr, "%s couldn't link: %v\n", path, e)
-				cnt_e += 1
-				return nil
-			}
+			fmt.Fprintf(os.Stderr, "linking %s to %s: %v\n", files_path, blob_path, er)
+			cnt_e += 1
 			return nil
 		}
 
 		cnt += 1
 		if ctx.Verbose {
-			fmt.Printf("%s... LINKED\n", path)
+			fmt.Printf("File '%s': restored.\n", path)
 		}
-
 		return nil
 	})
 	if err != nil {
