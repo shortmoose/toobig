@@ -35,10 +35,10 @@ run_and_verify() {
 }
 
 validate() {
-	rm -fr x/files-validate
-	mkdir x/files-validate
-	run_and_verify 0 restore --file-path=$PWD/x/files-validate $CFG
-	diff -r x/files x/files-validate
+    rm -fr x/files-validate
+    mkdir x/files-validate
+    run_and_verify 0 restore --file-path=$PWD/x/files-validate $CFG
+    diff -r x/files x/files-validate
 }
 
 TB=./toobig
