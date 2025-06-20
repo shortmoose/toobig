@@ -125,15 +125,9 @@ basic list of the error codes we currently use.
 
 ## Future
 
-- Currently we never delete old blobs, which means I normally run a bash script
-  that moves all blobs with only 1 link, ie `find -links 1 -type f`, to a
-  different directory, then run `toobig fsck`, to verify I didn't remove
-  anything I shouldn't have. This functionality should be part of the `update`
-  command.
-- The output, especially with errors, could be more consistent.
 - I have thought about breaking up the blobs directory into subdirectories,
   sort of like git does with its objects directory. No immediate plans for this
-  I would need to see people using it with enough blobs to make it worth while.
+  I would need to see users with enough blobs to make it worth while.
 - A config option to *NOT* use hardlinks? It would double the space usage but
   allow people to us work flows where they actually modify files, instead of
   replace them.
