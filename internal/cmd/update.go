@@ -51,8 +51,6 @@ func Update(ctx *base.Context) error {
 	u := (cnt_u > 0)
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
 
-	// Grab all the checksum numbers.
-
 	fmt.Printf("\nCleaning up refs:\n")
 	cnt, cnt_u, cnt_e = 0, 0, 0
 	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
@@ -67,14 +65,14 @@ func Update(ctx *base.Context) error {
 			return nil
 		}
 
-		fmt.Printf("Ref:%s deleted\n", path)
 		er = mvToOld(ctx, path, "refs")
 		if er != nil {
 			cnt_e += 1
-			fmt.Fprintf(os.Stderr, "Ref:%s: %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "%s moving to old : %v\n", path, er)
 			return nil
 		}
 
+		fmt.Printf("%s moved to old.\n", path)
 		cnt_u += 1
 		return nil
 	})
@@ -88,7 +86,7 @@ func Update(ctx *base.Context) error {
 	}
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
 
-	// Create an index of all checksums
+	fmt.Printf("\nCleaning up blobs:\n")
 	err = base.ChdirWalk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
 
 		if blob_index[path] {
@@ -97,9 +95,10 @@ func Update(ctx *base.Context) error {
 
 		er := mvToOld(ctx, path, "blobs")
 		if er != nil {
-			fmt.Fprintf(os.Stderr, "Ref:%s: %v\n", path, er)
+			fmt.Fprintf(os.Stderr, "%s moving to old: %v\n", path, er)
 			return nil
 		}
+		fmt.Printf("%s moved to old.\n", path)
 		return nil
 	})
 	if err != nil {

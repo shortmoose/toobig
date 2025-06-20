@@ -189,9 +189,7 @@ func findInodeHash(ctx *base.Context, inode uint64) (string, error) {
 
 func prepareOld(ctx *base.Context) {
 	currTime := time.Now()
-
 	path := filepath.Join(ctx.OldPath, currTime.Format("2006-01-02-15:04:05.000"))
-	fmt.Println(path)
 	err := os.Mkdir(path, 0755)
 	if err != nil {
 		panic(err)
@@ -223,8 +221,7 @@ func mvToOld(ctx *base.Context, path, sub string) error {
 		prepareOld(ctx)
 	}
 
-	new_path := filepath.Join(ctx.OldPath, sub, strings.ReplaceAll(path, "/", "-"))
-	fmt.Printf("mv %s %s\n", path, new_path)
+	new_path := filepath.Join(ctx.OldPath, sub, strings.ReplaceAll(path, "/", "\\"))
 	err := os.Rename(path, new_path)
 	if err != nil {
 		return fmt.Errorf("move file to dup directory: %w", err)
