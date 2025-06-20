@@ -2,17 +2,18 @@
 
 . e2e-tests/setup
 
+set -v
 echo "abc 123" >x/files/boo
 echo "abc 123" >x/files/foo
 ln x/files/foo x/files/aoo
+set +v
+echo
 
 run_and_verify 10 update $CFG
 
-set -x
-cat <<EOF | diff <(ls x/old/2*/dup) -
-boo
-EOF
+set -v
 diff x/old/2*/dup/boo x/files/boo
-set +x
+set +v
+echo
 
 validate

@@ -2,16 +2,24 @@
 
 . e2e-tests/setup
 
-set -x
-
+X## "Make it so we can't read the directory."
+set -v
 chmod 000 x/files
-run_and_verify 1 update $CFG
-chmod 700 x/files
+set +v
+echo
 
+run_and_verify 1 update $CFG
+
+X## "Make it so we can't read a directory a level or two down."
 X## "TODO: Don't really like the error message this gives."
 # Need to handle this in the walk function (Proper error and then skip directory)
+set -v
+chmod 700 x/files
 mkdir x/files/nope
 mkdir x/files/nope/nope
 chmod 000 x/files/nope/nope
+set +v
+echo
+
 run_and_verify 1 update $CFG
 chmod 700 x/files/nope/nope
