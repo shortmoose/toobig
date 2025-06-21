@@ -33,20 +33,12 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 	err := base.ChdirWalk(ctx.FilePath, func(path string, de fs.DirEntry) error {
 		cnt += 1
 
-		if !update {
-			ref, ix, er := verifyMeta(ctx, path, de)
-			if er != nil {
-				cnt_e += 1
-				fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
-				return nil
-			}
-			// Need this weird er part because of the check on update above.
-			if ix == nil && er == nil {
-				blob_index[ref] = true
-				return nil
-			}
-
-		} else {
+		ref, ix, er := verifyMeta(ctx, path, de)
+		if ix == nil && er == nil {
+			blob_index[ref] = true
+			return nil
+		}
+		if update {
 			// TODO: Should the old Ref be moved to old??
 			// See normal/file_updated test
 			// TODO: See update-dup-and-linked, link created multiple times?
@@ -57,11 +49,20 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 				return nil
 			}
 			blob_index[ref] = true
+			cnt_u += 1
+			fmt.Printf("File '%s': %v\n", path, "updated")
+			return nil
+		} else {
+			if er != nil {
+				cnt_e += 1
+				fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
+				return nil
+			} else {
+				cnt_u += 1
+				fmt.Printf("File '%s': %v\n", path, ix)
+				return nil
+			}
 		}
-
-		cnt_u += 1
-		fmt.Printf("File '%s': %v\n", path, "foo")
-		return nil
 	})
 	if err != nil {
 		return err

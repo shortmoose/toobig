@@ -7,6 +7,8 @@ rf x/files/update echo abc
 rf x/files/time echo cde
 run_and_verify 10 status $CFG
 run_and_verify 10 update $CFG
+# Just doing this because we have had bugs where files are constantly re-updated.
+run_and_verify 0 update $CFG
 validate
 
 X## "Update file. Make sure to break the hardlink."
@@ -14,6 +16,7 @@ rx rm x/files/update
 rf x/files/update echo xyz
 run_and_verify 10 status $CFG
 run_and_verify 10 update $CFG
+# Just validating doing the update fixed status.
 run_and_verify 0 status $CFG
 validate
 
