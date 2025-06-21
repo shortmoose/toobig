@@ -218,7 +218,7 @@ func updateMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, e
 		return "", fmt.Errorf("making directories: %w", err)
 	}
 
-	fm := config.FileMeta{sha256, info.ModTime().UnixNano()}
+	fm := config.FileMeta{Sha256: sha256, UnixNano: info.ModTime().UnixNano()}
 	err = config.WriteFileMeta(ctx.RefPath+"/"+filename, fm)
 	if err != nil {
 		return "", fmt.Errorf("writing ref: %w", err)
