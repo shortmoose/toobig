@@ -33,30 +33,24 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 	err := base.ChdirWalk(ctx.FilePath, func(path string, de fs.DirEntry) error {
 		cnt += 1
 
-		info, er := de.Info()
-		if er != nil {
-			cnt_e += 1
-			fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
-			return nil
-		}
+		if !update {
+			ref, ix, er := verifyMeta(ctx, path, de)
+			if er != nil {
+				cnt_e += 1
+				fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
+				return nil
+			}
+			// Need this weird er part because of the check on update above.
+			if ix == nil && er == nil {
+				blob_index[ref] = true
+				return nil
+			}
 
-		ref, ix, er := verifyMeta(ctx, path, info)
-		if !update && er != nil {
-			cnt_e += 1
-			fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
-			return nil
-		}
-		// Need this weird er part because of the check on update above.
-		if ix == nil && er == nil {
-			blob_index[ref] = true
-			return nil
-		}
-
-		if update {
+		} else {
 			// TODO: Should the old Ref be moved to old??
 			// See normal/file_updated test
 			// TODO: See update-dup-and-linked, link created multiple times?
-			ref, er = updateMeta(ctx, path, info)
+			ref, er := updateMeta(ctx, path, de)
 			if er != nil {
 				cnt_e += 1
 				fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
@@ -66,7 +60,7 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 		}
 
 		cnt_u += 1
-		fmt.Printf("File '%s': %v\n", path, ix)
+		fmt.Printf("File '%s': %v\n", path, "foo")
 		return nil
 	})
 	if err != nil {
@@ -166,7 +160,14 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 }
 
 // Validate that all three files (file, ref, and blob) fully match each other.
-func verifyMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, error, error) {
+func verifyMeta(ctx *base.Context, filename string, fileEntry fs.DirEntry) (string, error, error) {
+
+	// Load FileInfo for the file.
+	info, err := fileEntry.Info()
+	if err != nil {
+		return "", nil, err
+	}
+
 	ref, err := config.ReadFileMeta(filepath.Join(ctx.RefPath, filename))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -175,35 +176,41 @@ func verifyMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, e
 		return "", nil, fmt.Errorf("reading ref: %w", err)
 	}
 
-	// Verify timestamps match.
-	time_is_good := ref.UnixNano == info.ModTime().UnixNano()
-
-	// Check if the files are hardlinked.
 	info2, err := os.Stat(filepath.Join(ctx.BlobPath, ref.Sha256))
 	if err != nil {
 		if os.IsNotExist(err) {
-			return "", fmt.Errorf("blob missing"), nil
+			return "", fmt.Errorf("blob doesn't exist"), nil
 		}
-		return "", nil, fmt.Errorf("os.Stat of path: %w", err)
+		return "", nil, fmt.Errorf("reading blob: %w", err)
 	}
+
+	// Verify timestamps match. Don't return yet.
+	time_is_good := ref.UnixNano == info.ModTime().UnixNano()
 
 	if !os.SameFile(info, info2) {
 		return "", fmt.Errorf("file modified"), nil
 	}
+
 	if !time_is_good {
-		return "", nil, fmt.Errorf("file potentially corrupt, please do fsck")
+		return "", nil, fmt.Errorf("file modified, but still hardlinked")
 	}
+
 	return ref.Sha256, nil, nil
 }
 
-// Assume "filename" is the source of truth.
-func updateMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, error) {
+// Treat filename as the source of truth.
+func updateMeta(ctx *base.Context, filename string, dEntry fs.DirEntry) (string, error) {
+	info, err := dEntry.Info()
+	if err != nil {
+		return "", err
+	}
+
 	sha256, err := base.GetSha256(filename)
 	if err != nil {
 		return "", fmt.Errorf("calculating SHA-256: %w", err)
 	}
 
-	err = createHardLinkIfNeeded(ctx, filename, sha256, info)
+	err = createHardLink(ctx, filename, sha256, info)
 	if err != nil {
 		return "", fmt.Errorf("writing blob: %w", err)
 	}
@@ -229,9 +236,9 @@ func updateMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, e
 	return sha256, nil
 }
 
-func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string, stat fs.FileInfo) error {
+func createHardLink(ctx *base.Context, filename, sha256 string, stat fs.FileInfo) error {
 	blobPath := filepath.Join(ctx.BlobPath, sha256)
-	stat2, err := os.Stat(blobPath)
+	blobInfo, err := os.Stat(blobPath)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return fmt.Errorf("blob info '%s': %w", sha256, err)
@@ -247,7 +254,7 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string, stat fs.
 		return nil
 	}
 
-	if os.SameFile(stat, stat2) {
+	if os.SameFile(stat, blobInfo) {
 		return nil
 	}
 

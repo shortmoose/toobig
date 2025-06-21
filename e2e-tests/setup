@@ -2,10 +2,7 @@
 
 set -e -u
 
-warn() {
-    echo "$1"
-    exit 1
-}
+TB=./toobig
 
 # A comment... but the comment ends up in the script output.
 X##() {
@@ -15,12 +12,31 @@ X##() {
     echo -e "$PURPLE$1$NC"
 }
 
+rf() {
+    FILE=$1
+    shift
+    echo "$@ >$FILE"
+    "$@" >$FILE
+}
+
+rx() {
+    echo "$@"
+    "$@"
+}
+
+tb() {
+    echo "$TB $@ >/dev/null"
+    GOCOVERDIR=$PWD/gocov-datafiles $TB "$@" >/dev/null
+}
+
 # Normally we use this to verify we are getting an exit code of 1
 # This protects us from hiding problems like a panic (exit 2).
 run_and_verify() {
     expected=$1
     exit_code=0
     shift
+    echo
+    echo "$TB --update-is-error $@"
     GOCOVERDIR=$PWD/gocov-datafiles \
         $TB --update-is-error "$@" || exit_code=$?
 
@@ -39,16 +55,32 @@ run_and_verify() {
 }
 
 validate() {
+    X## "Restore files..."
     rm -fr x/files-validate
     mkdir x/files-validate
     run_and_verify 0 restore --file-path=$PWD/x/files-validate $CFG
-    echo "Validating data with diff"
+    X## "Validating data with diff"
+    echo diff -r x/files x/files-validate
+    echo "-------------------------------"
+    set +e
     diff -r x/files x/files-validate
-    echo "Success data is identical"
+    RV=$?
+    set -e
+    echo "-------------------------------"
+    if [ $# -eq 0 ]; then
+        EXP=0
+    else
+        EXP=$1
+    fi
+    if [ $RV -eq $EXP ]; then
+        echo "Success: diff returned $RV"
+    else
+        echo "Failed: data returned $RV, expected $EXP"
+        exit 1
+    fi
 }
 
-TB=./toobig
-
+# Some basic initialization of our environment.
 rm -fr x
 mkdir x
 mkdir x/{files,blobs,refs,old}

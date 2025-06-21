@@ -1,0 +1,25 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+rf x/files/update echo abc
+rf x/files/time echo cde
+tb update $CFG
+
+# These other two should probably not be considered normal.
+X## "Update the file. Make it a duplicate."
+rx touch x/files/update
+run_and_verify 11 status $CFG
+run_and_verify 10 update $CFG
+run_and_verify 0 status $CFG
+
+X## "Modify the file. Make sure it updates even if the timestamp didn't change."
+rx touch -r x/files/update x/files/time
+rx rm x/files/update
+rf x/files/update echo 423
+rx touch -r x/files/time x/files/update
+
+run_and_verify 11 status $CFG
+run_and_verify 10 update $CFG
+run_and_verify 0 status $CFG
+validate

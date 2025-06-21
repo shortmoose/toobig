@@ -2,30 +2,25 @@
 
 . e2e-tests/setup
 
-cat <<HERE | tee /dev/tty | bash
-echo "abc 123" >x/files/foo
-echo "abc 124" >x/files/foo.jpg
-$TB update $CFG >/dev/null
-HERE
-
-X## "Update the file. Making sure to break the hardlink."
-set -v
-rm x/files/foo
-echo "abc 125" >x/files/foo
-set +v
-
+X## "Add files."
+rf x/files/update echo abc
+rf x/files/time echo cde
 run_and_verify 10 status $CFG
 run_and_verify 10 update $CFG
 validate
 
-X## "Modify the file. Make sure it updates even if the timestamp didn't change."
-set -v
-touch -r x/files/foo x/files/foo.jpg
-rm x/files/foo
-echo "abc 186" >x/files/foo
-touch -r x/files/foo.jpg x/files/foo
-set +v
-
-run_and_verify 11 status $CFG
+X## "Update file. Make sure to break the hardlink."
+rx rm x/files/update
+rf x/files/update echo xyz
+run_and_verify 10 status $CFG
 run_and_verify 10 update $CFG
+run_and_verify 0 status $CFG
+validate
+
+X## "Update the file. Give it the same contents as another file."
+rx rm x/files/update
+rf x/files/update echo xyz
+run_and_verify 10 update $CFG
+X## "We forced a dup. Verify it doesn't require two updates."
+run_and_verify 0 status $CFG
 validate
