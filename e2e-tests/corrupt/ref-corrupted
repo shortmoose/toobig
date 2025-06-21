@@ -2,16 +2,12 @@
 
 . e2e-tests/setup
 
-cat <<HERE | tee /dev/tty | bash
-echo "abc 123" >x/files/foo
-echo "abc 124" >x/files/foo.jpg
-$TB update $CFG >/dev/null
-HERE
-
 X## "Create an invalid ref file."
-set -v
-echo "abc 124" >>x/refs/corrupt.jpg
-set +v
+rf x/refs/corrupt echo a
 
 run_and_verify 11 fsck $CFG
 run_and_verify 11 restore --file-path=$PWD/x/files2 $CFG
+run_and_verify 10 status $CFG
+run_and_verify 10 update $CFG
+run_and_verify 0 update $CFG
+run_and_verify 0 fsck $CFG

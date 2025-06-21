@@ -2,16 +2,10 @@
 
 . e2e-tests/setup
 
-cat <<HERE | tee /dev/tty | bash
-echo "abc 123" >x/files/foo
-echo "abc 124" >x/files/foo.jpg
-$TB update $CFG >/dev/null
-HERE
-
 X## "Create invalid blob - really short name since that once caused a problem."
-set -v
-echo "a" >>x/blobs/a
-set +v
-echo
+rf x/blobs/a echo a
+run_and_verify 11 fsck $CFG
 
+X## "Valid name, invalid checksum."
+rf x/blobs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa echo a
 run_and_verify 11 fsck $CFG
