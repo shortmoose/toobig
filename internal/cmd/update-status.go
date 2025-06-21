@@ -175,9 +175,7 @@ func verifyMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, e
 	}
 
 	// Verify timestamps match.
-	if ref.UnixNano != info.ModTime().UnixNano() {
-		return "", fmt.Errorf("file modified"), nil
-	}
+	time_is_good := ref.UnixNano == info.ModTime().UnixNano()
 
 	// Check if the files are hardlinked.
 	info2, err := os.Stat(filepath.Join(ctx.BlobPath, ref.Sha256))
@@ -190,6 +188,9 @@ func verifyMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, e
 
 	if !os.SameFile(info, info2) {
 		return "", fmt.Errorf("file modified"), nil
+	}
+	if !time_is_good {
+		return "", fmt.Errorf("file potentially corrupt, please do fsck"), nil
 	}
 	return ref.Sha256, nil, nil
 }
