@@ -5,7 +5,7 @@ for x in e2e-tests/*/*; do
         continue
     fi
 
-    if [[ $x != *$1* ]]; then
+    if [[ ! $x =~ $1 ]]; then
         echo "$x ...skipping"
         continue
     fi

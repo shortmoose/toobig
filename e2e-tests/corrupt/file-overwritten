@@ -2,11 +2,9 @@
 
 . e2e-tests/setup
 
-cat <<HERE | tee /dev/tty | bash
-echo "abc 123" >x/files/foo
-echo "abc 124" >x/files/foo.jpg
-$TB update $CFG >/dev/null
-HERE
+rf x/files/foo echo abc
+rf x/files/bar echo 123
+tb update $CFG
 
 X## "This will corrupt the blob"
 rf x/files/foo echo a

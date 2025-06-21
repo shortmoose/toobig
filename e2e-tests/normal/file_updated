@@ -26,4 +26,11 @@ rf x/files/update echo xyz
 run_and_verify 10 update $CFG
 X## "We forced a dup. Verify it doesn't require two updates."
 run_and_verify 0 status $CFG
+# We just want to run a fsck as part of the "normal" path.
+run_and_verify 0 fsck $CFG
 validate
+
+rx rm -fr x/files-validate/*
+run_and_verify 0 fsck -v $CFG
+run_and_verify 0 status -v $CFG
+run_and_verify 0 restore --file-path=/home/nathan/toobig/x/files-validate -v $CFG

@@ -2,10 +2,10 @@
 
 . e2e-tests/setup
 
-X## "Create invalid blob - really short name since that once caused a problem."
+X## "Invalid blob name - really short name since that once caused a problem."
 rf x/blobs/a echo a
 run_and_verify 11 fsck $CFG
 
-X## "Valid name, invalid checksum."
+X## "Valid blob name, invalid checksum."
 rf x/blobs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa echo a
 run_and_verify 11 fsck $CFG
