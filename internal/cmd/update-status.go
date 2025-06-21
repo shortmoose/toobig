@@ -30,8 +30,16 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 
 	fmt.Println("\nExamining files:")
 	cnt, cnt_u, cnt_e := 0, 0, 0
-	err := base.ChdirWalk(ctx.FilePath, func(path string, info fs.DirEntry) error {
+	err := base.ChdirWalk(ctx.FilePath, func(path string, de fs.DirEntry) error {
 		cnt += 1
+
+		info, er := de.Info()
+		if er != nil {
+			cnt_e += 1
+			fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
+			return nil
+		}
+
 		ref, ix, er := verifyMeta(ctx, path, info)
 		if er != nil {
 			cnt_e += 1
@@ -47,7 +55,7 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 			// TODO: Should the old Ref be moved to old??
 			// See normal/file_updated test
 			// TODO: See update-dup-and-linked, link created multiple times?
-			ref, er = updateMeta(ctx, path)
+			ref, er = updateMeta(ctx, path, info)
 			if er != nil {
 				cnt_e += 1
 				fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
@@ -157,8 +165,7 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 }
 
 // Validate that all three files (file, ref, and blob) fully match each other.
-func verifyMeta(ctx *base.Context, filename string, de fs.DirEntry) (string, error, error) {
-	// Verify we have the file ref.
+func verifyMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, error, error) {
 	ref, err := config.ReadFileMeta(filepath.Join(ctx.RefPath, filename))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -168,11 +175,6 @@ func verifyMeta(ctx *base.Context, filename string, de fs.DirEntry) (string, err
 	}
 
 	// Verify timestamps match.
-	info, err := de.Info()
-	if err != nil {
-		return "", nil, fmt.Errorf("getting file info: %w", err)
-	}
-
 	if ref.UnixNano != info.ModTime().UnixNano() {
 		return "", fmt.Errorf("file modified"), nil
 	}
@@ -193,18 +195,26 @@ func verifyMeta(ctx *base.Context, filename string, de fs.DirEntry) (string, err
 }
 
 // Assume "filename" is the source of truth.
-func updateMeta(ctx *base.Context, filename string) (string, error) {
+func updateMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, error) {
 	sha256, err := base.GetSha256(filename)
 	if err != nil {
 		return "", fmt.Errorf("calculating SHA-256: %w", err)
 	}
 
-	err = createHardLinkIfNeeded(ctx, filename, sha256)
+	err = createHardLinkIfNeeded(ctx, filename, sha256, info)
 	if err != nil {
 		return "", fmt.Errorf("writing blob: %w", err)
 	}
 
-	err = writeFileMeta(ctx, filename, sha256)
+	// TODO: The dup case means we need to reload os.Stat...
+	d := filepath.Dir(filepath.Join(ctx.RefPath, filename))
+	err = os.MkdirAll(d, 0700)
+	if err != nil {
+		return "", fmt.Errorf("making directories: %w", err)
+	}
+
+	fm := config.FileMeta{sha256, info.ModTime().UnixNano()}
+	err = config.WriteFileMeta(ctx.RefPath+"/"+filename, fm)
 	if err != nil {
 		return "", fmt.Errorf("writing ref: %w", err)
 	}
@@ -212,47 +222,22 @@ func updateMeta(ctx *base.Context, filename string) (string, error) {
 	return sha256, nil
 }
 
-func writeFileMeta(ctx *base.Context, filename, sha256 string) error {
-	info, err := os.Stat(filename)
+func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string, stat fs.FileInfo) error {
+	blobPath := filepath.Join(ctx.BlobPath, sha256)
+	stat2, err := os.Stat(blobPath)
 	if err != nil {
-		return fmt.Errorf("stating file: %w", err)
-	}
-
-	var fm config.FileMeta
-	fm.Sha256 = sha256
-	fm.UnixNano = info.ModTime().UnixNano()
-
-	d := filepath.Dir(filepath.Join(ctx.RefPath, filename))
-	err = os.MkdirAll(d, 0700)
-	if err != nil {
-		return fmt.Errorf("making directories: %w", err)
-	}
-
-	err = config.WriteFileMeta(ctx.RefPath+"/"+filename, fm)
-	if err != nil {
-		return fmt.Errorf("writing ref: %w", err)
-	}
-
-	return nil
-}
-
-func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
-	// Create a hard link.
-	// - If we are already linked is it the correct sha file?
-	// - If we aren't already linked, then make it so.
-	stat, err := os.Stat(filename)
-	if err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("file info '%s': %w", filename, err)
-	}
-
-	stat2, err := os.Stat(filepath.Join(ctx.BlobPath, sha256))
-	if err != nil {
-		if os.IsNotExist(err) {
-			// Easy case, just create hard link.
-			panicIfHashExists(ctx, stat)
-			return createHardLink(ctx, filename, sha256)
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("blob info '%s': %w", sha256, err)
 		}
-		return fmt.Errorf("blob info '%s': %w", sha256, err)
+
+		panicIfHashExists(ctx, stat)
+
+		// Easy case, just create hard link.
+		err = os.Link(filename, blobPath)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 
 	if os.SameFile(stat, stat2) {
@@ -260,33 +245,18 @@ func createHardLinkIfNeeded(ctx *base.Context, filename, sha256 string) error {
 	}
 
 	panicIfHashExists(ctx, stat)
+
 	// Dup case.
-	return createHardLink(ctx, filename, sha256)
-}
-
-func createHardLink(ctx *base.Context, filename, sha256 string) error {
-	err := os.Link(filename, ctx.BlobPath+"/"+sha256)
-	if err == nil {
-		fmt.Printf("link created... ")
-		return nil
-	}
-
-	e, _ := err.(*os.LinkError)
-	if e.Err != syscall.EEXIST {
-		return fmt.Errorf("link file to blob file: %w", err)
-	}
-	fmt.Print("dup found...")
 	err = mvToOld(ctx, filename, "dup")
 	if err != nil {
 		return fmt.Errorf("move file to dup directory: %w", err)
 	}
 
-	err = os.Link(ctx.BlobPath+"/"+sha256, filename)
+	err = os.Link(blobPath, filename)
 	if err != nil {
 		return fmt.Errorf("link file to blob file: %w", err)
 	}
 
-	fmt.Printf("link created... ")
 	return nil
 }
 
