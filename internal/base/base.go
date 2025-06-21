@@ -5,22 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"syscall"
 )
-
-// GetInode returns the inode of the given file.
-func GetInode(filename string) (uint64, error) {
-	fileinfo, err := os.Stat(filename)
-	if err != nil {
-		return 0, err
-	}
-
-	stat, ok := fileinfo.Sys().(*syscall.Stat_t)
-	if !ok {
-		return 0, fmt.Errorf("unable to get syscall.stat_t")
-	}
-	return stat.Ino, nil
-}
 
 // GetSha256 computes and returns the SHA256 for the given file.
 func GetSha256(filename string) (string, error) {

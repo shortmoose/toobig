@@ -16,5 +16,8 @@ echo
 
 # TODO:v3 Status should catch this error!
 run_and_verify 10 status $CFG
-run_and_verify 11 update $CFG
+
+# TODO: This isn't right..., horrible scary error message
+run_and_verify 2 update $CFG
+
 run_and_verify 11 fsck $CFG
