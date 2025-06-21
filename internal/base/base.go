@@ -23,6 +23,7 @@ func GetSha256(filename string) (string, error) {
 	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
 
+// TODO: No need for this function...
 // FileExists determines if the given file exists (permissions allowing).
 func FileExists(path string) (bool, error) {
 	if _, err := os.Stat(path); err == nil {

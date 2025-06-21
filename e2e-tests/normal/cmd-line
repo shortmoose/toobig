@@ -19,3 +19,6 @@ run_and_verify 0 update -h
 
 # This is annoying, urface/cli should return a status of 3 here.
 run_and_verify 1 restore $CFG
+
+# This is annoying, urface/cli should return a status of 3 here.
+run_and_verify 3 restore --file-path=x/ $CFG
