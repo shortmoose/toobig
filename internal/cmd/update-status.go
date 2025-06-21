@@ -206,7 +206,12 @@ func updateMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, e
 		return "", fmt.Errorf("writing blob: %w", err)
 	}
 
-	// TODO: The dup case means we need to reload os.Stat...
+	// The dup case means we need to reload os.Stat.
+	info, err = os.Stat(filename)
+	if err != nil {
+		return "", fmt.Errorf("file stat: %w", err)
+	}
+
 	d := filepath.Dir(filepath.Join(ctx.RefPath, filename))
 	err = os.MkdirAll(d, 0700)
 	if err != nil {
