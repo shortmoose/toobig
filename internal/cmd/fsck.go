@@ -14,6 +14,66 @@ import (
 func Fsck(ctx *base.Context) error {
 	fmt.Println("Performing fsck")
 
+	fmt.Println("\nValidating blobs:")
+	cnt, cnt_e, curr, start, waiting := 0, 0, "/", time.Now(), true
+
+	err := base.ChdirWalk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
+		if len(path) != 64 {
+			fmt.Fprintf(os.Stderr, "Blob '%s': doesn't have a valid name\n", path)
+			cnt_e += 1
+			return nil
+		}
+
+		// Display a progress bar (sort of).
+		if !ctx.Verbose {
+			if curr != path[:len(curr)] {
+				curr = path[:len(curr)]
+				// TODO: should have a bool that says if we will need a newline.
+				fmt.Printf("%s..", curr)
+			}
+
+			// Increase granularity if this is going to take a long time.
+			if waiting && time.Since(start).Seconds() > 100 {
+				waiting = false
+				if curr == "0" {
+					curr = "//"
+				}
+			}
+		}
+
+		sha, er := base.GetSha256(path)
+		if er != nil {
+			fmt.Fprintf(os.Stderr, "Blob '%s...': %v\n", path[:8], er)
+			cnt_e += 1
+			return nil
+		}
+
+		if path != sha {
+			fmt.Fprintf(os.Stderr, "Blob '%s...': checksum doesn't match\n", path[:8])
+			cnt_e += 1
+			return nil
+		}
+
+		if ctx.Verbose {
+			fmt.Printf("Blob '%s...' valid.\n", path[:8])
+		}
+
+		cnt += 1
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	if !ctx.Verbose {
+		fmt.Println("")
+	}
+	if cnt_e != 0 {
+		fmt.Fprintf(os.Stderr, "\nFsck failed: %d blobs validated, %d errors\n", cnt, cnt_e)
+		os.Exit(11)
+	}
+	fmt.Printf("%d blobs validated, %d errors.\n", cnt, cnt_e)
+
 	return fsckRestore(ctx, "Fsck", false)
 }
 
@@ -30,76 +90,10 @@ func Restore(ctx *base.Context) error {
 }
 
 func fsckRestore(ctx *base.Context, op string, restore bool) error {
-	curr, cnt, cnt_e := "/", 0, 0
-	var err error
-	if !restore {
-		fmt.Println("\nValidating blobs:")
-		start := time.Now()
-		waiting := true
-
-		err = base.ChdirWalk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
-			if len(path) != 64 {
-				fmt.Fprintf(os.Stderr, "Blob '%s': doesn't have a valid name\n", path)
-				cnt_e += 1
-				return nil
-			}
-
-			// Display a progress bar (sort of).
-			if !ctx.Verbose {
-				if curr != path[:len(curr)] {
-					curr = path[:len(curr)]
-					// TODO: should have a bool that says if we will need a newline.
-					fmt.Printf("%s..", curr)
-				}
-
-				// Increase granularity if this is going to take a long time.
-				if waiting && time.Since(start).Seconds() > 100 {
-					waiting = false
-					if curr == "0" {
-						curr = "//"
-					}
-				}
-			}
-
-			sha, er := base.GetSha256(path)
-			if er != nil {
-				fmt.Fprintf(os.Stderr, "Blob '%s...': %v\n", path[:8], er)
-				cnt_e += 1
-				return nil
-			}
-
-			if path != sha {
-				fmt.Fprintf(os.Stderr, "Blob '%s...': checksum doesn't match\n", path[:8])
-				cnt_e += 1
-				return nil
-			}
-
-			if ctx.Verbose {
-				fmt.Printf("Blob '%s...' valid.\n", path[:8])
-			}
-
-			cnt += 1
-			return nil
-		})
-		if err != nil {
-			return err
-		}
-
-		if !ctx.Verbose {
-			fmt.Println("")
-		}
-		if cnt_e != 0 {
-			fmt.Fprintf(os.Stderr, "\nFsck failed: %d blobs validated, %d errors\n", cnt, cnt_e)
-			os.Exit(11)
-		}
-		fmt.Printf("%d blobs validated, %d errors.\n", cnt, cnt_e)
-
-	}
-
 	fmt.Println("\nValidating refs:")
-	cnt, cnt_e = 0, 0
-	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 
+	cnt, cnt_e := 0, 0
+	err := base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		ref, er := config.ReadFileMeta(path)
 		if er != nil {
 			fmt.Fprintf(os.Stderr, "Ref '%s': %v\n", path, er)
@@ -140,8 +134,11 @@ func fsckRestore(ctx *base.Context, op string, restore bool) error {
 
 		cnt += 1
 		if ctx.Verbose {
-			fmt.Printf("Ref '%s': valid.\n", path)
+			if restore {
 			fmt.Printf("Ref '%s': restored.\n", path)
+			} else {
+			fmt.Printf("Ref '%s': valid.\n", path)
+			}
 		}
 		return nil
 	})
