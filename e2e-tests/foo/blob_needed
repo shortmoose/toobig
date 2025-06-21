@@ -14,8 +14,6 @@ rm x/blobs/c5d98*
 set +v
 echo
 
-# TODO: This seems weird. Status should give an error 11... The repo is
-# technically corrupt, but it can be fixed with an update.
 run_and_verify 10 status $CFG
 run_and_verify 11 fsck $CFG
 run_and_verify 11 restore -file-path=$PWD/x/files-validate $CFG

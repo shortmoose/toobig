@@ -14,7 +14,7 @@ touch x/files/foo
 set +v
 echo
 
-run_and_verify 10 status $CFG
+run_and_verify 11 status $CFG
 run_and_verify 10 update $CFG
 
 X## "foo was updated into the past"
@@ -23,5 +23,5 @@ touch -d "2 hours ago" x/files/foo
 set +v
 echo
 
-run_and_verify 10 status $CFG
+run_and_verify 11 status $CFG
 run_and_verify 10 update $CFG
