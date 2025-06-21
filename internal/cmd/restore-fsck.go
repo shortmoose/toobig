@@ -135,9 +135,9 @@ func fsckRestore(ctx *base.Context, op string, restore bool) error {
 		cnt += 1
 		if ctx.Verbose {
 			if restore {
-			fmt.Printf("Ref '%s': restored.\n", path)
+				fmt.Printf("Ref '%s': restored.\n", path)
 			} else {
-			fmt.Printf("Ref '%s': valid.\n", path)
+				fmt.Printf("Ref '%s': valid.\n", path)
 			}
 		}
 		return nil
