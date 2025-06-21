@@ -14,6 +14,6 @@ echo "abc 125" >x/files/foo
 set +v
 echo
 
-run_and_verify 10 status $CFG
+run_and_verify 11 status $CFG
 run_and_verify 2 update $CFG
 run_and_verify 11 fsck $CFG

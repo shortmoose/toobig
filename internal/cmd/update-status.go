@@ -41,12 +41,13 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 		}
 
 		ref, ix, er := verifyMeta(ctx, path, info)
-		if er != nil {
+		if !update && er != nil {
 			cnt_e += 1
 			fmt.Fprintf(os.Stderr, "File '%s': %v\n", path, er)
 			return nil
 		}
-		if ix == nil {
+		// Need this weird er part because of the check on update above.
+		if ix == nil && er == nil {
 			blob_index[ref] = true
 			return nil
 		}
@@ -190,7 +191,7 @@ func verifyMeta(ctx *base.Context, filename string, info fs.FileInfo) (string, e
 		return "", fmt.Errorf("file modified"), nil
 	}
 	if !time_is_good {
-		return "", fmt.Errorf("file potentially corrupt, please do fsck"), nil
+		return "", nil, fmt.Errorf("file potentially corrupt, please do fsck")
 	}
 	return ref.Sha256, nil, nil
 }

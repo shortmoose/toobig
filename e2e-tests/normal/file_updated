@@ -16,6 +16,7 @@ set +v
 
 run_and_verify 10 status $CFG
 run_and_verify 10 update $CFG
+validate
 
 X## "Modify the file. Make sure it updates even if the timestamp didn't change."
 set -v
@@ -25,6 +26,6 @@ echo "abc 186" >x/files/foo
 touch -r x/files/foo.jpg x/files/foo
 set +v
 
-run_and_verify 10 status $CFG
+run_and_verify 11 status $CFG
 run_and_verify 10 update $CFG
 validate
