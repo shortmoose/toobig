@@ -11,16 +11,11 @@ import (
 	"github.com/shortmoose/toobig/internal/config"
 )
 
-// Basic details:
-// fsck, minimal output, display errors.
-// for each section it should output the total number of files it processed.
 func Fsck(ctx *base.Context) error {
 	fmt.Println("Performing fsck")
 
 	fmt.Println("\nValidating blobs:")
-	curr, cnt, cnt_e := "/", 0, 0
-	start := time.Now()
-	waiting := true
+	cnt, cnt_e, curr, start, waiting := 0, 0, "/", time.Now(), true
 
 	err := base.ChdirWalk(ctx.BlobPath, func(path string, info fs.DirEntry) error {
 		if len(path) != 64 {
@@ -79,10 +74,26 @@ func Fsck(ctx *base.Context) error {
 	}
 	fmt.Printf("%d blobs validated, %d errors.\n", cnt, cnt_e)
 
-	fmt.Println("\nValidating refs:")
-	cnt, cnt_e = 0, 0
-	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
+	return fsckRestore(ctx, "Fsck", false)
+}
 
+func Restore(ctx *base.Context) error {
+	// TODO: Should we enforce that this directory is empty?
+	if !filepath.IsAbs(ctx.FilePathOverride) {
+		fmt.Fprintf(os.Stderr, "--file-path=%s isn't a full path.\n", ctx.FilePathOverride)
+		os.Exit(3)
+	}
+
+	fmt.Printf("Performing restore to %s\n", ctx.FilePathOverride)
+
+	return fsckRestore(ctx, "Restore", true)
+}
+
+func fsckRestore(ctx *base.Context, op string, restore bool) error {
+	fmt.Println("\nValidating refs:")
+
+	cnt, cnt_e := 0, 0
+	err := base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		ref, er := config.ReadFileMeta(path)
 		if er != nil {
 			fmt.Fprintf(os.Stderr, "Ref '%s': %v\n", path, er)
@@ -103,9 +114,31 @@ func Fsck(ctx *base.Context) error {
 			return nil
 		}
 
+		if restore {
+			files_path := filepath.Join(ctx.FilePathOverride, path)
+			d := filepath.Dir(files_path)
+			er = os.MkdirAll(d, 0700)
+			if er != nil {
+				fmt.Fprintf(os.Stderr, "mkdir '%s': %v\n", d, er)
+				cnt_e += 1
+				return nil
+			}
+
+			er = os.Link(blob_path, files_path)
+			if er != nil {
+				fmt.Fprintf(os.Stderr, "linking %s to %s: %v\n", files_path, blob_path, er)
+				cnt_e += 1
+				return nil
+			}
+		}
+
 		cnt += 1
 		if ctx.Verbose {
-			fmt.Printf("Ref '%s': valid.\n", path)
+			if restore {
+				fmt.Printf("Ref '%s': restored.\n", path)
+			} else {
+				fmt.Printf("Ref '%s': valid.\n", path)
+			}
 		}
 		return nil
 	})
@@ -114,11 +147,11 @@ func Fsck(ctx *base.Context) error {
 	}
 
 	if cnt_e != 0 {
-		fmt.Fprintf(os.Stderr, "\nFsck failed: %d refs validated, %d errors\n", cnt, cnt_e)
+		fmt.Fprintf(os.Stderr, "\n%s failed: %d refs validated, %d errors\n", op, cnt, cnt_e)
 		os.Exit(11)
 	}
 	fmt.Printf("%d refs validated, %d errors.\n", cnt, cnt_e)
 
-	fmt.Println("\nfsck complete.")
+	fmt.Printf("\n%s complete.\n", op)
 	return nil
 }

@@ -56,6 +56,7 @@ func main() {
 			},
 		},
 		Commands: []*cli.Command{
+			// TODO: Is there a way to specify these commands take a config file?
 			{
 				Name:  "update",
 				Usage: "update blobs and metadata files to match files",
