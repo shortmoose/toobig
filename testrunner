@@ -24,7 +24,7 @@ while true; do
     echo -e "$COLOR###############  $MSG  ######################$NC"
     echo "WAITING..."
 
-    inotifywait -q -r -e modify,create,delete,move .
+    inotifywait -q -r -e modify,create,delete,move . || exit 1
     sleep 0.2 # Let filesystem settle down, don't want files in a partially saved state.
 
 done
