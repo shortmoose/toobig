@@ -33,4 +33,4 @@ validate
 rx rm -fr x/files-validate/*
 run 0 fsck -v $CFG
 run 0 status -v $CFG
-run 0 restore --file-path=/home/nathan/toobig/x/files-validate -v $CFG
+run 0 restore --file-path=$PWD/x/files-validate -v $CFG
