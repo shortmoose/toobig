@@ -79,15 +79,16 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 	cnt, cnt_u, cnt_e = 0, 0, 0
 	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		cnt += 1
-		exists, er := base.FileExists(ctx.FilePath + "/" + path)
-		if er != nil {
+		_, er := os.Stat(ctx.FilePath + "/" + path)
+		if er == nil {
+			return nil
+		}
+		if !os.IsNotExist(er) {
 			cnt_e += 1
 			fmt.Fprintf(os.Stderr, "Ref '%s': %v\n", path, er)
 			return nil
 		}
-		if exists {
-			return nil
-		}
+		// Our ref is out-of-date (os.Stat returned os.IsNotExist).
 
 		if update {
 			er = mvToOld(ctx, path, "refs")
