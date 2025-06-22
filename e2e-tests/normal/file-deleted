@@ -1,0 +1,14 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+rf x/files/delete echo abc
+rf x/files/time echo cde
+runq update $CFG
+
+X## "Test file removal"
+rx rm x/files/delete
+run 10 status $CFG
+validate 1
+run 10 update $CFG
+validate

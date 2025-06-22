@@ -14,8 +14,8 @@ echo "abc 125" >x/blobs/bb964bb682d701aad340ab78c677e597fa8fc33df131c8b48f5b951c
 set +v
 echo
 
-run_and_verify 0 fsck $CFG
-run_and_verify 0 status $CFG
+run 0 fsck $CFG
+run 0 status $CFG
 
 X## "Duplicate refs are okay."
 set -v
@@ -23,5 +23,5 @@ cp x/refs/foo x/refs/cp_of_foo
 set +v
 echo
 
-run_and_verify 0 fsck $CFG
-run_and_verify 10 status $CFG
+run 0 fsck $CFG
+run 10 status $CFG

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+cat <<HERE | tee /dev/tty | bash
+echo "abc 123" >x/files/foo
+echo "abc 124" >x/files/foo.jpg
+$TB update $CFG >/dev/null
+HERE
+
+X## "Remove blob, update will fix it."
+set -v
+rm x/blobs/c5d98*
+set +v
+echo
+
+run 10 status $CFG
+run 11 fsck $CFG
+run 11 restore -file-path=$PWD/x/files-validate $CFG
+
+X## "Running the update that will fix it."
+run 10 update $CFG
+run 0 fsck $CFG
+validate

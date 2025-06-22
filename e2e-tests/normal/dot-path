@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+X## "File is inside a normal directory."
+rx mkdir x/files/dot
+rf x/files/dot/foo echo abc
+run 10 update $CFG
+validate
+
+X## "File is inside a .dot directory, which should be ignored."
+rx mkdir x/files/.dot
+rf x/files/.dot/foo echo abc
+run 0 update $CFG
+validate 1

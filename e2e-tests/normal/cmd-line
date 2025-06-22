@@ -1,0 +1,24 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+X## "Just making sure it doesn't fail."
+run 0 config
+
+X## "Just making sure it doesn't fail."
+run 0 version
+
+X## "Bad command gives an exit code of 3"
+run 3 updat $CFG
+
+X## "This is also a bad command. Although the output looks like help."
+run 3 update
+
+X## "Output will be same as above, but -h means it was expected, and so success."
+run 0 update -h
+
+X## "This is annoying, urface/cli should return a status of 3 here."
+run 1 restore $CFG
+
+X## "file-path needs to be absolute."
+run 3 restore --file-path=x/ $CFG

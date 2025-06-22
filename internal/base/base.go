@@ -5,22 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"syscall"
 )
-
-// GetInode returns the inode of the given file.
-func GetInode(filename string) (uint64, error) {
-	fileinfo, err := os.Stat(filename)
-	if err != nil {
-		return 0, err
-	}
-
-	stat, ok := fileinfo.Sys().(*syscall.Stat_t)
-	if !ok {
-		return 0, fmt.Errorf("unable to get syscall.stat_t")
-	}
-	return stat.Ino, nil
-}
 
 // GetSha256 computes and returns the SHA256 for the given file.
 func GetSha256(filename string) (string, error) {
@@ -38,6 +23,7 @@ func GetSha256(filename string) (string, error) {
 	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
 
+// TODO: No need for this function...
 // FileExists determines if the given file exists (permissions allowing).
 func FileExists(path string) (bool, error) {
 	if _, err := os.Stat(path); err == nil {

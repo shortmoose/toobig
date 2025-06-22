@@ -2,22 +2,26 @@
 
 . e2e-tests/setup
 
-cat <<HERE | tee /dev/tty | bash
-echo "abc 123" >x/files/foo
-echo "abc 124" >x/files/foo.jpg
-$TB update $CFG >/dev/null
-HERE
+rf x/files/foo echo abc
+runq update $CFG
 
 X## "Create invalid ref."
-set -v
-cat <<HERE >x/refs/no-sha.jpg
+cat <<HERE >x/refs/bad-sha
 {
  "sha256": "c5d982dc040081e09cad25209fed928b334a21fb2ff34db5202178a7b1a81988",
  "unixnano": 1749858394741289104
 }
 HERE
-set +v
-echo
+rx cat x/refs/bad-sha
+run 11 fsck $CFG
+run 10 update $CFG
 
-run_and_verify 11 fsck $CFG
-run_and_verify 11 restore --file-path=$PWD/x/files2 $CFG
+X## "Create invalid ref."
+cat <<HERE >x/refs/bad-sha
+{
+ "sha256": "c5d98",
+ "unixnano": 1749858394741289104
+}
+HERE
+rx cat x/refs/bad-sha
+run 11 fsck $CFG

@@ -15,7 +15,7 @@ rm x/files/d/foo
 set +v
 echo
 
-run_and_verify 10 update $CFG
+run 10 update $CFG
 
 X## "Validating 'old' storage is correct."
 set -v

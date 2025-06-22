@@ -1,0 +1,36 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+X## "Add files."
+rf x/files/update echo abc
+rf x/files/time echo cde
+run 10 status $CFG
+run 10 update $CFG
+# Just doing this because we have had bugs where files are constantly re-updated.
+run 0 update $CFG
+validate
+
+X## "Update file. Make sure to break the hardlink."
+rx rm x/files/update
+rf x/files/update echo xyz
+run 10 status $CFG
+run 10 update $CFG
+# Validating that the update, fixed the status.
+run 0 status $CFG
+validate
+
+X## "Update the file. Give it the same contents as another file."
+rx rm x/files/update
+rf x/files/update echo xyz
+run 10 update $CFG
+X## "We forced a dup. Verify it doesn't require two updates."
+run 0 status $CFG
+# We just wanted to get an fsck into this workflow.
+run 0 fsck $CFG
+validate
+
+rx rm -fr x/files-validate/*
+run 0 fsck -v $CFG
+run 0 status -v $CFG
+run 0 restore --file-path=$PWD/x/files-validate -v $CFG

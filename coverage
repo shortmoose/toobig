@@ -10,7 +10,7 @@ go test ./... -cover -args -test.gocoverdir=$PWD/gocov-datafiles
 
 # Run e2e tests
 go build --cover -o . ./...
-./test
+./test $1
 
 # Process the coverage data
 go tool covdata textfmt -i=gocov-datafiles -o=gocov.txt

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+. e2e-tests/setup
+
+rf x/files/foo echo abc
+rf x/files/bar echo 123
+runq update $CFG
+
+X## "This will corrupt the blob"
+rf x/files/foo echo a
+run 11 status $CFG
+# TODO: This is a very scary looking panic...
+run 2 update $CFG
+run 11 fsck $CFG
