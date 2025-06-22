@@ -102,14 +102,9 @@ func fsckRestore(ctx *base.Context, op string, restore bool) error {
 		}
 
 		blob_path := filepath.Join(ctx.BlobPath, ref.Sha256)
-		ex, er := base.FileExists(blob_path)
+		_, er = os.Stat(blob_path)
 		if er != nil {
 			fmt.Printf("Blob '%s...': %v\n", ref.Sha256[:8], er)
-			cnt_e += 1
-			return nil
-		}
-		if !ex {
-			fmt.Printf("Blob '%s...' not found.\n", ref.Sha256[:8])
 			cnt_e += 1
 			return nil
 		}
