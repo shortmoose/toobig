@@ -4,7 +4,7 @@
 
 rf x/files/update echo abc
 rf x/files/time echo cde
-tb update $CFG
+runq update $CFG
 
 # These other two should probably not be considered normal.
 X## "Update the file. Make it a duplicate."

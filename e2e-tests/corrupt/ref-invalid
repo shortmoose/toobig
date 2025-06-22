@@ -3,7 +3,7 @@
 . e2e-tests/setup
 
 rf x/files/foo echo abc
-tb update $CFG
+runq update $CFG
 
 X## "Create invalid ref."
 cat <<HERE >x/refs/bad-sha

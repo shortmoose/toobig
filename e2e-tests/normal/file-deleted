@@ -4,7 +4,7 @@
 
 rf x/files/delete echo abc
 rf x/files/time echo cde
-tb update $CFG
+runq update $CFG
 
 X## "Test file removal"
 rx rm x/files/delete

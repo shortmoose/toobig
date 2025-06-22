@@ -4,7 +4,7 @@
 
 rf x/files/foo echo abc
 rf x/files/bar echo 123
-tb update $CFG
+runq update $CFG
 
 X## "This will corrupt the blob"
 rf x/files/foo echo a
