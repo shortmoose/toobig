@@ -15,12 +15,13 @@ rm x/files/d/foo
 set +v
 echo
 
+# Make sure things are tidy.
+rm -fr x/old/*
 run 10 update $CFG
 
 X## "Validating 'old' storage is correct."
 set -v
-cat <<EOF | diff <(cd x/old/2* && find . -type f -printf "%p\n") -
+cat <<EOF | diff <(cd x/old/* && find . -type f -printf "%p\n") -
 ./refs/d\\foo
 ./blobs/c5d982dc040081e09cad25209fed928b334a21fb2ff34db5202178a7b1a8199b
 EOF
-set +v

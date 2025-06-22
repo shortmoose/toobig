@@ -39,9 +39,6 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 			return nil
 		}
 		if update {
-			// TODO: Should the old Ref be moved to old??
-			// See normal/file_updated test
-			// TODO: See update-dup-and-linked, link created multiple times?
 			ref, er := updateMeta(ctx, path, de)
 			if er != nil {
 				cnt_e += 1
@@ -79,7 +76,7 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 	cnt, cnt_u, cnt_e = 0, 0, 0
 	err = base.ChdirWalk(ctx.RefPath, func(path string, info fs.DirEntry) error {
 		cnt += 1
-		_, er := os.Stat(ctx.FilePath + "/" + path)
+		_, er := os.Stat(filepath.Join(ctx.FilePath, path))
 		if er == nil {
 			return nil
 		}
@@ -91,13 +88,12 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 		// Our ref is out-of-date (os.Stat returned os.IsNotExist).
 
 		if update {
-			er = mvToOld(ctx, path, "refs")
+			er = mvToOld(ctx, ctx.RefPath, path, "refs")
 			if er != nil {
 				cnt_e += 1
 				fmt.Fprintf(os.Stderr, "Ref %s: %v\n", path, er)
 				return nil
 			}
-
 		}
 
 		cnt_u += 1
@@ -132,7 +128,7 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 				name = name[:8]
 			}
 
-			er := mvToOld(ctx, path, "blobs")
+			er := mvToOld(ctx, ctx.BlobPath, path, "blobs")
 			if er != nil {
 				fmt.Fprintf(os.Stderr, "Blob '%s': %v\n", name, er)
 				cnt_e += 1
@@ -223,6 +219,11 @@ func updateMeta(ctx *base.Context, filename string, dEntry fs.DirEntry) (string,
 		return "", fmt.Errorf("file stat: %w", err)
 	}
 
+	err = mvToOld(ctx, ctx.RefPath, filename, "refs")
+	if err != nil {
+		return "", fmt.Errorf("ref -> old '%s': %w", filename, err)
+	}
+
 	d := filepath.Dir(filepath.Join(ctx.RefPath, filename))
 	err = os.MkdirAll(d, 0700)
 	if err != nil {
@@ -230,7 +231,7 @@ func updateMeta(ctx *base.Context, filename string, dEntry fs.DirEntry) (string,
 	}
 
 	fm := config.FileMeta{Sha256: sha256, UnixNano: info.ModTime().UnixNano()}
-	err = config.WriteFileMeta(ctx.RefPath+"/"+filename, fm)
+	err = config.WriteFileMeta(filepath.Join(ctx.RefPath, filename), fm)
 	if err != nil {
 		return "", fmt.Errorf("writing ref: %w", err)
 	}
@@ -263,7 +264,7 @@ func createHardLink(ctx *base.Context, filename, sha256 string, stat fs.FileInfo
 	panicIfHashExists(ctx, stat)
 
 	// Dup case.
-	err = mvToOld(ctx, filename, "dup")
+	err = mvToOld(ctx, ctx.FilePath, filename, "dup")
 	if err != nil {
 		return fmt.Errorf("move file to dup directory: %w", err)
 	}
@@ -308,6 +309,11 @@ func panicIfHashExists(ctx *base.Context, stat os.FileInfo) {
 func prepareOld(ctx *base.Context) {
 	currTime := time.Now()
 	path := filepath.Join(ctx.OldPath, currTime.Format("2006-01-02-15:04:05.000"))
+	if once {
+		return
+	}
+	once = true
+
 	err := os.Mkdir(path, 0755)
 	if err != nil {
 		panic(err)
@@ -333,15 +339,17 @@ func prepareOld(ctx *base.Context) {
 	}
 }
 
-func mvToOld(ctx *base.Context, path, sub string) error {
-	if !once {
-		once = true
-		prepareOld(ctx)
-	}
+func mvToOld(ctx *base.Context, root, path, sub string) error {
+	prepareOld(ctx)
 
+	curr_path := filepath.Join(root, path)
 	new_path := filepath.Join(ctx.OldPath, sub, strings.ReplaceAll(path, "/", "\\"))
-	err := os.Rename(path, new_path)
+	err := os.Rename(curr_path, new_path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+
 		return fmt.Errorf("move file to dup directory: %w", err)
 	}
 
