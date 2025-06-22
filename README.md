@@ -8,8 +8,7 @@
 TooBig was created from a need to manage large files like photos, videos, and
 other files. Over the last number of years I have found it has worked
 wonderfully for managing my decades of family photos, but also for managing
-photo
-and video assets for development projects, and other uses here and there.
+photo and video assets for development projects, and other uses here and there.
 
 TooBig converts a set of files into a set of refs and blobs. A blob is the
 original file, but the name has been changed to the 64 character SHA-256
