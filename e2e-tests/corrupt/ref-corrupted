@@ -5,9 +5,9 @@
 X## "Create an invalid ref file."
 rf x/refs/corrupt echo a
 
-run_and_verify 11 fsck $CFG
-run_and_verify 11 restore --file-path=$PWD/x/files2 $CFG
-run_and_verify 10 status $CFG
-run_and_verify 10 update $CFG
-run_and_verify 0 update $CFG
-run_and_verify 0 fsck $CFG
+run 11 fsck $CFG
+run 11 restore --file-path=$PWD/x/files2 $CFG
+run 10 status $CFG
+run 10 update $CFG
+run 0 update $CFG
+run 0 fsck $CFG

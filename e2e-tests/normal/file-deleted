@@ -8,7 +8,7 @@ tb update $CFG
 
 X## "Test file removal"
 rx rm x/files/delete
-run_and_verify 10 status $CFG
+run 10 status $CFG
 validate 1
-run_and_verify 10 update $CFG
+run 10 update $CFG
 validate

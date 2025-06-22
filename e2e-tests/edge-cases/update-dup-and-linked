@@ -9,7 +9,7 @@ ln x/files/foo x/files/aoo
 set +v
 echo
 
-run_and_verify 10 update $CFG
+run 10 update $CFG
 
 set -v
 diff x/old/2*/dup/boo x/files/boo

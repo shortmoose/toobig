@@ -8,7 +8,7 @@ tb update $CFG
 
 X## "This will corrupt the blob"
 rf x/files/foo echo a
-run_and_verify 11 status $CFG
+run 11 status $CFG
 # TODO: This is a very scary looking panic...
-run_and_verify 2 update $CFG
-run_and_verify 11 fsck $CFG
+run 2 update $CFG
+run 11 fsck $CFG

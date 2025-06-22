@@ -4,8 +4,8 @@
 
 X## "Invalid blob name - really short name since that once caused a problem."
 rf x/blobs/a echo a
-run_and_verify 11 fsck $CFG
+run 11 fsck $CFG
 
 X## "Valid blob name, invalid checksum."
 rf x/blobs/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa echo a
-run_and_verify 11 fsck $CFG
+run 11 fsck $CFG

@@ -12,4 +12,4 @@ EOF
 cat $CFG
 echo
 
-run_and_verify 12 update $CFG
+run 12 update $CFG

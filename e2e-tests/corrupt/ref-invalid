@@ -13,8 +13,8 @@ cat <<HERE >x/refs/bad-sha
 }
 HERE
 rx cat x/refs/bad-sha
-run_and_verify 11 fsck $CFG
-run_and_verify 10 update $CFG
+run 11 fsck $CFG
+run 10 update $CFG
 
 X## "Create invalid ref."
 cat <<HERE >x/refs/bad-sha
@@ -24,4 +24,4 @@ cat <<HERE >x/refs/bad-sha
 }
 HERE
 rx cat x/refs/bad-sha
-run_and_verify 11 fsck $CFG
+run 11 fsck $CFG

@@ -6,7 +6,7 @@ rm -fr gocov-datafiles
 mkdir gocov-datafiles
 
 # Run unit tests.
-# go test ./... -cover -args -test.gocoverdir=$PWD/gocov-datafiles
+go test ./... -cover -args -test.gocoverdir=$PWD/gocov-datafiles
 
 # Run e2e tests
 go build --cover -o . ./...

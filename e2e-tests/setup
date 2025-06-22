@@ -24,14 +24,15 @@ rx() {
     "$@"
 }
 
-tb() {
+# Run quiet
+runq() {
     echo "$TB $@ >/dev/null"
     GOCOVERDIR=$PWD/gocov-datafiles $TB "$@" >/dev/null
 }
 
 # Normally we use this to verify we are getting an exit code of 1
 # This protects us from hiding problems like a panic (exit 2).
-run_and_verify() {
+run() {
     expected=$1
     exit_code=0
     shift
@@ -58,7 +59,7 @@ validate() {
     X## "Restore files..."
     rm -fr x/files-validate
     mkdir x/files-validate
-    run_and_verify 0 restore --file-path=$PWD/x/files-validate $CFG
+    run 0 restore --file-path=$PWD/x/files-validate $CFG
     X## "Validating data with diff"
     echo diff -r x/files x/files-validate
     echo "-------------------------------"

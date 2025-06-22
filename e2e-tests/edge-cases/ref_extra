@@ -14,8 +14,8 @@ cp x/refs/foo x/refs/cp_of_foo
 set +v
 echo
 
-run_and_verify 10 status $CFG
-run_and_verify 10 update $CFG
+run 10 status $CFG
+run 10 update $CFG
 # TODO: find more standard way to test.
 if [ -f x/refs/cp_of_foo ]; then
     echo "This file shouldn't exist"

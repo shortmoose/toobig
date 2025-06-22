@@ -14,11 +14,11 @@ rm x/blobs/c5d98*
 set +v
 echo
 
-run_and_verify 10 status $CFG
-run_and_verify 11 fsck $CFG
-run_and_verify 11 restore -file-path=$PWD/x/files-validate $CFG
+run 10 status $CFG
+run 11 fsck $CFG
+run 11 restore -file-path=$PWD/x/files-validate $CFG
 
 X## "Running the update that will fix it."
-run_and_verify 10 update $CFG
-run_and_verify 0 fsck $CFG
+run 10 update $CFG
+run 0 fsck $CFG
 validate
