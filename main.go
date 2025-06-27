@@ -11,19 +11,19 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-// This is ugly, not sure how to get the parent.
 type do func(ctx *base.Context) error
 
-func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
+func wrap_cfg(ct context.Context, cd *cli.Command, fn do, arg string) error {
 	args := cd.Args().Slice()
-	if len(args) != 1 {
+	if len(args) != 0 || len(arg) == 0 {
+		fmt.Fprintf(os.Stderr, "Invalid arguments...\n")
 		_ = cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
 		os.Exit(base.ExitCodeInvalidArgs)
 	}
 
 	var ctx base.Context
 	ctx.Command = cd.Name
-	ctx.ConfigPath = args[0]
+	ctx.ConfigPath = arg
 
 	ctx.Verbose = cd.Bool("verbose")
 	ctx.UpdateIsError = cd.Bool("update-is-error")
@@ -40,6 +40,7 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 }
 
 func main() {
+	var sval string
 	app := &cli.Command{
 		EnableShellCompletion: true,
 		Name:                  "toobig",
@@ -56,19 +57,30 @@ func main() {
 			},
 		},
 		Commands: []*cli.Command{
-			// TODO: Is there a way to specify these commands take a config file?
 			{
 				Name:  "update",
 				Usage: "update blobs and metadata files to match files",
 				Action: func(ctx context.Context, c *cli.Command) error {
-					return wrap_cfg(ctx, c, cmd.Update)
+					return wrap_cfg(ctx, c, cmd.Update, sval)
+				},
+				Arguments: []cli.Argument{
+					&cli.StringArg{
+						Name:        "config",
+						Destination: &sval,
+					},
 				},
 			},
 			{
 				Name:  "restore",
 				Usage: "restore files to match blobs and metadata files",
 				Action: func(ctx context.Context, c *cli.Command) error {
-					return wrap_cfg(ctx, c, cmd.Restore)
+					return wrap_cfg(ctx, c, cmd.Restore, sval)
+				},
+				Arguments: []cli.Argument{
+					&cli.StringArg{
+						Name:        "config",
+						Destination: &sval,
+					},
 				},
 				Flags: []cli.Flag{
 					&cli.StringFlag{
@@ -82,14 +94,26 @@ func main() {
 				Name:  "status",
 				Usage: "current state of repository - are there current file changes",
 				Action: func(ctx context.Context, c *cli.Command) error {
-					return wrap_cfg(ctx, c, cmd.Status)
+					return wrap_cfg(ctx, c, cmd.Status, sval)
+				},
+				Arguments: []cli.Argument{
+					&cli.StringArg{
+						Name:        "config",
+						Destination: &sval,
+					},
 				},
 			},
 			{
 				Name:  "fsck",
 				Usage: "verify data integrity - are the refs and blobs valid",
 				Action: func(ctx context.Context, c *cli.Command) error {
-					return wrap_cfg(ctx, c, cmd.Fsck)
+					return wrap_cfg(ctx, c, cmd.Fsck, sval)
+				},
+				Arguments: []cli.Argument{
+					&cli.StringArg{
+						Name:        "config",
+						Destination: &sval,
+					},
 				},
 			},
 			{
