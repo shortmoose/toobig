@@ -67,7 +67,7 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 
 	if cnt_e != 0 {
 		fmt.Fprintf(os.Stderr, "%s failed: %d files, %d updated, %d errors\n", op, cnt, cnt_u, cnt_e)
-		os.Exit(11)
+		os.Exit(base.ExitCodeDataInconsistency)
 	}
 	u := (cnt_u > 0)
 	fmt.Printf("%d files, %d updated.\n", cnt, cnt_u)
@@ -110,7 +110,7 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 
 	if cnt_e != 0 {
 		fmt.Fprintf(os.Stderr, "%s failed: %d refs validated, %d errors\n", op, cnt, cnt_e)
-		os.Exit(11)
+		os.Exit(base.ExitCodeDataInconsistency)
 	}
 	fmt.Printf("%d refs validated, %d errors.\n", cnt, cnt_e)
 	u = (u || cnt_u > 0)
@@ -144,7 +144,7 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 
 		if cnt_e != 0 {
 			fmt.Fprintf(os.Stderr, "Clean up failed: %d moved, %d errors\n", cnt_u, cnt_e)
-			os.Exit(11)
+			os.Exit(base.ExitCodeDataInconsistency)
 		}
 		fmt.Printf("%d moved.\n", cnt_u)
 		u = (u || cnt_u > 0)
@@ -152,7 +152,7 @@ func statusUpdate(ctx *base.Context, op string, update bool) error {
 
 	fmt.Printf("\n%s complete.\n", op)
 	if ctx.UpdateIsError && (cnt_u > 0 || u) {
-		os.Exit(10)
+		os.Exit(base.ExitCodeNormalUpdate)
 	}
 	return nil
 }

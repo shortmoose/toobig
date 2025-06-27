@@ -18,7 +18,7 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 	args := cd.Args().Slice()
 	if len(args) != 1 {
 		_ = cli.ShowCommandHelp(ct, cd.Root(), cd.Name)
-		os.Exit(3)
+		os.Exit(base.ExitCodeInvalidArgs)
 	}
 
 	var ctx base.Context
@@ -32,7 +32,7 @@ func wrap_cfg(ct context.Context, cd *cli.Command, fn do) error {
 	cfg, err := config.ReadConfig(ctx.ConfigPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-		os.Exit(12)
+		os.Exit(base.ExitCodeConfigError)
 	}
 	ctx.TooBig = cfg
 
@@ -119,6 +119,6 @@ Remember all paths are relative to wherever the config file is located.`)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 
-		os.Exit(1)
+		os.Exit(base.ExitCodeGeneralError)
 	}
 }
