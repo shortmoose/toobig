@@ -70,7 +70,7 @@ func Fsck(ctx *base.Context) error {
 	}
 	if cnt_e != 0 {
 		fmt.Fprintf(os.Stderr, "\nFsck failed: %d blobs validated, %d errors\n", cnt, cnt_e)
-		os.Exit(11)
+		os.Exit(base.ExitCodeDataInconsistency)
 	}
 	fmt.Printf("%d blobs validated, %d errors.\n", cnt, cnt_e)
 
@@ -81,7 +81,7 @@ func Restore(ctx *base.Context) error {
 	// TODO: Should we enforce that this directory is empty?
 	if !filepath.IsAbs(ctx.FilePathOverride) {
 		fmt.Fprintf(os.Stderr, "--file-path=%s isn't a full path.\n", ctx.FilePathOverride)
-		os.Exit(3)
+		os.Exit(base.ExitCodeInvalidArgs)
 	}
 
 	fmt.Printf("Performing restore to %s\n", ctx.FilePathOverride)
@@ -143,7 +143,7 @@ func fsckRestore(ctx *base.Context, op string, restore bool) error {
 
 	if cnt_e != 0 {
 		fmt.Fprintf(os.Stderr, "\n%s failed: %d refs validated, %d errors\n", op, cnt, cnt_e)
-		os.Exit(11)
+		os.Exit(base.ExitCodeDataInconsistency)
 	}
 	fmt.Printf("%d refs validated, %d errors.\n", cnt, cnt_e)
 
