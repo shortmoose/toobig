@@ -8,9 +8,11 @@ jobs:
   govulncheck_job:
     runs-on: ubuntu-latest
     name: Run govulncheck
+    env:
+      GOOS: linux
     steps:
       - id: govulncheck
         uses: golang/govulncheck-action@v1
         with:
-           go-version-input: 1.21
+           go-version-input: 1.22
            go-package: ./...
