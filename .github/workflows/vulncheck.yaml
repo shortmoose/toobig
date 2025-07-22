@@ -4,12 +4,12 @@ on:
     branches: ['main']
   pull_request:
     branches: ['main']
+env:
+  GOOS: linux
 jobs:
   govulncheck_job:
     runs-on: ubuntu-latest
     name: Run govulncheck
-    env:
-      GOOS: linux
     steps:
       - id: govulncheck
         uses: golang/govulncheck-action@v1
