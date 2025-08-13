@@ -225,7 +225,7 @@ func updateMeta(ctx *base.Context, filename string, dEntry fs.DirEntry) (string,
 	}
 
 	d := filepath.Dir(filepath.Join(ctx.RefPath, filename))
-	err = os.MkdirAll(d, 0700)
+	err = os.MkdirAll(d, 0777)  // The umask may adjust these settings.
 	if err != nil {
 		return "", fmt.Errorf("making directories: %w", err)
 	}
