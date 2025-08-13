@@ -112,7 +112,7 @@ func fsckRestore(ctx *base.Context, op string, restore bool) error {
 		if restore {
 			files_path := filepath.Join(ctx.FilePathOverride, path)
 			d := filepath.Dir(files_path)
-			er = os.MkdirAll(d, 0700)
+			er = os.MkdirAll(d, 0777)
 			if er != nil {
 				fmt.Fprintf(os.Stderr, "mkdir '%s': %v\n", d, er)
 				cnt_e += 1
