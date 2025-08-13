@@ -314,26 +314,26 @@ func prepareOld(ctx *base.Context) {
 	}
 	once = true
 
-	err := os.Mkdir(path, 0755)
+	err := os.Mkdir(path, 0777)
 	if err != nil {
 		panic(err)
 	}
 	ctx.OldPath = path
 
 	path = filepath.Join(ctx.OldPath, "dup")
-	err = os.Mkdir(path, 0755)
+	err = os.Mkdir(path, 0777)
 	if err != nil {
 		panic(err)
 	}
 
 	path = filepath.Join(ctx.OldPath, "refs")
-	err = os.Mkdir(path, 0755)
+	err = os.Mkdir(path, 0777)
 	if err != nil {
 		panic(err)
 	}
 
 	path = filepath.Join(ctx.OldPath, "blobs")
-	err = os.Mkdir(path, 0755)
+	err = os.Mkdir(path, 0777)
 	if err != nil {
 		panic(err)
 	}
